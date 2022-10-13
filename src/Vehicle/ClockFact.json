@@ -1,0 +1,17 @@
+{
+    "version":      1,
+    "fileType":  "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "currentTime",
+    "shortDesc": "Time",
+    "type":             "string"
+},
+{
+    "name":             "currentDate",
+    "shortDesc": "Date",
+    "type":             "string"
+}
+]
+}

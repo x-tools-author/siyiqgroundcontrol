@@ -1,0 +1,189 @@
+{
+    "$id": "https://mavlink.io/events.schema.json",
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "description": "Schema for event definitions",
+    "type": "object",
+    "properties": {
+        "version": {
+            "description": "Version number for the format of this file. Future versions need to be backwards compatible (i.e. existing parsers can parse newer versions).",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1
+        },
+        "components": {
+            "type": "object",
+            "description": "The object key is an 8 Bit Component ID, used as highest 8 bits in the event ID. This is typically equal to the MAVLink component ID, but does not have to be.",
+            "patternProperties": {
+                "^[0-9]+$": {
+                    "type": "object",
+                    "properties": {
+                        "namespace": {
+                            "description": "Namespace, name of the component, e.g. 'camera'.",
+                            "type": "string",
+                            "pattern": "^[a-z][a-z0-9_]*$"
+                        },
+                        "enums": {
+                            "type": "object",
+                            "description": "The object key is the enum name.",
+                            "patternProperties": {
+                                "^[a-zA-Z][a-zA-Z0-9_]*_t$": {
+                                    "type": "object",
+                                    "properties": {
+                                        "type": {
+                                            "description": "Enum type.",
+                                            "type": "string",
+                                            "enum": [
+                                                "uint8_t",
+                                                "int8_t",
+                                                "uint16_t",
+                                                "int16_t",
+                                                "uint32_t",
+                                                "int32_t",
+                                                "uint64_t",
+                                                "int64_t"
+                                            ]
+                                        },
+                                        "description": {
+                                            "description": "Enum description.",
+                                            "type": "string",
+                                            "pattern": "^[^\n]*$"
+                                        },
+                                        "is_bitfield": {
+                                            "description": "Set to true if this enum is a bitfield.",
+                                            "type": "boolean"
+                                        },
+                                        "entries": {
+                                            "type": "object",
+                                            "description": "The object key is the value.",
+                                            "patternProperties": {
+                                                "^[0-9]+$": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "name": {
+                                                            "description": "Enum entry.",
+                                                            "type": "string",
+                                                            "pattern": "^[a-z][a-z0-9_]*$"
+                                                        },
+                                                        "description": {
+                                                            "description": "Enum entry description.",
+                                                            "type": "string",
+                                                            "pattern": "^[^\n]*$"
+                                                        },
+                                                        "comment": {
+                                                            "description": "Comment, not used by anything.",
+                                                            "type": "string"
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "name",
+                                                        "description"
+                                                    ],
+                                                    "additionalProperties": false
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [
+                                        "type"
+                                    ],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "event_groups": {
+                            "type": "object",
+                            "description": "The object key is the Event group name.",
+                            "patternProperties": {
+                                "^[a-z][a-z0-9_]*$": {
+                                    "type": "object",
+                                    "properties": {
+                                        "events": {
+                                            "type": "object",
+                                            "description": "The object key is the lower 24 bits of the event ID.",
+                                            "patternProperties": {
+                                                "^[0-9]+$": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "name": {
+                                                            "description": "Event name.",
+                                                            "type": "string",
+                                                            "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                                                        },
+                                                        "message": {
+                                                            "description": "Short single-line message.",
+                                                            "type": "string",
+                                                            "pattern": "^[^\n]{1,120}$"
+                                                        },
+                                                        "description": {
+                                                            "description": "Detailed description.",
+                                                            "type": "string"
+                                                        },
+                                                        "arguments": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "type": "object",
+                                                                "properties": {
+                                                                    "name": {
+                                                                        "description": "Argument name.",
+                                                                        "type": "string",
+                                                                        "pattern": "^[a-zA-Z][a-zA-Z0-9_]*$"
+                                                                    },
+                                                                    "type": {
+                                                                        "description": "Argument type. Either basic type or an enum.",
+                                                                        "type": "string"
+                                                                    },
+                                                                    "description": {
+                                                                        "description": "Argument description.",
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "required": [
+                                                                    "type",
+                                                                    "name"
+                                                                ],
+                                                                "additionalProperties": false
+                                                            }
+                                                        }
+                                                    },
+                                                    "required": [
+                                                        "name",
+                                                        "message"
+                                                    ],
+                                                    "additionalProperties": false
+                                                }
+                                            },
+                                            "additionalProperties": false
+                                        }
+                                    },
+                                    "required": [],
+                                    "additionalProperties": false
+                                }
+                            },
+                            "additionalProperties": false
+                        },
+                        "supported_protocols": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "pattern": "^(calibration|health_and_arming_check)$",
+                                "comment": "Optional list of supported protocols."
+                            }
+                        }
+                    },
+                    "required": [
+                        "namespace"
+                    ],
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "required": [
+        "version",
+        "components"
+    ],
+    "additionalProperties": false
+}

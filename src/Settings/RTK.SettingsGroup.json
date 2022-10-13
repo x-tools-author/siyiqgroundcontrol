@@ -1,0 +1,79 @@
+{
+    "version":      1,
+    "fileType":  "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":                 "surveyInAccuracyLimit",
+    "shortDesc":     "Survey in accuracy (U-blox only)",
+    "longDesc":      "The minimum accuracy value that Survey-In must achieve before it can complete.",
+    "type":                 "double",
+    "default":         2.0,
+    "min":                  0.01,
+    "units":                "m",
+    "decimalPlaces":        2,
+    "qgcRebootRequired":    true
+},
+{
+    "name":                 "surveyInMinObservationDuration",
+    "shortDesc":     "Minimum observation time",
+    "longDesc":      "Defines the minimum amount of observation time for the position calculation.",
+    "type":                 "Uint32",
+    "default":         180,
+    "min":                  1,
+    "units":                "secs",
+    "decimalPlaces":        0,
+    "qgcRebootRequired":    true
+},
+{
+    "name":                 "useFixedBasePosition",
+    "shortDesc":     "Use specified base position",
+    "longDesc":      "Specify the values for the RTK base position without having to do a survey in.",
+    "type":                 "bool",
+    "default":         false,
+    "qgcRebootRequired":    true
+},
+{
+    "name":                 "fixedBasePositionLatitude",
+    "shortDesc":     "Base Position Latitude",
+    "longDesc":      "Defines the latitude of the fixed RTK base position.",
+    "type":                 "double",
+    "default":         0,
+    "min":                  -90,
+    "max":                  90,
+    "decimalPlaces":        9,
+    "qgcRebootRequired":    true
+},
+{
+    "name":                 "fixedBasePositionLongitude",
+    "shortDesc":     "Base Position Longitude",
+    "longDesc":      "Defines the longitude of the fixed RTK base position.",
+    "type":                 "double",
+    "default":         0,
+    "min":                  -180,
+    "max":                  180,
+    "decimalPlaces":        9,
+    "qgcRebootRequired":    true
+},
+{
+    "name":                 "fixedBasePositionAltitude",
+    "shortDesc":     "Base Position Alt (WGS84)",
+    "longDesc":      "Defines the altitude of the fixed RTK base position.",
+    "type":                 "float",
+    "default":         0,
+    "units":                "m",
+    "decimalPlaces":        2,
+    "qgcRebootRequired":    true
+},
+{
+    "name":                 "fixedBasePositionAccuracy",
+    "shortDesc":     "Base Position Accuracy",
+    "longDesc":      "Defines the accuracy of the fixed RTK base position.",
+    "type":                 "float",
+    "default":         0,
+    "units":                "m",
+    "decimalPlaces":        2,
+    "qgcRebootRequired":    true
+}
+]
+}

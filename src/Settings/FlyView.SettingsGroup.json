@@ -1,0 +1,71 @@
+{
+    "version":      1,
+    "fileType":  "FactMetaData",
+    "QGC.MetaData.Facts":
+[
+{
+    "name":             "guidedMinimumAltitude",
+    "shortDesc": "Minimum altitude for guided actions altitude slider.",
+    "type":             "double",
+    "units":            "m",
+    "default":     2
+},
+{
+    "name":             "guidedMaximumAltitude",
+    "shortDesc": "Maximum altitude for guided actions altitude slider.",
+    "type":             "double",
+    "units":            "m",
+    "default":     121.92
+},
+{
+    "name":             "showLogReplayStatusBar",
+    "shortDesc": "Show/Hide Log Replay status bar",
+    "type":             "bool",
+    "default":     false
+},
+{
+    "name":             "alternateInstrumentPanel",
+    "shortDesc": "Use Vertical Instrument Panel instead of the default one",
+    "type":             "bool",
+    "default":     false
+},
+{
+    "name":             "showAdditionalIndicatorsCompass",
+    "shortDesc": "Show additional heading indicators on Compass",
+    "type":             "bool",
+    "default":     false
+},
+{
+    "name":             "lockNoseUpCompass",
+    "shortDesc": "Lock Compass Nose-Up",
+    "type":             "bool",
+    "default":     false
+},
+{
+    "name":             "keepMapCenteredOnVehicle",
+    "shortDesc": "Keep map centered on vehicle",
+    "type":             "bool",
+    "default":     false
+},
+{
+    "name":         "showSimpleCameraControl",
+    "shortDesc":    "Show controls for camera triggering using MAV_CMD_DO_DIGICAM_CONTROL.",
+    "type":         "bool",
+    "default":      true
+},
+{
+    "name":         "showObstacleDistanceOverlay",
+    "shortDesc":    "Show obstacle distance overlay on map and video.",
+    "type":         "bool",
+    "default":      false
+},
+{
+    "name":             "maxGoToLocationDistance",
+    "shortDesc": "Maximum distance allowed for Go To Location.",
+    "type":             "double",
+    "units":            "m",
+    "default":     1000,
+    "min":              1
+}
+]
+}

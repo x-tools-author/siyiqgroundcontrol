@@ -1,0 +1,24 @@
+[submodule "src/GPS/Drivers"]
+	path = src/GPS/Drivers
+	url = https://github.com/PX4/GpsDrivers.git
+[submodule "libs/mavlink/include/mavlink/v2.0"]
+	path = libs/mavlink/include/mavlink/v2.0
+	url = https://github.com/mavlink/c_library_v2.git
+[submodule "libs/OpenSSL/android_openssl"]
+	path = libs/OpenSSL/android_openssl
+	url = https://github.com/Auterion/android_openssl
+[submodule "libs/qmlglsink/gst-plugins-good"]
+	path = libs/qmlglsink/gst-plugins-good
+	url = https://github.com/mavlink/gst-plugins-good.git
+[submodule "libs/xz-embedded"]
+	path = libs/xz-embedded
+	url = https://github.com/Auterion/xz-embedded.git
+[submodule "libs/libevents/libevents"]
+	path = libs/libevents/libevents
+	url = https://github.com/mavlink/libevents.git
+[submodule "libs/eigen"]
+	path = libs/eigen
+	url = https://gitlab.com/libeigen/eigen.git
+[submodule "libs/qmdnsengine"]
+	path = libs/qmdnsengine
+	url = https://github.com/patrickelectric/qmdnsengine
