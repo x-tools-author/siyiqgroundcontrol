@@ -24,7 +24,7 @@ Rectangle {
     id:     root
     clip:   true
     anchors.fill: parent
-    color: "red"
+    color: "#8fff0000"
 
     Column {
         anchors.left: parent.left
