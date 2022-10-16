@@ -1,5 +1,6 @@
 #include <QTimer>
 #include <QtEndian>
+#include <QDateTime>
 #include <QTcpSocket>
 
 #include "SiYiCrcApi.h"
@@ -10,7 +11,7 @@
 SiYiTcpClient::SiYiTcpClient(QObject *parent)
     : QTcpSocket(parent)
 {
-    sequence_ = quint16(qrand());
+    sequence_ = quint16(QDateTime::currentMSecsSinceEpoch());
 }
 
 SiYiTcpClient::~SiYiTcpClient()
@@ -24,7 +25,6 @@ QByteArray SiYiTcpClient::sendMessage(quint8 control, quint8 cmdId,
                                       const QByteArray &data, bool *ok)
 {
     QByteArray msg = packMessage(control, cmdId, data);
-    qDebug() << "Tx:" << QString(msg.toHex(' '));
     if (QTcpSocket::ConnectedState == state()) {
         if (msg.length() == write(msg)) {
             if (ok) *ok = true;
@@ -144,11 +144,11 @@ bool SiYiTcpClient::unpackMessage(ProtocolMessageContext *ctx,
 
 quint16 SiYiTcpClient::sequence()
 {
-//    quint16 seq = sequence_;
-//    sequence_ += 1;
-//    return seq;
+    quint16 seq = sequence_;
+    sequence_ += 1;
+    return seq;
 
-    return 0;
+    return seq;
 }
 
 quint32 SiYiTcpClient::headerCheckSum32(ProtocolMessageHeaderContext *ctx)
@@ -161,7 +161,6 @@ quint32 SiYiTcpClient::headerCheckSum32(ProtocolMessageHeaderContext *ctx)
         bytes.append(reinterpret_cast<char*>(&ctx->dataLength), 4);
         bytes.append(reinterpret_cast<char*>(&ctx->sequence), 2);
         bytes.append(reinterpret_cast<char*>(&ctx->cmdId), 1);
-        qDebug() << "Header:" << QString(bytes.toHex(' '));
 
         return checkSum32(bytes);
     }
@@ -191,11 +190,5 @@ quint32 SiYiTcpClient::packetCheckSum32(ProtocolMessageContext *ctx)
 
 quint32 SiYiTcpClient::checkSum32(const QByteArray &bytes)
 {
-    SiYiCrcApi crcApi;
-    QByteArray input = bytes;
-    quint32 crc32 = crcApi.crcCalculate<quint32>(
-                reinterpret_cast<uint8_t *>(input.data()),
-                bytes.length(),
-                SiYiCrcApi::CRC_32_MPEG2);
-    return crc32;
+    return SiYiCrcApi::calculateCrc32(bytes);
 }
