@@ -21,12 +21,12 @@ SiYi *SiYi::instance()
     return instance_;
 }
 
-SiYiCamera *SiYi::camera()
+SiYiCamera *SiYi::cameraInstance()
 {
     return camera_;
 }
 
-SiYiTransmitter *SiYi::transmitter()
+SiYiTransmitter *SiYi::transmitterInstance()
 {
     return transmitter_;
 }

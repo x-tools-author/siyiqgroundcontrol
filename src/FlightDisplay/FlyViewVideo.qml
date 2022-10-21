@@ -88,4 +88,8 @@ Item {
         id: obstacleDistance
         showText: pipState.state === pipState.fullState
     }
+
+    FlyViewVideoSiYiController {
+        anchors.fill: parent
+    }
 }

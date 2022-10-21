@@ -11,6 +11,8 @@ SiYiCamera::SiYiCamera(QObject *parent)
     connect(this, &SiYiCamera::disconnected, this, [=](){
         this->killTimer(heartheatTimerId_);
     });
+
+    connectionTimerId_ = startTimer(3000);
 }
 
 void SiYiCamera::timerEvent(QTimerEvent *event)
@@ -20,6 +22,10 @@ void SiYiCamera::timerEvent(QTimerEvent *event)
         QByteArray ack = sendMessage(0x01, 0x80, QByteArray(), &ok);
         if (ok) {
             Q_UNUSED(ack);
+        }
+    } else if (connectionTimerId_ == event->timerId()) {
+        if (QTcpSocket::UnconnectedState == state()) {
+            connectToHost("192.168.144.25", 37256);
         }
     }
 }

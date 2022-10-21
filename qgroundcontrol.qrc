@@ -284,7 +284,7 @@
         <file alias="VibrationPage.qml">src/AnalyzeView/VibrationPage.qml</file>
         <file alias="VirtualJoystick.qml">src/FlightDisplay/VirtualJoystick.qml</file>
         <file alias="VTOLLandingPatternEditor.qml">src/PlanView/VTOLLandingPatternEditor.qml</file>
-        <file alias="QGroundControl/FlightDisplay/FlightDisplayViewVideoControl.qml">src/FlightDisplay/FlightDisplayViewVideoControl.qml</file>
+        <file alias="QGroundControl/FlightDisplay/FlyViewVideoSiYiController.qml">src/FlightDisplay/FlyViewVideoSiYiController.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
@@ -353,7 +353,16 @@
         <file alias="Parameter.MetaData.json.xz">src/comm/MockLink.Parameter.MetaData.json.xz</file>
         <file alias="Parameter.MetaData.json">src/comm/MockLink.Parameter.MetaData.json</file>
     </qresource>
-    <qresource prefix="/"/>
+    <qresource prefix="/">
+        <file>resources/SiYi/BeadSight.svg</file>
+        <file>resources/SiYi/Left.svg</file>
+        <file>resources/SiYi/Reset.svg</file>
+        <file>resources/SiYi/Right.svg</file>
+        <file>resources/SiYi/Up.svg</file>
+        <file>resources/SiYi/ZoomIn.svg</file>
+        <file>resources/SiYi/ZoomOut.svg</file>
+        <file>resources/SiYi/Down.svg</file>
+    </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>
     <qresource prefix="/new/prefix1"/>

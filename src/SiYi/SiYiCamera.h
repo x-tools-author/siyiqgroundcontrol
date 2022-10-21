@@ -15,6 +15,7 @@ protected:
     void timerEvent(QTimerEvent *event) override;
 private:
     int heartheatTimerId_;
+    int connectionTimerId_;
 };
 
 #endif // SIYICAMERA_H

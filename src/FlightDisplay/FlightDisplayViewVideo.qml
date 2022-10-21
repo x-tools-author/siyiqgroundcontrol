@@ -20,8 +20,6 @@ import QGroundControl.Palette           1.0
 import QGroundControl.Vehicle           1.0
 import QGroundControl.Controllers       1.0
 
-import "qrc:/qml/QGroundControl/FlightDisplay"
-
 Item {
     id:     root
     clip:   true
@@ -193,9 +191,5 @@ Item {
             }
             property int zoom: 0
         }
-    }
-
-    FlightDisplayViewVideoControl {
-        anchors.fill: parent
     }
 }
