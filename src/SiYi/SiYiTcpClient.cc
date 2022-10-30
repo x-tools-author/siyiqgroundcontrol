@@ -8,10 +8,21 @@
 
 #define PROTOCOL_STX 0x5566AABB
 
-SiYiTcpClient::SiYiTcpClient(QObject *parent)
+SiYiTcpClient::SiYiTcpClient(const QString ip, quint16 port, QObject *parent)
     : QTcpSocket(parent)
+    , ip_(ip)
+    , port_(port)
 {
     sequence_ = quint16(QDateTime::currentMSecsSinceEpoch());
+
+    connect(this, &SiYiTcpClient::connected, this, [=](){
+        this->heartheatTimerId_ = this->startTimer(4000);
+    });
+    connect(this, &SiYiTcpClient::disconnected, this, [=](){
+        this->killTimer(heartheatTimerId_);
+    });
+
+    connectionTimerId_ = startTimer(3000);
 }
 
 SiYiTcpClient::~SiYiTcpClient()
@@ -21,15 +32,36 @@ SiYiTcpClient::~SiYiTcpClient()
     }
 }
 
+void SiYiTcpClient::timerEvent(QTimerEvent *event)
+{
+    if (heartheatTimerId_ == event->timerId()) {
+        bool ok = false;
+        QByteArray ack = sendMessage(heartbeatMessage(), true, &ok);
+        if (ok) {
+            onHeartBearMessageReceived(ack);
+        }
+    } else if (connectionTimerId_ == event->timerId()) {
+        if (QTcpSocket::UnconnectedState == state()) {
+            connectToHost(ip_, port_);
+        }
+    }
+}
+
 QByteArray SiYiTcpClient::sendMessage(quint8 control, quint8 cmdId,
                                       const QByteArray &data, bool *ok)
 {
     QByteArray msg = packMessage(control, cmdId, data);
+    return sendMessage(msg, control == 0x01, ok);
+}
+
+QByteArray SiYiTcpClient::sendMessage(
+        const QByteArray &msg, bool needResponse, bool *ok)
+{
     if (QTcpSocket::ConnectedState == state()) {
         if (msg.length() == write(msg)) {
             if (ok) *ok = true;
             qDebug() << "Tx:" << QString(msg.toHex(' '));
-            if (control & 0x01) {
+            if (needResponse) {
                 if (waitForReadyRead()) {
                     QByteArray ack = readAll();
                     qDebug() << "Rx:" << QString(ack.toHex(' '));

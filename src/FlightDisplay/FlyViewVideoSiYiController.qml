@@ -37,10 +37,10 @@ Rectangle {
         anchors.verticalCenter: parent.verticalCenter
         Repeater {
             model: [
-                [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg"],
-                [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg"],
-                [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg"],
-                [qsTr("准星"), "qrc:/resources/SiYi/BeadSight.svg"],
+                [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
+                [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
+                [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
+                [qsTr("准星"), "qrc:/resources/SiYi/BeadSight.svg", false],
                 [qsTr("向上"), "qrc:/resources/SiYi/Up.svg"],
                 [qsTr("向下"), "qrc:/resources/SiYi/Down.svg"],
                 [qsTr("向左"), "qrc:/resources/SiYi/Left.svg"],
@@ -58,16 +58,13 @@ Rectangle {
                     source: modelData[1]
                     anchors.verticalCenter: parent.verticalCenter
                 }
-                Item {
-                    width: slider.width
-                    height: slider.height
-                    Slider {
-                        id: slider
-                        from: 0
-                        to: 100
-                        //onPressedChanged: {}
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
+                Slider {
+                    id: slider
+                    from: 0
+                    to: 100
+                    visible: modelData[2]
+                    anchors.verticalCenter: parent.verticalCenter
+                    onPressedChanged: {}
                 }
             }
         }
