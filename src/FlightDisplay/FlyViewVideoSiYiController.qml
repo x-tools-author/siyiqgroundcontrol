@@ -41,10 +41,10 @@ Rectangle {
                 [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
                 [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
                 [qsTr("准星"), "qrc:/resources/SiYi/BeadSight.svg", false],
-                [qsTr("向上"), "qrc:/resources/SiYi/Up.svg"],
-                [qsTr("向下"), "qrc:/resources/SiYi/Down.svg"],
-                [qsTr("向左"), "qrc:/resources/SiYi/Left.svg"],
-                [qsTr("向右"), "qrc:/resources/SiYi/Right.svg"]
+                [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
+                [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
+                [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
+                [qsTr("向右"), "qrc:/resources/SiYi/Right.svg", true]
             ]
             Row {
                 spacing: 10
