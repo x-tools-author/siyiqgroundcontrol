@@ -35,43 +35,43 @@ private:
         qint32 channel;
     };
 private:
-    int signalQuality_;
+    int signalQuality_{-1};
     int signalQuality(){return signalQuality_;}
     Q_SIGNAL void signalQualityChanged();
 
-    int inactiveTime_;
+    int inactiveTime_{-1};
     int inactiveTime(){return inactiveTime_;}
     Q_SIGNAL void inactiveTimeChanged();
 
-    int upStream_;
+    int upStream_{-1};
     int upStream(){return upStream_;}
     Q_SIGNAL void upStreamChanged();
 
-    int downStream_;
+    int downStream_{-1};
     int downStream(){return downStream_;}
     Q_SIGNAL void downStreamChanged();
 
-    int txBanWidth_;
+    int txBanWidth_{-1};
     int txBanWidth(){return txBanWidth_;}
     Q_SIGNAL void txBanWidthChanged();
 
-    int rxBanWidth_;
+    int rxBanWidth_{-1};
     int rxBanWidth(){return rxBanWidth_;}
     Q_SIGNAL void rxBanWidthChanged();
 
-    int rssi_;
+    int rssi_{-1};
     int rssi(){return rssi_;}
     Q_SIGNAL void rssiChanged();
 
-    int freq_;
+    int freq_{-1};
     int freq(){return freq_;}
     Q_SIGNAL void freqChanged();
 
-    int channel_;
+    int channel_{-1};
     int channel(){return channel_;}
     Q_SIGNAL void channelChanged();
 
-    QString version_;
+    QString version_{"--"};
     QString version(){return version_;}
     Q_SIGNAL void versionChanged();
 };
