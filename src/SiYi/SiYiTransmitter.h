@@ -18,11 +18,19 @@ class SiYiTransmitter : public SiYiTcpClient
 
     Q_PROPERTY(QString version READ version NOTIFY versionChanged)
 public:
-    explicit SiYiTransmitter(QObject *parent = nullptr);
-protected:
-    QByteArray heartbeatMessage() override;
-    void onHeartBearMessageReceived(const QByteArray &msg) override;
-private:
+    struct ProtocolMessageHeaderContext {
+        quint32 stx;
+        quint8 control;
+        quint16 dataLength;
+        quint16 sequence;
+        quint8 cmdId;
+        quint32 crc;
+    };
+    struct ProtocolMessageContext {
+        ProtocolMessageHeaderContext header;
+        QByteArray data;
+        quint32 crc;
+    };
     struct HeartbeatAckContext {
         qint32 signal;
         qint32 inactiveTime;
@@ -34,6 +42,16 @@ private:
         qint32 freq;
         qint32 channel;
     };
+public:
+    explicit SiYiTransmitter(QObject *parent = nullptr);
+protected:
+    QByteArray heartbeatMessage() override;
+    void analyzeMessage() override;
+private:
+    QByteArray packMessage(quint8 control, quint8 cmd,
+                           const QByteArray &payload);
+    quint32 headerCheckSum32(ProtocolMessageHeaderContext *ctx);
+    quint32 packetCheckSum32(ProtocolMessageContext *ctx);
 private:
     int signalQuality_{-1};
     int signalQuality(){return signalQuality_;}

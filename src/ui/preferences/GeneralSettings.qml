@@ -257,6 +257,7 @@ Rectangle {
                                     Layout.preferredWidth:  _comboFieldWidth
                                     fact:                   _videoSettings.udpPort
                                     visible:                udpPortLabel.visible
+                                    text: "rtsp://192.168.144.25:8554/main.264"
                                 }
 
                                 QGCLabel {

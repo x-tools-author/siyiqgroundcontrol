@@ -8,6 +8,9 @@ SiYi::SiYi(QObject *parent)
 {
     camera_ = new SiYiCamera(this);
     transmitter_ = new SiYiTransmitter(this);
+
+    camera_->start();
+    transmitter_->start();
 }
 
 SiYi *SiYi::instance()

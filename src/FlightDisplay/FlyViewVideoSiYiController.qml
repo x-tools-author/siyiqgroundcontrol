@@ -22,6 +22,7 @@ import QGroundControl.Controllers       1.0
 
 import SiYi.Object 1.0
 import QtGraphicalEffects 1.12
+import "qrc:/qml/QGroundControl/Controls"
 
 Rectangle {
     id:     root
@@ -33,7 +34,29 @@ Rectangle {
     property SiYiCamera camera: siyi.camera
     property SiYiTransmitter transmitter: siyi.transmitter
 
+    Grid {
+        anchors.bottom: controlRectangle.top
+        columns: 2
+        Repeater {
+            model: [
+                qsTr("信道:"), transmitter.channel,
+                qsTr("信号质量:"), transmitter.signalQuality,
+                qsTr("信号强度:"), transmitter.rssi,
+                qsTr("延时时间:"), transmitter.inactiveTime,
+                qsTr("上行数据量:"), transmitter.upStream,
+                qsTr("下行数据量:"), transmitter.downStream,
+                qsTr("上行带宽:"), transmitter.txBanWidth,
+                qsTr("下行带宽:"), transmitter.rxBanWidth,
+            ]
+            QGCLabel {
+                text: modelData
+                color: "white"
+            }
+        }
+    }
+
     Rectangle {
+        id: controlRectangle
         color: "#80ffffff"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter

@@ -27,7 +27,7 @@ message(Qt version $$[QT_VERSION])
 
 include(QGCCommon.pri)
 
-TARGET   = QGroundControl
+TARGET   = SiYiQGroundControl
 TEMPLATE = app
 QGCROOT  = $$PWD
 
@@ -1557,4 +1557,6 @@ LinuxBuild {
 }
 
 QMAKE_CXXFLAGS += -execution-charset:utf-8
+!AndroidBuild {
 QMAKE_CXXFLAGS += -source-charset:utf-8
+}

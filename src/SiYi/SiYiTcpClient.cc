@@ -2,176 +2,36 @@
 #include <QtEndian>
 #include <QDateTime>
 #include <QTcpSocket>
+#include <QTimerEvent>
 
 #include "SiYiCrcApi.h"
 #include "SiYiTcpClient.h"
 
-#define PROTOCOL_STX 0x5566AABB
+
 
 SiYiTcpClient::SiYiTcpClient(const QString ip, quint16 port, QObject *parent)
-    : QTcpSocket(parent)
+    : QThread(parent)
     , ip_(ip)
     , port_(port)
 {
     sequence_ = quint16(QDateTime::currentMSecsSinceEpoch());
-
-    connect(this, &SiYiTcpClient::connected, this, [=](){
-        this->heartheatTimerId_ = this->startTimer(4000);
-    });
-    connect(this, &SiYiTcpClient::disconnected, this, [=](){
-        this->killTimer(heartheatTimerId_);
-    });
-
-    connectionTimerId_ = startTimer(3000);
+    // 自动重连
+    connect(this, &SiYiTcpClient::finished, this, [=](){start();});
 }
 
 SiYiTcpClient::~SiYiTcpClient()
 {
-    if (this->state() == QTcpSocket::ConnectedState) {
-        disconnectFromHost();
+    if (isRunning()) {
+        exit();
+        wait();
     }
 }
 
-void SiYiTcpClient::timerEvent(QTimerEvent *event)
+void SiYiTcpClient::sendMessage(const QByteArray &msg)
 {
-    if (heartheatTimerId_ == event->timerId()) {
-        bool ok = false;
-        QByteArray ack = sendMessage(heartbeatMessage(), true, &ok);
-        if (ok) {
-            onHeartBearMessageReceived(ack);
-        }
-    } else if (connectionTimerId_ == event->timerId()) {
-        if (QTcpSocket::UnconnectedState == state()) {
-            connectToHost(ip_, port_);
-        }
-    }
-}
-
-QByteArray SiYiTcpClient::sendMessage(quint8 control, quint8 cmdId,
-                                      const QByteArray &data, bool *ok)
-{
-    QByteArray msg = packMessage(control, cmdId, data);
-    return sendMessage(msg, control == 0x01, ok);
-}
-
-QByteArray SiYiTcpClient::sendMessage(
-        const QByteArray &msg, bool needResponse, bool *ok)
-{
-    if (QTcpSocket::ConnectedState == state()) {
-        if (msg.length() == write(msg)) {
-            if (ok) *ok = true;
-            qDebug() << "Tx:" << QString(msg.toHex(' '));
-            if (needResponse) {
-                if (waitForReadyRead()) {
-                    QByteArray ack = readAll();
-                    qDebug() << "Rx:" << QString(ack.toHex(' '));
-                    return ack;
-                }
-            } else {
-                if (ok) *ok = true;
-                return QByteArray();
-            }
-        }
-    }
-
-    if (ok) *ok = false;
-    return QByteArray();
-}
-
-QByteArray SiYiTcpClient::packMessage(quint8 control, quint8 cmdId,
-                                      const QByteArray &data)
-{
-    ProtocolMessageContext ctx;
-    ctx.header.stx = PROTOCOL_STX;
-    ctx.header.control = control;
-    ctx.header.dataLength = data.length();
-    ctx.header.sequence = sequence();
-    ctx.header.cmdId = cmdId;
-    ctx.header.crc = headerCheckSum32(&ctx.header);
-    ctx.data = data;
-    ctx.crc = packetCheckSum32(&ctx);
-
-    QByteArray msg;
-    quint32 beStx = qToBigEndian<quint32>(ctx.header.stx);
-
-    msg.append(reinterpret_cast<char*>(&beStx), 4);                 // STX
-    msg.append(reinterpret_cast<char*>(&ctx.header.control), 1);    // CTRL
-    msg.append(reinterpret_cast<char*>(&ctx.header.dataLength), 4); // Data_len
-    msg.append(reinterpret_cast<char*>(&ctx.header.sequence), 2);   // SEQ
-    msg.append(reinterpret_cast<char*>(&ctx.header.cmdId), 1);      // CMD_ID
-    msg.append(reinterpret_cast<char*>(&ctx.header.crc), 4);        // CRC32(header)
-    msg.append(ctx.data);                                           // DATA
-    msg.append(reinterpret_cast<char*>(&ctx.crc), 4);               // CRC32(packet)
-
-    return msg;
-}
-
-bool SiYiTcpClient::unpackMessage(ProtocolMessageContext *ctx,
-                                  const QByteArray &msg)
-{
-    if (ctx) {
-        int offset = 0;
-        if (msg.length() >= 16) {
-            // STX
-            const quint32 *ptr32 =
-                    reinterpret_cast<const quint32 *>(msg.data());
-            quint32 i32 = *ptr32;
-            i32 = qToBigEndian<quint32>(i32);
-            ctx->header.stx = i32;
-            offset += 4;
-            // CTRL
-            const quint8 *ptr8 =
-                    reinterpret_cast<const quint8*>(msg.data() + offset);
-            quint8 i8 = *ptr8;
-            ctx->header.control = i8;
-            offset += 1;
-            // Data_len
-            ptr32 = reinterpret_cast<const quint32 *>(msg.data() + offset);
-            i32 = *ptr32;
-            ctx->header.dataLength = i32;
-            offset += 4;
-            // SEQ
-            const quint16 *ptr16 =
-                    reinterpret_cast<const quint16*>(msg.data() + offset);
-            quint16 i16 = *ptr16;
-            ctx->header.sequence = i16;
-            offset += 2;
-            // CMD_ID
-            ptr8 = reinterpret_cast<const quint8*>(msg.data() + offset);
-            i8 = *ptr8;
-            ctx->header.cmdId = i8;
-            offset += 1;
-            // CRC32(header)
-            ptr32 = reinterpret_cast<const quint32 *>(msg.data() + offset);
-            i32 = *ptr32;
-            ctx->header.crc = i32;
-            offset += 4;
-
-            if (msg.length() >= int(16 + ctx->header.dataLength + 2)) {
-                QByteArray data(msg.data() + offset, ctx->header.dataLength);
-                ctx->data = data;
-                offset += ctx->header.dataLength;
-
-                ptr32 = reinterpret_cast<const quint32 *>(msg.data() + offset);
-                i32 = *ptr32;
-                ctx->crc = i32;
-
-                if (ctx->header.stx == PROTOCOL_STX) {
-                    QByteArray headerBytes(msg.data(), 16);
-                    QByteArray packetBytes(msg.data(), 16
-                                           + ctx->header.dataLength);
-                    quint32 headerCrc = checkSum32(headerBytes);
-                    quint32 packetCrc = checkSum32(packetBytes);
-                    if (headerCrc == ctx->header.crc
-                            && packetCrc == ctx->crc) {
-                        return true;
-                    }
-                }
-            }
-        }
-    }
-
-    return false;
+    txMessageVectorMutex_.lock();
+    txMessageVector_.append(msg);
+    txMessageVectorMutex_.unlock();
 }
 
 quint16 SiYiTcpClient::sequence()
@@ -179,45 +39,83 @@ quint16 SiYiTcpClient::sequence()
     quint16 seq = sequence_;
     sequence_ += 1;
     return seq;
-
-    return seq;
 }
 
-quint32 SiYiTcpClient::headerCheckSum32(ProtocolMessageHeaderContext *ctx)
+void SiYiTcpClient::run()
 {
-    if (ctx) {
-        QByteArray bytes;
-        quint32 beStx = qToBigEndian<quint32>(ctx->stx);
-        bytes.append(reinterpret_cast<char*>(&beStx), 4);
-        bytes.append(reinterpret_cast<char*>(&ctx->control), 1);
-        bytes.append(reinterpret_cast<char*>(&ctx->dataLength), 4);
-        bytes.append(reinterpret_cast<char*>(&ctx->sequence), 2);
-        bytes.append(reinterpret_cast<char*>(&ctx->cmdId), 1);
+    QTcpSocket *tcpClient = new QTcpSocket();
+    QTimer *txTimer = new QTimer();
+    QTimer *rxTimer = new QTimer();
+    QTimer *heartbeatTimer = new QTimer();
+    const QString info = QString("[%1:%2]:").arg(ip_, QString::number(port_));
 
-        return checkSum32(bytes);
-    }
+    connect(tcpClient, &QTcpSocket::connected, tcpClient, [=](){
+        heartbeatTimer->start();
+        qInfo() << info << "Connect to server successfully!";
+    });
+    connect(tcpClient, &QTcpSocket::disconnected, tcpClient, [=](){
+        heartbeatTimer->stop();
+        exit();
+        qInfo() << info << "Disconnect from server!";
+    });
+    connect(tcpClient, &QTcpSocket::errorOccurred, tcpClient, [=](){
+        heartbeatTimer->stop();
+        exit();
+        qInfo() << info << tcpClient->errorString();
+    });
+    connect(tcpClient, &QTcpSocket::readyRead, tcpClient, [=](){
+        QByteArray bytes = tcpClient->readAll();
+        this->rxBytesMutex_.lock();
+        this->rxBytes_.append(bytes);
+        this->rxBytesMutex_.unlock();
 
-    return 0;
-}
+        qInfo() << info << "Rx:" << bytes.toHex(' ');
+    });
 
-quint32 SiYiTcpClient::packetCheckSum32(ProtocolMessageContext *ctx)
-{
-    if (ctx) {
-        QByteArray bytes;
-        quint32 beStx = qToBigEndian<quint32>(ctx->header.stx);
-        bytes.append(reinterpret_cast<char*>(&beStx), 4);
-        bytes.append(reinterpret_cast<char*>(&ctx->header.control), 1);
-        bytes.append(reinterpret_cast<char*>(&ctx->header.dataLength), 4);
-        bytes.append(reinterpret_cast<char*>(&ctx->header.sequence), 2);
-        bytes.append(reinterpret_cast<char*>(&ctx->header.cmdId), 1);
-        bytes.append(reinterpret_cast<char*>(&ctx->header.crc), 4);
+    // 定时发送
+    txTimer->setInterval(10);
+    txTimer->setSingleShot(true);
+    connect(txTimer, &QTimer::timeout, txTimer, [=](){
+        txMessageVectorMutex_.lock();
+        QByteArray msg = txMessageVector_.isEmpty()
+                ? QByteArray() : txMessageVector_.takeFirst();
+        txMessageVectorMutex_.unlock();
 
-        bytes.append(ctx->data);
+        if ((!msg.isEmpty())
+                && (tcpClient->state() == QTcpSocket::ConnectedState)) {
+            if (tcpClient->write(msg) != -1) {
+                qInfo() << info << "Tx:" << msg.toHex(' ');
+            } else {
+                qInfo() << info << tcpClient->errorString();
+            }
+        }
 
-        return checkSum32(bytes);
-    }
+        txTimer->start();
+    });
 
-    return 0;
+    // 定时接收
+    rxTimer->setInterval(10);
+    rxTimer->setSingleShot(true);
+    connect(rxTimer, &QTimer::timeout, rxTimer, [=](){
+        rxTimer->start();
+    });
+
+    // 心跳
+    heartbeatTimer->setInterval(1500);
+    heartbeatTimer->setSingleShot(true);
+    connect(heartbeatTimer, &QTimer::timeout, heartbeatTimer, [=](){
+        QByteArray msg = heartbeatMessage();
+        sendMessage(msg);
+        heartbeatTimer->start();
+    });
+
+    tcpClient->connectToHost(ip_, port_);
+
+    txTimer->start();
+    rxTimer->start();
+    exec();
+    txTimer->deleteLater();
+    tcpClient->deleteLater();
 }
 
 quint32 SiYiTcpClient::checkSum32(const QByteArray &bytes)
