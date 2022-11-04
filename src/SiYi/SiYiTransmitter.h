@@ -52,6 +52,7 @@ private:
                            const QByteArray &payload);
     quint32 headerCheckSum32(ProtocolMessageHeaderContext *ctx);
     quint32 packetCheckSum32(ProtocolMessageContext *ctx);
+    void onHeartbeatMessageReceived(const QByteArray &msg);
 private:
     int signalQuality_{-1};
     int signalQuality(){return signalQuality_;}
