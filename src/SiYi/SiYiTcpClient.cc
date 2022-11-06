@@ -93,10 +93,11 @@ void SiYiTcpClient::run()
         txTimer->start();
     });
 
-    // 定时接收
+    // 定时处理接收数据
     rxTimer->setInterval(10);
     rxTimer->setSingleShot(true);
     connect(rxTimer, &QTimer::timeout, rxTimer, [=](){
+        analyzeMessage();
         rxTimer->start();
     });
 

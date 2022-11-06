@@ -85,7 +85,9 @@ QByteArray SiYiCamera::heartbeatMessage()
 
 void SiYiCamera::analyzeMessage()
 {
-
+    rxBytesMutex_.lock();
+    rxBytes_.clear();
+    rxBytesMutex_.unlock();
 }
 
 QByteArray SiYiCamera::packMessage(quint8 control, quint8 cmd,

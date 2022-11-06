@@ -9,7 +9,7 @@ SiYiTransmitter::SiYiTransmitter(QObject *parent)
 
 QByteArray SiYiTransmitter::heartbeatMessage()
 {
-#if 1
+#if 0
     return packMessage(0x01, 0x83, QByteArray());
 #else
     return packMessage(0x01, 0x2f, QByteArray());
@@ -20,38 +20,63 @@ void SiYiTransmitter::analyzeMessage()
 {
     rxBytesMutex_.lock();
     while (rxBytes_.length() >= 4) {
-        if (rxBytes_.at(0) == 0x55 && rxBytes_.at(1) == 0x56
+        if (rxBytes_.at(0) == 0x55 && rxBytes_.at(1) == 0x66
                 && rxBytes_.at(2) == 0xaa && rxBytes_.at(3) == 0xbb) {
             int headerLength = 4+1+2+2+1+4;
-            if (rxBytes_.length() >= (4+1+2+2+1+4)) {
+            if (rxBytes_.length() >= headerLength) {
                 ProtocolMessageHeaderContext header;
-                header.stx = *reinterpret_cast<quint32*>(rxBytes_.data());
-                header.control = *reinterpret_cast<quint8*>(rxBytes_.data() + 4);
-                header.dataLength = *reinterpret_cast<quint16*>(rxBytes_.data() + 1);
-                header.sequence = *reinterpret_cast<quint16*>(rxBytes_.data() + 2);
-                header.cmdId = *reinterpret_cast<quint16*>(rxBytes_.data() + 2);
-                header.crc = *reinterpret_cast<quint16*>(rxBytes_.data() + 1);
+                quint32 *ptr32 = nullptr;
+                quint16 *ptr16 = nullptr;
+                quint8 *ptr8 = nullptr;
+                int offset = 0;
+                ptr32 = reinterpret_cast<quint32*>(rxBytes_.data());
+                header.stx = *ptr32;
+                offset += 4;
 
+                ptr8 = reinterpret_cast<quint8*>(rxBytes_.data() + offset);
+                header.control = *ptr8;
+                offset += 1;
+
+                ptr16 = reinterpret_cast<quint16*>(rxBytes_.data() + offset);
+                header.dataLength = *ptr16;
+                offset += 2;
+
+                ptr16 = reinterpret_cast<quint16*>(rxBytes_.data() + offset);
+                header.sequence = *ptr16;
+                offset += 2;
+
+                ptr8 = reinterpret_cast<quint8*>(rxBytes_.data() + offset);
+                header.cmdId = *ptr8;
+                offset += 1;
+
+                ptr32 = reinterpret_cast<quint32*>(rxBytes_.data() + offset);
+                header.crc = *ptr32;
+#if 0
                 header.stx = qToBigEndian<quint32>(header.stx);
                 header.control = qToBigEndian<quint8>(header.control);
                 header.dataLength = qToBigEndian<quint16>(header.dataLength);
                 header.sequence = qToBigEndian<quint16>(header.sequence);
                 header.cmdId = qToBigEndian<quint8>(header.cmdId);
                 header.crc = qToBigEndian<quint32>(header.crc);
+#endif
 
                 ProtocolMessageContext msg;
                 msg.header = header;
-                if (rxBytes_.length() >= (headerLength + header.dataLength + 4)) {
+                int msgLen = headerLength + header.dataLength + 4;
+                if (rxBytes_.length() >= msgLen) {
                     msg.data = QByteArray(rxBytes_.data() + headerLength);
                     int offset = headerLength + header.dataLength;
                     msg.crc = *reinterpret_cast<quint16*>(rxBytes_.data() + offset);
                     msg.crc = qToBigEndian<quint32>(msg.crc);
                 }
 
-                int msgLen = headerLength + msg.data.length() + 4;
-                if (msg.header.cmdId == 0x83) {
+                if ((msg.header.cmdId == 0x83) || (msg.header.cmdId == 0x2f)) {
                     QByteArray packet = QByteArray(rxBytes_.data(), msgLen);
                     onHeartbeatMessageReceived(packet);
+                } else if (msg.header.cmdId == 0x8a) {
+                    // Nothing to do yet
+                } else {
+                    qDebug() << "Unknow message id:" << msg.header.cmdId;
                 }
 
                 rxBytes_.remove(0, msgLen);
@@ -130,10 +155,10 @@ quint32 SiYiTransmitter::packetCheckSum32(ProtocolMessageContext *ctx)
 
 void SiYiTransmitter::onHeartbeatMessageReceived(const QByteArray &msg)
 {
-    int offset = 4 + 1 + 2 + 2 + 1 + 4;
-    if (msg.length() == int(offset + sizeof(HeartbeatAckContext))) {
+    int headerLnegth = 4 + 1 + 2 + 2 + 1 + 4;
+    if (msg.length() == int(headerLnegth + sizeof(HeartbeatAckContext) + 4)) {
         const char *ptr = msg.constData();
-        ptr += offset;
+        ptr += headerLnegth;
         auto ctx = reinterpret_cast<const HeartbeatAckContext*>(ptr);
 
         signalQuality_ = ctx->signal;
@@ -155,6 +180,17 @@ void SiYiTransmitter::onHeartbeatMessageReceived(const QByteArray &msg)
         emit rssiChanged();
         emit freqChanged();
         emit channelChanged();
+
+        qInfo() << "signalQuality_:" << signalQuality_
+                << "inactiveTime_:" << inactiveTime_
+                << "upStream_:" << upStream_
+                << "downStream_:" << downStream_
+                << "txBanWidth_:" << txBanWidth_
+                << "rxBanWidth_:" << rxBanWidth_
+                << "rssi_:" << rssi_
+                << "freq_:" << freq_
+                << "channel_:" << channel_;
+
     } else {
         qWarning() << "bad heartbeat message:" << msg.toHex(' ') ;
     }
