@@ -34,9 +34,92 @@ Rectangle {
     property SiYiCamera camera: siyi.camera
     property SiYiTransmitter transmitter: siyi.transmitter
 
+    MouseArea {
+        id: controlMouseArea
+        anchors.fill: parent
+        hoverEnabled: true
+        onPressed: {
+            enableControl = true
+            controlMouseArea.originX = mouse.x
+            controlMouseArea.originY = mouse.y
+            controlMouseArea.currentX = mouse.x
+            controlMouseArea.currentY = mouse.y
+            controlMouseArea.pitch = 0
+            controlMouseArea.yaw = 0
+            contrlTimer.start()
+        }
+        onReleased: {
+            enableControl = false
+            contrlTimer.stop()
+        }
+        onPositionChanged: {
+            controlMouseArea.currentX = mouse.x
+            controlMouseArea.currentY = mouse.y
+            controlMouseArea.yaw = controlMouseArea.currentX - controlMouseArea.originX
+            controlMouseArea.pitch = controlMouseArea.currentY - controlMouseArea.originY
+        }
+        onDoubleClicked: camera.resetPostion()
+        onClicked: camera.autoFocus()
+
+        Timer {
+            id: contrlTimer
+            running: false
+            interval: 100
+            repeat: true
+            onTriggered: {
+                if (controlMouseArea.enableControl) {
+                    if (controlMouseArea.yaw < -100) {
+                        controlMouseArea.yaw = -100
+                    }
+
+                    if (controlMouseArea.yaw > 100) {
+                        console.info(controlMouseArea.yaw)
+                        controlMouseArea.yaw = 100
+                    }
+
+                    if (controlMouseArea.pitch < -100) {
+                        controlMouseArea.pitch = -100
+                    }
+
+                    if (controlMouseArea.pitch > 100) {
+                        console.info(controlMouseArea.pitch)
+                        controlMouseArea.pitch = 100
+                    }
+
+                    console.info(controlMouseArea.yaw, controlMouseArea.pitch,
+                                 controlMouseArea.originX, controlMouseArea.originY,
+                                 controlMouseArea.currentX, controlMouseArea.currentY)
+                    camera.turn(controlMouseArea.yaw, controlMouseArea.pitch)
+                }
+
+                controlMouseArea.originX = controlMouseArea.currentX
+                controlMouseArea.originY = controlMouseArea.currentY
+            }
+            onRunningChanged: {
+                if (!running) {
+                    controlMouseArea.originX = 0
+                    controlMouseArea.originY = 0
+                    controlMouseArea.currentX = 0
+                    controlMouseArea.currentY = 0
+                    camera.turn(0, 0)
+                }
+            }
+        }
+
+        property bool enableControl: false
+        property int pitch: 0
+        property int yaw: 0
+        property int originX: 0
+        property int originY: 0
+        property int currentX: 0
+        property int currentY: 0
+    }
+
     Grid {
-        anchors.bottom: controlRectangle.top
+        id: infoGrid
         columns: 2
+        anchors.left: parent.left
+        anchors.leftMargin: 150
         Repeater {
             model: [
                 qsTr("信道:"), transmitter.channel,
@@ -57,34 +140,39 @@ Rectangle {
 
     Rectangle {
         id: controlRectangle
-        color: "#80ffffff"
+        color: "#00000000"
         anchors.left: parent.left
         anchors.verticalCenter: parent.verticalCenter
+        anchors.leftMargin: 150
         width: controlColumn.width
         height: controlColumn.height
-        Column {
+        anchors.top: infoGrid.bottom
+        Row {
             id: controlColumn
+            spacing: 10
             Repeater {
                 model: [
                     [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
                     [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
                     [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
-                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false],
-                    [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
-                    [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
-                    [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
-                    [qsTr("向右"), "qrc:/resources/SiYi/Right.svg", true]
+                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false]
+//                    [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
+//                    [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
+//                    [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
+//                    [qsTr("向右"), "qrc:/resources/SiYi/Right.svg", true]
                 ]
                 Row {
                     spacing: 10
                     Text {
+                        id: btText
                         text: modelData[0]
                         anchors.verticalCenter: parent.verticalCenter
+                        visible: false
                     }
                     Image {
                         id: iconImage
-                        width: 32
-                        height: 32
+                        width: btText.width
+                        height: width
                         source: modelData[1]
                         anchors.verticalCenter: parent.verticalCenter
                         MouseArea {
