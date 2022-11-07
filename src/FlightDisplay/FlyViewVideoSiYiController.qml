@@ -125,11 +125,11 @@ Rectangle {
                 qsTr("信道:"), transmitter.channel,
                 qsTr("信号质量:"), transmitter.signalQuality,
                 qsTr("信号强度:"), transmitter.rssi,
-                qsTr("延时时间:"), transmitter.inactiveTime,
-                qsTr("上行数据量:"), transmitter.upStream,
-                qsTr("下行数据量:"), transmitter.downStream,
-                qsTr("上行带宽:"), transmitter.txBanWidth,
-                qsTr("下行带宽:"), transmitter.rxBanWidth,
+                qsTr("延时时间:"), transmitter.inactiveTime + "ms",
+                qsTr("上行数据量:"), (transmitter.upStream/1000).toFixed(3) + "KB",
+                qsTr("下行数据量:"), (transmitter.downStream/1000).toFixed(3) + "KB",
+                qsTr("上行带宽:"), (transmitter.txBanWidth/1000).toFixed(1) + "Mbps",
+                qsTr("下行带宽:"), (transmitter.rxBanWidth/1000).toFixed(1) + "Mbps",
             ]
             QGCLabel {
                 text: modelData
