@@ -20,8 +20,10 @@ void SiYiTransmitter::analyzeMessage()
 {
     rxBytesMutex_.lock();
     while (rxBytes_.length() >= 4) {
-        if (rxBytes_.at(0) == 0x55 && rxBytes_.at(1) == 0x66
-                && rxBytes_.at(2) == 0xaa && rxBytes_.at(3) == 0xbb) {
+        if (rxBytes_.at(0) == char(0x55)
+                && rxBytes_.at(1) == char(0x66)
+                && rxBytes_.at(2) == char(0xaa)
+                && rxBytes_.at(3) == char(0xbb)) {
             int headerLength = 4+1+2+2+1+4;
             if (rxBytes_.length() >= headerLength) {
                 ProtocolMessageHeaderContext header;

@@ -29,9 +29,11 @@ SiYiTcpClient::~SiYiTcpClient()
 
 void SiYiTcpClient::sendMessage(const QByteArray &msg)
 {
-    txMessageVectorMutex_.lock();
-    txMessageVector_.append(msg);
-    txMessageVectorMutex_.unlock();
+    if (isRunning()) {
+        txMessageVectorMutex_.lock();
+        txMessageVector_.append(msg);
+        txMessageVectorMutex_.unlock();
+    }
 }
 
 quint16 SiYiTcpClient::sequence()
@@ -51,9 +53,13 @@ void SiYiTcpClient::run()
 
     connect(tcpClient, &QTcpSocket::connected, tcpClient, [=](){
         heartbeatTimer->start();
+        emit connected();
         qInfo() << info << "Connect to server successfully!";
     });
     connect(tcpClient, &QTcpSocket::disconnected, tcpClient, [=](){
+        txMessageVectorMutex_.lock();
+        txMessageVector_.clear();
+        txMessageVectorMutex_.unlock();
         heartbeatTimer->stop();
         exit();
         qInfo() << info << "Disconnect from server!";
@@ -122,4 +128,14 @@ void SiYiTcpClient::run()
 quint32 SiYiTcpClient::checkSum32(const QByteArray &bytes)
 {
     return SiYiCrcApi::calculateCrc32(bytes);
+}
+
+void SiYiTcpClient::resetIp(const QString &ip)
+{
+    if (ip_ != ip) {
+        ip_ = ip;
+        exit();
+        wait();
+        emit ipChanged();
+    }
 }

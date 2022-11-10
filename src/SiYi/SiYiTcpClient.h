@@ -28,10 +28,15 @@ protected:
     quint16 sequence();
     void run() override;
     quint32 checkSum32(const QByteArray &bytes);
+    void resetIp(const QString &ip);
 private:
     quint16 sequence_;
-    const QString ip_;
-    const quint16 port_;
+    QString ip_;
+    quint16 port_;
+signals:
+    void connected();
+    void disconnected();
+    void ipChanged();
 };
 
 #endif // SIYITCPCLIENT_H

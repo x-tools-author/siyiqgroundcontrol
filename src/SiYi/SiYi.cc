@@ -9,7 +9,21 @@ SiYi::SiYi(QObject *parent)
     camera_ = new SiYiCamera(this);
     transmitter_ = new SiYiTransmitter(this);
 
-    camera_->start();
+    connect(transmitter_, &SiYiCamera::connected, this, [=](){
+        this->isTransmitterConnected_ = true;
+        camera_->start();
+    });
+    connect(transmitter_, &SiYiCamera::disconnected, this, [=](){
+        this->isTransmitterConnected_ = false;
+        transmitter_->exit();
+    });
+
+    connect(camera_, &SiYiCamera::ipChanged, this, [=](){
+        if (isTransmitterConnected_) {
+            camera_->start();
+        }
+    });
+
     transmitter_->start();
 }
 

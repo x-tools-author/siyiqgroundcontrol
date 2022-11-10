@@ -6,7 +6,8 @@
 SiYiCamera::SiYiCamera(QObject *parent)
     : SiYiTcpClient("192.168.144.25", 37256)
 {
-
+    connect(this, &SiYiCamera::connected,
+            this, &SiYiCamera::GetRecordingState);
 }
 
 SiYiCamera::~SiYiCamera()
@@ -48,7 +49,7 @@ bool SiYiCamera::autoFocus()
     return true;
 }
 
-Q_INVOKABLE bool SiYiCamera::zoom(int option)
+bool SiYiCamera::zoom(int option)
 {
     if (option != 1 && option != 0 && option != -1) {
         option = 0;
@@ -63,7 +64,7 @@ Q_INVOKABLE bool SiYiCamera::zoom(int option)
     return true;
 }
 
-Q_INVOKABLE bool SiYiCamera::focus(int option)
+bool SiYiCamera::focus(int option)
 {
     if (option != 1 && option != 0 && option != -1) {
         option = 0;
@@ -78,6 +79,53 @@ Q_INVOKABLE bool SiYiCamera::focus(int option)
     return true;
 }
 
+bool SiYiCamera::sendCommand(int cmd)
+{
+    uint8_t cmdId = 0x9f;
+    QByteArray body;
+    body.append(char(cmd));
+
+    QByteArray msg = packMessage(0x00, cmdId, body);
+    sendMessage(msg);
+    return true;
+}
+
+bool SiYiCamera::sendRecodingCommand(int cmd)
+{
+    uint8_t cmdId = 0x81;
+    QByteArray body;
+    body.append(char(cmd));
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+    return true;
+}
+
+bool SiYiCamera::GetRecordingState()
+{
+    uint8_t cmdId = 0x80;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+    return true;
+}
+
+void SiYiCamera::analyzeIp(QString videoUrl)
+{
+    videoUrl = videoUrl.remove(QString("rtsp://"));
+    QStringList strList = videoUrl.split('/');
+    if (!strList.isEmpty()) {
+        QString ip = strList.first();
+        if (ip.split(':').length() == 2) {
+            ip = ip.split(':').first();
+            if (ip.split(' ').length() == 4) {
+                resetIp(ip);
+            }
+        }
+    }
+}
+
 QByteArray SiYiCamera::heartbeatMessage()
 {
     return packMessage(0x01, 0x80, QByteArray());
@@ -86,7 +134,72 @@ QByteArray SiYiCamera::heartbeatMessage()
 void SiYiCamera::analyzeMessage()
 {
     rxBytesMutex_.lock();
-    rxBytes_.clear();
+    while (rxBytes_.length() >= 4) {
+        if (rxBytes_.at(0) == char(0x55)
+                && rxBytes_.at(1) == char(0x66)
+                && rxBytes_.at(3) == char(0xbb)
+                && rxBytes_.at(3) == char(0xbb)) {
+            int headerLength = 4+1+4+2+1+4;
+            if (rxBytes_.length() >= headerLength) {
+                ProtocolMessageHeaderContext header;
+                quint32 *ptr32 = nullptr;
+                quint16 *ptr16 = nullptr;
+                quint8 *ptr8 = nullptr;
+                int offset = 0;
+                ptr32 = reinterpret_cast<quint32*>(rxBytes_.data());
+                header.stx = *ptr32;
+                offset += 4;
+
+                ptr8 = reinterpret_cast<quint8*>(rxBytes_.data() + offset);
+                header.control = *ptr8;
+                offset += 1;
+
+                ptr32 = reinterpret_cast<quint32*>(rxBytes_.data() + offset);
+                header.dataLength = *ptr32;
+                offset += 4;
+
+                ptr16 = reinterpret_cast<quint16*>(rxBytes_.data() + offset);
+                header.sequence = *ptr16;
+                offset += 2;
+
+                ptr8 = reinterpret_cast<quint8*>(rxBytes_.data() + offset);
+                header.cmdId = *ptr8;
+                offset += 1;
+
+                ptr32 = reinterpret_cast<quint32*>(rxBytes_.data() + offset);
+                header.crc = (*ptr32);
+#if 0
+                header.stx = qToBigEndian<quint32>(header.stx);
+                header.control = qToBigEndian<quint8>(header.control);
+                header.dataLength = qToBigEndian<quint16>(header.dataLength);
+                header.sequence = qToBigEndian<quint16>(header.sequence);
+                header.cmdId = qToBigEndian<quint8>(header.cmdId);
+                header.crc = qToBigEndian<quint32>(header.crc);
+#endif
+
+                ProtocolMessageContext msg;
+                msg.header = header;
+                int msgLen = headerLength + header.dataLength + 4;
+                if (rxBytes_.length() >= msgLen) {
+                    msg.data = QByteArray(rxBytes_.data() + headerLength);
+                    int offset = headerLength + header.dataLength;
+                    msg.crc = *reinterpret_cast<quint16*>(rxBytes_.data() + offset);
+                    msg.crc = qToBigEndian<quint32>(msg.crc);
+                }
+
+                QByteArray packet = QByteArray(rxBytes_.data(), msgLen);
+                if (msg.header.cmdId == 0x80) {
+                    messageHandle0x80(packet);
+                } else if (msg.header.cmdId == 0x81) {
+                    messageHandle0x81(packet);
+                }
+
+                rxBytes_.remove(0, msgLen);
+            }
+        } else {
+            rxBytes_.remove(0, 1);
+        }
+    }
     rxBytesMutex_.unlock();
 }
 
@@ -221,4 +334,39 @@ bool SiYiCamera::unpackMessage(ProtocolMessageContext *ctx,
     }
 
     return false;
+}
+
+void SiYiCamera::messageHandle0x80(const QByteArray &msg)
+{
+    struct ACK {
+        quint8 state;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        isRecording_ = (ctx->state == 1);
+        emit isRecordingChanged();
+    }
+}
+
+void SiYiCamera::messageHandle0x81(const QByteArray &msg)
+{
+    struct ACK {
+        quint8 isStarted;
+        quint8 result;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        isRecording_ = ctx->isStarted;
+        emit isRecordingChanged();
+    }
 }

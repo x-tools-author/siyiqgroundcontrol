@@ -22,6 +22,7 @@ private:
     static SiYi *instance_;
     SiYiCamera *camera_;
     SiYiTransmitter *transmitter_;
+    bool isTransmitterConnected_{false};
 private:
     QVariant camera(){return QVariant::fromValue(camera_);}
     QVariant transmitter(){return QVariant::fromValue(transmitter_);}

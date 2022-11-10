@@ -24,6 +24,8 @@ import QGroundControl.Palette               1.0
 import QGroundControl.Controllers           1.0
 import QGroundControl.SettingsManager       1.0
 
+import SiYi.Object 1.0
+
 Rectangle {
     id:                 _root
     color:              qgcPal.window
@@ -258,6 +260,7 @@ Rectangle {
                                     fact:                   _videoSettings.udpPort
                                     visible:                udpPortLabel.visible
                                     text: "rtsp://192.168.144.25:8554/main.264"
+                                    onTextEdited: SiYi.camera.analyzeIp(text)
                                 }
 
                                 QGCLabel {

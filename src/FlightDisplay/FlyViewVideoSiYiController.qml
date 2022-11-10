@@ -33,6 +33,7 @@ Rectangle {
     property var siyi: SiYi
     property SiYiCamera camera: siyi.camera
     property SiYiTransmitter transmitter: siyi.transmitter
+    property bool isRecording: camera.isRecording
 
     MouseArea {
         id: controlMouseArea
@@ -73,7 +74,6 @@ Rectangle {
                     }
 
                     if (controlMouseArea.yaw > 100) {
-                        console.info(controlMouseArea.yaw)
                         controlMouseArea.yaw = 100
                     }
 
@@ -82,13 +82,12 @@ Rectangle {
                     }
 
                     if (controlMouseArea.pitch > 100) {
-                        console.info(controlMouseArea.pitch)
                         controlMouseArea.pitch = 100
                     }
 
-                    console.info(controlMouseArea.yaw, controlMouseArea.pitch,
+                    /*console.info(controlMouseArea.yaw, controlMouseArea.pitch,
                                  controlMouseArea.originX, controlMouseArea.originY,
-                                 controlMouseArea.currentX, controlMouseArea.currentY)
+                                 controlMouseArea.currentX, controlMouseArea.currentY)*/
                     camera.turn(controlMouseArea.yaw, controlMouseArea.pitch)
                 }
 
@@ -154,8 +153,10 @@ Rectangle {
                 model: [
                     [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
                     [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
-                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
-                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false]
+//                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
+//                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false],
+                    [qsTr("拍照"), "qrc:/resources/SiYi/Photo.svg", false],
+                    [qsTr("录像"), "qrc:/resources/SiYi/Video.svg", false]
 //                    [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
 //                    [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
 //                    [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
@@ -175,6 +176,25 @@ Rectangle {
                         height: width
                         source: modelData[1]
                         anchors.verticalCenter: parent.verticalCenter
+
+                        property bool isRecording: root.isRecording
+
+                        onIsRecordingChanged: {
+                            if (index === 3) {
+                                source = isRecording
+                                        ? "qrc:/resources/SiYi/Stop.svg"
+                                        : "qrc:/resources/SiYi/Video.svg"
+                            }
+                        }
+
+                        Component.onCompleted: {
+                            if (index === 3) {
+                                source = isRecording
+                                        ? "qrc:/resources/SiYi/Stop.svg"
+                                        : "qrc:/resources/SiYi/Video.svg"
+                            }
+                        }
+
                         MouseArea {
                             id: iconMouse
                             anchors.fill: parent
@@ -183,10 +203,14 @@ Rectangle {
                                     camera.zoom(1)
                                 } else if (index === 1) { // 缩小
                                     camera.zoom(-1)
-                                } else if (index === 2) { // 回中
-                                    camera.resetPostion()
-                                } else if (index === 3) { // 自动对焦
-                                    camera.autoFocus()
+                                } else if (index === 2) { // 拍照
+                                    camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
+                                } else if (index === 3) { // 录像
+                                    if (camera.isRecording) {
+                                        camera.sendRecodingCommand(SiYiCamera.CloseRecording)
+                                    } else {
+                                        camera.sendRecodingCommand(SiYiCamera.OpenRecording)
+                                    }
                                 }
                             }
                             onReleased: {

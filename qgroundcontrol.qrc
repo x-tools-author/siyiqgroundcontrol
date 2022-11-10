@@ -362,6 +362,9 @@
         <file>resources/SiYi/ZoomIn.svg</file>
         <file>resources/SiYi/ZoomOut.svg</file>
         <file>resources/SiYi/Down.svg</file>
+        <file>resources/SiYi/Photo.svg</file>
+        <file>resources/SiYi/Stop.svg</file>
+        <file>resources/SiYi/Video.svg</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>

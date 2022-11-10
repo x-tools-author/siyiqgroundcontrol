@@ -26,14 +26,14 @@ AudioOutput::AudioOutput(QGCApplication* app, QGCToolbox* toolbox)
         return;
     }
 
-    _tts = new QTextToSpeech(this);
+    //_tts = new QTextToSpeech(this);
 
     //-- Force TTS engine to English as all incoming messages from the autopilot
     //   are in English and not localized.
 #ifdef Q_OS_LINUX
-    _tts->setLocale(QLocale("en_US"));
+    //_tts->setLocale(QLocale("en_US"));
 #endif
-    connect(_tts, &QTextToSpeech::stateChanged, this, &AudioOutput::_stateChanged);
+    //connect(_tts, &QTextToSpeech::stateChanged, this, &AudioOutput::_stateChanged);
 }
 
 void AudioOutput::say(const QString& inText)
@@ -67,7 +67,7 @@ void AudioOutput::_stateChanged(QTextToSpeech::State state)
         if(_texts.size()) {
             QString text = _texts.first();
             _texts.removeFirst();
-            _tts->say(text);
+            //_tts->say(text);
         }
     }
 }
