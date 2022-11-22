@@ -30,7 +30,7 @@ SiYi::SiYi(QObject *parent)
 #endif
 
     transmitter_->start();
-#if 0   // 改为1时，云台控制无需先连接
+#if 0   // 为1时，云台控制无需先连接
     camera_->start();
 #endif
 }
