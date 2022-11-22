@@ -11,6 +11,7 @@
 class SiYiTcpClient : public QThread
 {
     Q_OBJECT
+    Q_PROPERTY(bool isConnected READ isConnected NOTIFY isConnectedChanged)
 public:
     SiYiTcpClient(const QString ip, quint16 port, QObject *parent = Q_NULLPTR);
     ~SiYiTcpClient();
@@ -37,6 +38,10 @@ signals:
     void connected();
     void disconnected();
     void ipChanged();
+private:
+    bool isConnected_{false};
+    bool isConnected(){return isConnected_;}
+    Q_SIGNAL void isConnectedChanged();
 };
 
 #endif // SIYITCPCLIENT_H

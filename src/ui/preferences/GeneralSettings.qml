@@ -260,7 +260,7 @@ Rectangle {
                                     fact:                   _videoSettings.udpPort
                                     visible:                udpPortLabel.visible
                                     text: "rtsp://192.168.144.25:8554/main.264"
-                                    onTextEdited: SiYi.camera.analyzeIp(text)
+                                    onTextChanged: SiYi.camera.analyzeIp(text)
                                 }
 
                                 QGCLabel {

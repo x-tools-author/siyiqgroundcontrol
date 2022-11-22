@@ -8,7 +8,6 @@ SiYi::SiYi(QObject *parent)
 {
     camera_ = new SiYiCamera(this);
     transmitter_ = new SiYiTransmitter(this);
-
     connect(transmitter_, &SiYiCamera::connected, this, [=](){
         this->isTransmitterConnected_ = true;
         camera_->start();
@@ -24,7 +23,16 @@ SiYi::SiYi(QObject *parent)
         }
     });
 
+#ifdef Q_OS_ANDROID
+    isAndroid_ = true;
+#else
+    isAndroid_ = false;
+#endif
+
     transmitter_->start();
+#if 0   // 改为1时，云台控制无需先连接
+    camera_->start();
+#endif
 }
 
 SiYi *SiYi::instance()

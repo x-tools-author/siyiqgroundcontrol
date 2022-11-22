@@ -88,7 +88,22 @@ Rectangle {
                     /*console.info(controlMouseArea.yaw, controlMouseArea.pitch,
                                  controlMouseArea.originX, controlMouseArea.originY,
                                  controlMouseArea.currentX, controlMouseArea.currentY)*/
-                    camera.turn(controlMouseArea.yaw, controlMouseArea.pitch)
+                    if (SiYi.isAndroid) {
+                        camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
+                    } else {
+                        var delta = 5 // 变化小于该值时，不转动云台
+                        var yaw = controlMouseArea.yaw
+                        var pitch = controlMouseArea.pitch
+
+                        if (Math.abs(controlMouseArea.yaw) < delta) {
+                            yaw = 0
+                        }
+                        if (Math.abs(controlMouseArea.pitch) < delta) {
+                            pitch = 0
+                        }
+
+                        camera.turn(yaw, -pitch)
+                    }
                 }
 
                 controlMouseArea.originX = controlMouseArea.currentX

@@ -18,6 +18,9 @@ import QGroundControl.Palette               1.0
 import QGroundControl.MultiVehicleManager   1.0
 import QGroundControl.ScreenTools           1.0
 import QGroundControl.Controllers           1.0
+import QtGraphicalEffects 1.12
+
+import SiYi.Object 1.0
 
 Rectangle {
     id:     _root
@@ -32,6 +35,9 @@ Rectangle {
     property var    _activeVehicle:     QGroundControl.multiVehicleManager.activeVehicle
     property bool   _communicationLost: _activeVehicle ? _activeVehicle.vehicleLinkManager.communicationLost : false
     property color  _mainStatusBGColor: qgcPal.brandingPurple
+
+    property SiYiCamera camera: SiYi.camera
+    property SiYiTransmitter transmitter: SiYi.transmitter
 
     QGCPalette { id: qgcPal }
 
@@ -214,6 +220,48 @@ Rectangle {
         MouseArea {
             anchors.fill:   parent
             onClicked:      largeProgressBar._userHide = true
+        }
+    }
+
+    Row {
+        spacing: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 32
+        anchors.verticalCenter: parent.verticalCenter
+        Image {
+            id: emiterImage
+            source: "qrc:/resources/SiYi/Emiter.svg"
+            width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+            height: width
+            anchors.verticalCenter: parent.verticalCenter
+            ColorOverlay {
+                anchors.fill: emiterImage
+                source: emiterImage
+                color: SiYi.isAndroid ? "green" : "white"
+            }
+        }
+        QGCLabel {
+            id: transmitterStateText
+            text: transmitter.isConnected ? qsTr("已连接") :  qsTr("未连接")
+            color: SiYi.isAndroid ? "green" : "white"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        Image {
+            id: photoImage
+            source: "qrc:/resources/SiYi/Photo.svg"
+            width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+            height: width
+            anchors.verticalCenter: parent.verticalCenter
+            ColorOverlay {
+                anchors.fill: photoImage
+                source: photoImage
+                color: SiYi.isAndroid ? "green" : "white"
+            }
+        }
+        QGCLabel {
+            text: camera.isConnected ? qsTr("已连接") :  qsTr("未连接")
+            color: SiYi.isAndroid ? "green" : "white"
+            anchors.verticalCenter: parent.verticalCenter
         }
     }
 }

@@ -54,9 +54,13 @@ void SiYiTcpClient::run()
     connect(tcpClient, &QTcpSocket::connected, tcpClient, [=](){
         heartbeatTimer->start();
         emit connected();
+        this->isConnected_ = true;
+        emit isConnectedChanged();
         qInfo() << info << "Connect to server successfully!";
     });
     connect(tcpClient, &QTcpSocket::disconnected, tcpClient, [=](){
+        this->isConnected_ = false;
+        emit isConnectedChanged();
         txMessageVectorMutex_.lock();
         txMessageVector_.clear();
         txMessageVectorMutex_.unlock();
