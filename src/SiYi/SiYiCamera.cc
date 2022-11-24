@@ -113,13 +113,14 @@ bool SiYiCamera::GetRecordingState()
 
 void SiYiCamera::analyzeIp(QString videoUrl)
 {
+    qDebug() << videoUrl;
     videoUrl = videoUrl.remove(QString("rtsp://"));
     QStringList strList = videoUrl.split('/');
     if (!strList.isEmpty()) {
         QString ip = strList.first();
         if (ip.split(':').length() == 2) {
             ip = ip.split(':').first();
-            if (ip.split(' ').length() == 4) {
+            if (ip.split('.').length() == 4) {
                 resetIp(ip);
             }
         }

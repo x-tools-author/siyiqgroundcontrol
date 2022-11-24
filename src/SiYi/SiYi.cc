@@ -20,6 +20,10 @@ SiYi::SiYi(QObject *parent)
     connect(camera_, &SiYiCamera::ipChanged, this, [=](){
         if (isTransmitterConnected_) {
             camera_->start();
+        } else {
+            qInfo() << QString("Ip changed:%1, "
+                               "but transmitter is not connected!")
+                       .arg(camera_->property("ip").toString());
         }
     });
 
