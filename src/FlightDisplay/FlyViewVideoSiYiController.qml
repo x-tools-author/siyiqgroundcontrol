@@ -134,6 +134,7 @@ Rectangle {
         columns: 2
         anchors.left: parent.left
         anchors.leftMargin: 150
+        visible: false
         Repeater {
             model: [
                 qsTr("信道:"), transmitter.channel,
@@ -156,19 +157,21 @@ Rectangle {
         id: controlRectangle
         color: "#00000000"
         anchors.left: parent.left
-        anchors.verticalCenter: parent.verticalCenter
+        //anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: 150
+        anchors.topMargin: 10
         width: controlColumn.width
         height: controlColumn.height
-        anchors.top: infoGrid.bottom
-        Row {
+        anchors.top: parent.top
+        //anchors.top: infoGrid.bottom
+        Column {
             id: controlColumn
-            spacing: 10
+            spacing: 20
             Repeater {
                 model: [
                     [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
                     [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
-//                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
+                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
 //                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false],
                     [qsTr("拍照"), "qrc:/resources/SiYi/Photo.svg", false],
                     [qsTr("录像"), "qrc:/resources/SiYi/Video.svg", false]
@@ -195,7 +198,7 @@ Rectangle {
                         property bool isRecording: root.isRecording
 
                         onIsRecordingChanged: {
-                            if (index === 3) {
+                            if (index === 4) {
                                 source = isRecording
                                         ? "qrc:/resources/SiYi/Stop.svg"
                                         : "qrc:/resources/SiYi/Video.svg"
@@ -203,7 +206,7 @@ Rectangle {
                         }
 
                         Component.onCompleted: {
-                            if (index === 3) {
+                            if (index === 4) {
                                 source = isRecording
                                         ? "qrc:/resources/SiYi/Stop.svg"
                                         : "qrc:/resources/SiYi/Video.svg"
@@ -218,9 +221,11 @@ Rectangle {
                                     camera.zoom(1)
                                 } else if (index === 1) { // 缩小
                                     camera.zoom(-1)
-                                } else if (index === 2) { // 拍照
+                                } else if (index === 2) {
+                                    camera.resetPostion()
+                                } else if (index === 3) { // 拍照
                                     camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
-                                } else if (index === 3) { // 录像
+                                } else if (index === 4) { // 录像
                                     if (camera.isRecording) {
                                         camera.sendRecodingCommand(SiYiCamera.CloseRecording)
                                     } else {
@@ -237,7 +242,17 @@ Rectangle {
                         ColorOverlay {
                             anchors.fill: iconImage
                             source: iconImage
-                            color: iconMouse.pressed ? "green" : "white"
+                            color: {
+                                if (index === 4) {
+                                    if (camera.isRecording) {
+                                        return "red"
+                                    } else {
+                                        return iconMouse.pressed ? "green" : "white"
+                                    }
+                                } else {
+                                    return iconMouse.pressed ? "green" : "white"
+                                }
+                            }
                         }
                     }
                     Slider {

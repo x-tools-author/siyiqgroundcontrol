@@ -19,6 +19,10 @@ SiYi::SiYi(QObject *parent)
 
     connect(camera_, &SiYiCamera::ipChanged, this, [=](){
         if (isTransmitterConnected_) {
+            if (camera_->isRunning()) {
+                camera_->exit();
+                camera_->wait();
+            }
             camera_->start();
         } else {
             qInfo() << QString("Ip changed:%1, "
@@ -34,7 +38,7 @@ SiYi::SiYi(QObject *parent)
 #endif
 
     transmitter_->start();
-#if 0   // 为1时，云台控制无需先连接
+#if 1   // 为1时，云台控制无需先连接
     camera_->start();
 #endif
 }

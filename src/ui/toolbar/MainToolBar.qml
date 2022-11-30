@@ -228,6 +228,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 32
         anchors.verticalCenter: parent.verticalCenter
+        visible: false
         Image {
             id: emiterImage
             source: "qrc:/resources/SiYi/Emiter.svg"
@@ -260,6 +261,32 @@ Rectangle {
         }
         QGCLabel {
             text: camera.isConnected ? qsTr("已连接") :  qsTr("未连接")
+            color: SiYi.isAndroid ? "green" : "white"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+    }
+    Row {
+        spacing: 10
+        anchors.right: parent.right
+        anchors.rightMargin: 32
+        anchors.verticalCenter: parent.verticalCenter
+        QGCLabel {
+            text:  qsTr("信号强度：")
+            color: SiYi.isAndroid ? "green" : "white"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        QGCLabel {
+            text: transmitter.isConnected ? transmitter.signalQuality : "--"
+            color: SiYi.isAndroid ? "green" : "white"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        QGCLabel {
+            text: qsTr("下行数据：")
+            color: SiYi.isAndroid ? "green" : "white"
+            anchors.verticalCenter: parent.verticalCenter
+        }
+        QGCLabel {
+            text: transmitter.isConnected ? transmitter.downStream + "KB" : "--"
             color: SiYi.isAndroid ? "green" : "white"
             anchors.verticalCenter: parent.verticalCenter
         }
