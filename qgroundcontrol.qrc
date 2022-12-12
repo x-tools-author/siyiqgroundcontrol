@@ -358,7 +358,6 @@
         <file>resources/SiYi/Left.svg</file>
         <file>resources/SiYi/Reset.svg</file>
         <file>resources/SiYi/Right.svg</file>
-        <file>resources/SiYi/Up.svg</file>
         <file>resources/SiYi/ZoomIn.svg</file>
         <file>resources/SiYi/ZoomOut.svg</file>
         <file>resources/SiYi/Down.svg</file>
@@ -367,14 +366,8 @@
         <file>resources/SiYi/Video.svg</file>
         <file>resources/SiYi/Emiter.svg</file>
         <file>resources/SiYi/data.svg</file>
-        <file>resources/SiYi/Emiter (2).svg</file>
         <file>resources/SiYi/far.svg</file>
         <file>resources/SiYi/neer.svg</file>
-        <file>resources/SiYi/Photo (2).svg</file>
-        <file>resources/SiYi/Reset (2).svg</file>
-        <file>resources/SiYi/ZoomIn (2).svg</file>
-        <file>resources/SiYi/ZoomOut (2).svg</file>
-        <file>resources/SiYi/Video (2).svg</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>

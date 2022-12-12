@@ -171,12 +171,12 @@ Rectangle {
             spacing: 20
             Repeater {
                 model: [
-                    [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn (2).svg", false],
-                    [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut (2).svg", false],
-                    [qsTr("回中"), "qrc:/resources/SiYi/Reset (2).svg", false],
+                    [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
+                    [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
+                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
 //                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false],
-                    [qsTr("拍照"), "qrc:/resources/SiYi/Photo (2).svg", false],
-                    [qsTr("录像"), "qrc:/resources/SiYi/Video (2).svg", false],
+                    [qsTr("拍照"), "qrc:/resources/SiYi/Photo.svg", false],
+                    [qsTr("录像"), "qrc:/resources/SiYi/Video.svg", false],
 //                    [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
 //                    [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
 //                    [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
@@ -205,7 +205,7 @@ Rectangle {
                             if (index === 4) {
                                 source = isRecording
                                         ? "qrc:/resources/SiYi/Stop.svg"
-                                        : "qrc:/resources/SiYi/Video (2).svg"
+                                        : "qrc:/resources/SiYi/Video.svg"
                             }
                         }
 
@@ -213,7 +213,7 @@ Rectangle {
                             if (index === 4) {
                                 source = isRecording
                                         ? "qrc:/resources/SiYi/Stop.svg"
-                                        : "qrc:/resources/SiYi/Video (2).svg"
+                                        : "qrc:/resources/SiYi/Video.svg"
                             }
                         }
 

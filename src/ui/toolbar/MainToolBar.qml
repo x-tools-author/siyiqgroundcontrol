@@ -274,7 +274,7 @@ Rectangle {
         visible: transmitter.isConnected
         Image {
             id: emiterImage2
-            source: "qrc:/resources/SiYi/Emiter (2).svg"
+            source: "qrc:/resources/SiYi/Emiter.svg"
             width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
             height: width
             anchors.verticalCenter: parent.verticalCenter
@@ -285,7 +285,7 @@ Rectangle {
             }
         }
         QGCLabel {
-            text: transmitter.isConnected ? transmitter.rssi : "--"
+            text: transmitter.isConnected ? transmitter.rssi + "dbm" : "--"
             color: SiYi.isAndroid ? "black" : "white"
             anchors.verticalCenter: parent.verticalCenter
         }
