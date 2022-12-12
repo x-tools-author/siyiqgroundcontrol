@@ -39,6 +39,7 @@ Rectangle {
         id: controlMouseArea
         anchors.fill: parent
         hoverEnabled: true
+        visible: camera.isConnected
         onPressed: {
             enableControl = true
             controlMouseArea.originX = mouse.x
@@ -141,10 +142,10 @@ Rectangle {
                 qsTr("信号质量:"), transmitter.signalQuality,
                 qsTr("信号强度:"), transmitter.rssi,
                 qsTr("延时时间:"), transmitter.inactiveTime + "ms",
-                qsTr("上行数据量:"), (transmitter.upStream/1000).toFixed(3) + "KB",
-                qsTr("下行数据量:"), (transmitter.downStream/1000).toFixed(3) + "KB",
-                qsTr("上行带宽:"), (transmitter.txBanWidth/1000).toFixed(1) + "Mbps",
-                qsTr("下行带宽:"), (transmitter.rxBanWidth/1000).toFixed(1) + "Mbps",
+                qsTr("上行数据量:"), (transmitter.upStream/1024).toFixed(3) + "KB",
+                qsTr("下行数据量:"), (transmitter.downStream/1024).toFixed(3) + "KB",
+                qsTr("上行带宽:"), (transmitter.txBanWidth/1024).toFixed(1) + "Mbps",
+                qsTr("下行带宽:"), (transmitter.rxBanWidth/1024).toFixed(1) + "Mbps",
             ]
             QGCLabel {
                 text: modelData
@@ -164,21 +165,24 @@ Rectangle {
         height: controlColumn.height
         anchors.top: parent.top
         //anchors.top: infoGrid.bottom
+        visible: camera.isConnected
         Column {
             id: controlColumn
             spacing: 20
             Repeater {
                 model: [
-                    [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
-                    [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
-                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
+                    [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn (2).svg", false],
+                    [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut (2).svg", false],
+                    [qsTr("回中"), "qrc:/resources/SiYi/Reset (2).svg", false],
 //                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false],
-                    [qsTr("拍照"), "qrc:/resources/SiYi/Photo.svg", false],
-                    [qsTr("录像"), "qrc:/resources/SiYi/Video.svg", false]
+                    [qsTr("拍照"), "qrc:/resources/SiYi/Photo (2).svg", false],
+                    [qsTr("录像"), "qrc:/resources/SiYi/Video (2).svg", false],
 //                    [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
 //                    [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
 //                    [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
 //                    [qsTr("向右"), "qrc:/resources/SiYi/Right.svg", true]
+                    [qsTr("远景"), "qrc:/resources/SiYi/far.svg", false],
+                    [qsTr("近景"), "qrc:/resources/SiYi/neer.svg", false]
                 ]
                 Row {
                     spacing: 10
@@ -201,7 +205,7 @@ Rectangle {
                             if (index === 4) {
                                 source = isRecording
                                         ? "qrc:/resources/SiYi/Stop.svg"
-                                        : "qrc:/resources/SiYi/Video.svg"
+                                        : "qrc:/resources/SiYi/Video (2).svg"
                             }
                         }
 
@@ -209,7 +213,7 @@ Rectangle {
                             if (index === 4) {
                                 source = isRecording
                                         ? "qrc:/resources/SiYi/Stop.svg"
-                                        : "qrc:/resources/SiYi/Video.svg"
+                                        : "qrc:/resources/SiYi/Video (2).svg"
                             }
                         }
 
@@ -231,11 +235,17 @@ Rectangle {
                                     } else {
                                         camera.sendRecodingCommand(SiYiCamera.OpenRecording)
                                     }
+                                } else if (index === 5) { // 远景
+                                    camera.focus(1)
+                                } else if (index === 6) { // 近景
+                                    camera.focus(-1)
                                 }
                             }
                             onReleased: {
                                 if (index === 0 || index === 1) {
                                     camera.zoom(0)
+                                } else if (index === 5 || index === 6) {
+                                    camera.focus(0)
                                 }
                             }
                         }

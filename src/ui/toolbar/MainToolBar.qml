@@ -116,6 +116,7 @@ Rectangle {
     //-------------------------------------------------------------------------
     //-- Branding Logo
     Image {
+        id: brandingLogo
         anchors.right:          parent.right
         anchors.top:            parent.top
         anchors.bottom:         parent.bottom
@@ -267,27 +268,42 @@ Rectangle {
     }
     Row {
         spacing: 10
-        anchors.right: parent.right
+        anchors.right: brandingLogo.source ? brandingLogo.left : parent.right
         anchors.rightMargin: 32
         anchors.verticalCenter: parent.verticalCenter
-        QGCLabel {
-            text:  qsTr("信号强度：")
-            color: SiYi.isAndroid ? "green" : "white"
+        visible: transmitter.isConnected
+        Image {
+            id: emiterImage2
+            source: "qrc:/resources/SiYi/Emiter (2).svg"
+            width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+            height: width
             anchors.verticalCenter: parent.verticalCenter
+            ColorOverlay {
+                anchors.fill: emiterImage2
+                source: emiterImage2
+                color: SiYi.isAndroid ? "black" : "white"
+            }
         }
         QGCLabel {
-            text: transmitter.isConnected ? transmitter.signalQuality : "--"
-            color: SiYi.isAndroid ? "green" : "white"
+            text: transmitter.isConnected ? transmitter.rssi : "--"
+            color: SiYi.isAndroid ? "black" : "white"
             anchors.verticalCenter: parent.verticalCenter
         }
-        QGCLabel {
-            text: qsTr("下行数据：")
-            color: SiYi.isAndroid ? "green" : "white"
+        Image {
+            id: photoImage2
+            source: "qrc:/resources/SiYi/data.svg"
+            width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+            height: width
             anchors.verticalCenter: parent.verticalCenter
+            ColorOverlay {
+                anchors.fill: photoImage2
+                source: photoImage2
+                color: SiYi.isAndroid ? "black" : "white"
+            }
         }
         QGCLabel {
-            text: transmitter.isConnected ? transmitter.downStream + "KB" : "--"
-            color: SiYi.isAndroid ? "green" : "white"
+            text: transmitter.isConnected ? (transmitter.downStream/1024).toFixed(1) + "KB" : "--"
+            color: SiYi.isAndroid ? "black" : "white"
             anchors.verticalCenter: parent.verticalCenter
         }
     }
