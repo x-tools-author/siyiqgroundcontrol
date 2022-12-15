@@ -20,6 +20,8 @@ import QGroundControl.ScreenTools   1.0
 import QGroundControl.FlightDisplay 1.0
 import QGroundControl.FlightMap     1.0
 
+import SiYi.Object 1.0
+
 /// @brief Native QML top level window
 /// All properties defined here are visible to all QML pages.
 ApplicationWindow {
@@ -27,6 +29,8 @@ ApplicationWindow {
     minimumWidth:   ScreenTools.isMobile ? Screen.width  : Math.min(ScreenTools.defaultFontPixelWidth * 100, Screen.width)
     minimumHeight:  ScreenTools.isMobile ? Screen.height : Math.min(ScreenTools.defaultFontPixelWidth * 50, Screen.height)
     visible:        true
+
+    property SiYiCamera siYiCamera: SiYi.camera
 
     Component.onCompleted: {
         //-- Full screen on mobile or tiny screens

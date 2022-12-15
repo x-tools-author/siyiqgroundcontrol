@@ -165,7 +165,7 @@ Rectangle {
         height: controlColumn.height
         anchors.top: parent.top
         //anchors.top: infoGrid.bottom
-        visible: camera.isConnected
+        //visible: camera.isConnected
         Column {
             id: controlColumn
             spacing: 20
@@ -174,13 +174,8 @@ Rectangle {
                     [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
                     [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
                     [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
-//                    [qsTr("对焦"), "qrc:/resources/SiYi/BeadSight.svg", false],
                     [qsTr("拍照"), "qrc:/resources/SiYi/Photo.svg", false],
                     [qsTr("录像"), "qrc:/resources/SiYi/Video.svg", false],
-//                    [qsTr("向上"), "qrc:/resources/SiYi/Up.svg", true],
-//                    [qsTr("向下"), "qrc:/resources/SiYi/Down.svg", true],
-//                    [qsTr("向左"), "qrc:/resources/SiYi/Left.svg", true],
-//                    [qsTr("向右"), "qrc:/resources/SiYi/Right.svg", true]
                     [qsTr("远景"), "qrc:/resources/SiYi/far.svg", false],
                     [qsTr("近景"), "qrc:/resources/SiYi/neer.svg", false]
                 ]
@@ -194,10 +189,12 @@ Rectangle {
                     }
                     Image {
                         id: iconImage
-                        width: btText.width
-                        height: width
+                        sourceSize.width: btText.width
+                        sourceSize.height: width
                         source: modelData[1]
                         anchors.verticalCenter: parent.verticalCenter
+                        fillMode: Image.PreserveAspectFit
+                        mipmap: true
 
                         property bool isRecording: root.isRecording
 
@@ -309,6 +306,57 @@ Rectangle {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    QGCLabel {
+        id: zoomMultipleLabel
+        text: (zoomMultipleLabel.zoomMultiple/10).toFixed(1)
+        anchors.centerIn: parent
+        color: "white"
+        visible: false
+
+        Timer {
+            id: visibleTimer
+            interval: 5000
+            running: false
+            repeat: false
+            onTriggered: zoomMultipleLabel.visible = false
+        }
+
+        property real zoomMultiple: siYiCamera.zoomMultiple
+        onZoomMultipleChanged: {
+            //zoomMultipleLabel.visible = true
+            //visibleTimer.restart()
+        }
+    }
+
+    QGCLabel {
+        id: resultLabel
+        anchors.centerIn: parent
+        color: "white"
+        visible: false
+
+        Timer {
+            id: resultTimer
+            interval: 5000
+            running: false
+            repeat: false
+            onTriggered: resultLabel.visible = false
+        }
+
+        Connections {
+            target: siYiCamera
+            onOperationResultChanged: {
+                if (result === 0) {
+                    resultLabel.text = qsTr("拍照成功")
+                } else if (result === 1) {
+                    resultLabel.text = qsTr("拍照失败")
+                }
+
+                //resultTimer.restart()
+                //resultLabel.visible = true
             }
         }
     }

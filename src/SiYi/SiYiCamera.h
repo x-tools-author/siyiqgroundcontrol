@@ -10,6 +10,7 @@ class SiYiCamera : public SiYiTcpClient
 {
     Q_OBJECT
     Q_PROPERTY(bool isRecording READ isRecording NOTIFY isRecordingChanged)
+    Q_PROPERTY(int zoomMultiple READ zoomMultiple NOTIFY zoomMultipleChanged)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -33,6 +34,10 @@ public:
         OpenRecording
     };
     Q_ENUM(CameraVideoCommand);
+
+signals:
+    void operationResultChanged(int result);
+
 public:
     explicit SiYiCamera(QObject *parent = nullptr);
     ~SiYiCamera();
@@ -62,11 +67,17 @@ private:
 private:
     void messageHandle0x80(const QByteArray &msg);
     void messageHandle0x81(const QByteArray &msg);
+    void messageHandle0x98(const QByteArray &msg);
+    void messageHandle0x9e(const QByteArray &msg);
 
 private:
     bool isRecording_{false};
     bool isRecording(){return isRecording_;}
     Q_SIGNAL void isRecordingChanged();
+
+    int zoomMultiple_{1};
+    int zoomMultiple(){return zoomMultiple_;}
+    Q_SIGNAL void zoomMultipleChanged();
 };
 
 #endif // SIYICAMERA_H

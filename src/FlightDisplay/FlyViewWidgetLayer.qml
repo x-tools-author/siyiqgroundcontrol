@@ -30,6 +30,9 @@ import QGroundControl.Palette       1.0
 import QGroundControl.ScreenTools   1.0
 import QGroundControl.Vehicle       1.0
 
+import SiYi.Object 1.0
+import "qrc:/qml/QGroundControl/Controls"
+
 // This is the ui overlay layer for the widgets/tools for Fly View
 Item {
     id: _root
@@ -48,6 +51,9 @@ Item {
     property real   _toolsMargin:           ScreenTools.defaultFontPixelWidth * 0.75
     property rect   _centerViewport:        Qt.rect(0, 0, width, height)
     property real   _rightPanelWidth:       ScreenTools.defaultFontPixelWidth * 30
+
+    property var siyi: SiYi
+    property SiYiCamera camera: siyi.camera
 
     QGCToolInsets {
         id:                     _totalToolInsets
@@ -145,6 +151,81 @@ Item {
         ]
 
         property bool _verticalCenter: !QGroundControl.settingsManager.flyViewSettings.alternateInstrumentPanel.rawValue
+    }
+
+    Rectangle {
+        id: zoomMultipleRectangle
+        anchors.bottom: telemetryPanel.top
+        width: zoomMultipleLabel.width + zoomMultipleLabel.width*0.4
+        height: zoomMultipleLabel.height + zoomMultipleLabel.height*0.4
+        color: "white"
+        anchors.bottomMargin: 10
+        visible: false
+        anchors.horizontalCenter: telemetryPanel.horizontalCenter
+        radius: 5
+        QGCLabel {
+            id: zoomMultipleLabel
+            text: (zoomMultipleLabel.zoomMultiple/10).toFixed(1)
+            anchors.centerIn: parent
+            color: "black"
+            font.pixelSize: 48
+
+            Timer {
+                id: visibleTimer
+                interval: 5000
+                running: false
+                repeat: false
+                onTriggered: zoomMultipleRectangle.visible = false
+            }
+
+            property real zoomMultiple: siYiCamera.zoomMultiple
+            onZoomMultipleChanged: {
+                resultRectangle.visible = false
+                zoomMultipleRectangle.visible = true
+                visibleTimer.restart()
+            }
+        }
+    }
+
+    Rectangle {
+        id: resultRectangle
+        anchors.bottom: telemetryPanel.top
+        width: resultLabel.width + resultLabel.width*0.4
+        height: resultLabel.height + resultLabel.height*0.4
+        anchors.bottomMargin: 10
+        anchors.horizontalCenter: telemetryPanel.horizontalCenter
+        color: "white"
+        visible: false
+        radius: 5
+        QGCLabel {
+            id: resultLabel
+            anchors.centerIn: parent
+            color: "black"
+            font.pixelSize: 48
+
+            Timer {
+                id: resultTimer
+                interval: 5000
+                running: false
+                repeat: false
+                onTriggered: resultRectangle.visible = false
+            }
+
+            Connections {
+                target: siYiCamera
+                onOperationResultChanged: {
+                    if (result === 0) {
+                        resultLabel.text = qsTr("拍照成功")
+                    } else if (result === 1) {
+                        resultLabel.text = qsTr("拍照失败")
+                    }
+
+                    resultTimer.restart()
+                    zoomMultipleRectangle.visible = false
+                    resultRectangle.visible = true
+                }
+            }
+        }
     }
 
     TelemetryValuesBar {

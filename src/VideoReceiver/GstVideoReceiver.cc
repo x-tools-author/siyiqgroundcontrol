@@ -715,7 +715,7 @@ GstVideoReceiver::_makeSource(const QString& uri)
         } else if (isRtsp) {
             if ((source = gst_element_factory_make("rtspsrc", "source")) != nullptr) {
                 g_object_set(static_cast<gpointer>(source), "location", qPrintable(uri), "latency", 17, "udp-reconnect", 1, "timeout", _udpReconnect_us, NULL);
-                g_object_set(_source, "protocols", 0x00000004, NULL);
+                g_object_set(static_cast<gpointer>(source), "protocols", 0x00000004, NULL);
             }
         } else if(isUdp264 || isUdp265 || isUdpMPEGTS || isTaisync) {
             if ((source = gst_element_factory_make("udpsrc", "source")) != nullptr) {

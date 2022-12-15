@@ -193,6 +193,10 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x80(packet);
                 } else if (msg.header.cmdId == 0x81) {
                     messageHandle0x81(packet);
+                } else if (msg.header.cmdId == 0x98) {
+                    messageHandle0x98(packet);
+                } else if (msg.header.cmdId == 0x9e) {
+                    messageHandle0x9e(packet);
                 }
 
                 rxBytes_.remove(0, msgLen);
@@ -369,5 +373,38 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
 
         isRecording_ = ctx->isStarted;
         emit isRecordingChanged();
+    }
+}
+
+void SiYiCamera::messageHandle0x98(const QByteArray &msg)
+{
+    struct ACK {
+        qint16 zoomMultiple;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        zoomMultiple_ = ctx->zoomMultiple;
+        emit zoomMultipleChanged();
+    }
+}
+
+void SiYiCamera::messageHandle0x9e(const QByteArray &msg)
+{
+    struct ACK {
+        qint8 result;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        emit operationResultChanged(ctx->result);
     }
 }

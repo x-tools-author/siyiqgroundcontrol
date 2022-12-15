@@ -275,8 +275,8 @@ Rectangle {
         Image {
             id: emiterImage2
             source: "qrc:/resources/SiYi/Emiter.svg"
-            width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
-            height: width
+            sourceSize.width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+            sourceSize.height: width
             anchors.verticalCenter: parent.verticalCenter
             ColorOverlay {
                 anchors.fill: emiterImage2
@@ -292,8 +292,8 @@ Rectangle {
         Image {
             id: photoImage2
             source: "qrc:/resources/SiYi/data.svg"
-            width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
-            height: width
+            sourceSize.width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+            sourceSize.height: width
             anchors.verticalCenter: parent.verticalCenter
             ColorOverlay {
                 anchors.fill: photoImage2
