@@ -11,6 +11,8 @@ class SiYiCamera : public SiYiTcpClient
     Q_OBJECT
     Q_PROPERTY(bool isRecording READ isRecording NOTIFY isRecordingChanged)
     Q_PROPERTY(int zoomMultiple READ zoomMultiple NOTIFY zoomMultipleChanged)
+    Q_PROPERTY(bool enableZoom READ enableZoom NOTIFY enableZoomChanged)
+    Q_PROPERTY(bool enableFocus READ enableFocus NOTIFY enableFocusChanged)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -63,10 +65,12 @@ private:
     quint32 packetCheckSum32(ProtocolMessageContext *ctx);
     bool unpackMessage(ProtocolMessageContext *ctx,
                        const QByteArray &msg);
+    void GetCamerVersion();
 
 private:
     void messageHandle0x80(const QByteArray &msg);
     void messageHandle0x81(const QByteArray &msg);
+    void messageHandle0x94(const QByteArray &msg);
     void messageHandle0x98(const QByteArray &msg);
     void messageHandle0x9e(const QByteArray &msg);
 
@@ -78,6 +82,14 @@ private:
     int zoomMultiple_{1};
     int zoomMultiple(){return zoomMultiple_;}
     Q_SIGNAL void zoomMultipleChanged();
+
+    bool enableZoom_{false};
+    bool enableZoom(){return enableZoom_;}
+    Q_SIGNAL void enableZoomChanged();
+
+    bool enableFocus_{false};
+    bool enableFocus(){return enableFocus_;}
+    Q_SIGNAL void enableFocusChanged();
 };
 
 #endif // SIYICAMERA_H

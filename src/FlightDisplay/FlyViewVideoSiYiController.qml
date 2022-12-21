@@ -158,153 +158,180 @@ Rectangle {
         id: controlRectangle
         color: "#00000000"
         anchors.left: parent.left
-        //anchors.verticalCenter: parent.verticalCenter
         anchors.leftMargin: 150
         anchors.topMargin: 10
         width: controlColumn.width
         height: controlColumn.height
         anchors.top: parent.top
-        //anchors.top: infoGrid.bottom
-        //visible: camera.isConnected
+        visible: camera.isConnected
+        Text {
+            id: btText
+            text: "Hiden"
+            anchors.verticalCenter: parent.verticalCenter
+            visible: false
+        }
+
         Column {
             id: controlColumn
             spacing: 20
-            Repeater {
-                model: [
-                    [qsTr("放大"), "qrc:/resources/SiYi/ZoomIn.svg", false],
-                    [qsTr("缩小"), "qrc:/resources/SiYi/ZoomOut.svg", false],
-                    [qsTr("回中"), "qrc:/resources/SiYi/Reset.svg", false],
-                    [qsTr("拍照"), "qrc:/resources/SiYi/Photo.svg", false],
-                    [qsTr("录像"), "qrc:/resources/SiYi/Video.svg", false],
-                    [qsTr("远景"), "qrc:/resources/SiYi/far.svg", false],
-                    [qsTr("近景"), "qrc:/resources/SiYi/neer.svg", false]
-                ]
-                Row {
-                    spacing: 10
-                    Text {
-                        id: btText
-                        text: modelData[0]
-                        anchors.verticalCenter: parent.verticalCenter
-                        visible: false
-                    }
-                    Image {
-                        id: iconImage
-                        sourceSize.width: btText.width
-                        sourceSize.height: width
-                        source: modelData[1]
-                        anchors.verticalCenter: parent.verticalCenter
-                        fillMode: Image.PreserveAspectFit
-                        mipmap: true
 
-                        property bool isRecording: root.isRecording
+            Image { // 放大
+                id: zoomIn
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: "qrc:/resources/SiYi/ZoomIn.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                visible: camera.enableZoom
+                MouseArea {
+                    id: zoomInMA
+                    anchors.fill: parent
+                    onPressed: camera.zoom(1)
+                    onReleased: camera.zoom(0)
+                }
+                ColorOverlay {
+                    anchors.fill: zoomIn
+                    source: zoomIn
+                    color: zoomInMA.pressed ? "green" : "white"
+                }
+            }
 
-                        onIsRecordingChanged: {
-                            if (index === 4) {
-                                source = isRecording
-                                        ? "qrc:/resources/SiYi/Stop.svg"
-                                        : "qrc:/resources/SiYi/Video.svg"
-                            }
-                        }
+            Image { // 缩小
+                id: zoomOut
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: "qrc:/resources/SiYi/ZoomOut.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                visible: camera.enableZoom
+                MouseArea {
+                    id: zoomOutMA
+                    anchors.fill: parent
+                    onPressed: camera.zoom(-1)
+                    onReleased: camera.zoom(0)
+                }
+                ColorOverlay {
+                    anchors.fill: zoomOut
+                    source: zoomOut
+                    color: zoomOutMA.pressed ? "green" : "white"
+                }
+            }
 
-                        Component.onCompleted: {
-                            if (index === 4) {
-                                source = isRecording
-                                        ? "qrc:/resources/SiYi/Stop.svg"
-                                        : "qrc:/resources/SiYi/Video.svg"
-                            }
-                        }
+            Image { // 回中
+                id: reset
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: "qrc:/resources/SiYi/Reset.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                MouseArea {
+                    id: resetMA
+                    anchors.fill: parent
+                    onPressed: camera.resetPostion()
+                }
+                ColorOverlay {
+                    anchors.fill: reset
+                    source: reset
+                    color: resetMA.pressed ? "green" : "white"
+                }
+            }
 
-                        MouseArea {
-                            id: iconMouse
-                            anchors.fill: parent
-                            onPressed: {
-                                if (index === 0) { // 放大
-                                    camera.zoom(1)
-                                } else if (index === 1) { // 缩小
-                                    camera.zoom(-1)
-                                } else if (index === 2) {
-                                    camera.resetPostion()
-                                } else if (index === 3) { // 拍照
-                                    camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
-                                } else if (index === 4) { // 录像
-                                    if (camera.isRecording) {
-                                        camera.sendRecodingCommand(SiYiCamera.CloseRecording)
-                                    } else {
-                                        camera.sendRecodingCommand(SiYiCamera.OpenRecording)
-                                    }
-                                } else if (index === 5) { // 远景
-                                    camera.focus(1)
-                                } else if (index === 6) { // 近景
-                                    camera.focus(-1)
-                                }
-                            }
-                            onReleased: {
-                                if (index === 0 || index === 1) {
-                                    camera.zoom(0)
-                                } else if (index === 5 || index === 6) {
-                                    camera.focus(0)
-                                }
-                            }
-                        }
-                        ColorOverlay {
-                            anchors.fill: iconImage
-                            source: iconImage
-                            color: {
-                                if (index === 4) {
-                                    if (camera.isRecording) {
-                                        return "red"
-                                    } else {
-                                        return iconMouse.pressed ? "green" : "white"
-                                    }
-                                } else {
-                                    return iconMouse.pressed ? "green" : "white"
-                                }
-                            }
-                        }
-                    }
-                    Slider {
-                        id: slider
-                        from: 0
-                        to: 100
-                        visible: modelData[2]
-                        anchors.verticalCenter: parent.verticalCenter
-                        onPressedChanged: {
-                            if (pressed) {
-                                sendingTimer.enableSending = true
-                                sendingTimer.start()
-                            } else {
-                                sendingTimer.enableSending = false
-                                sendingTimer.stop()
-                                camera.turn(0, 0)
-                            }
-                        }
+            Image { // 拍照
+                id: photo
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: "qrc:/resources/SiYi/Photo.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                MouseArea {
+                    id: photoMA
+                    anchors.fill: parent
+                    onPressed: camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
+                }
+                ColorOverlay {
+                    anchors.fill: photo
+                    source: photo
+                    color: photoMA.pressed ? "green" : "white"
+                }
+            }
 
-                        onValueChanged: {
-                            if (sendingTimer.enableSending) {
-                                if (index === 4) { // 上
-                                    camera.turn(0, slider.value)
-                                } else if (index === 5) { // 下
-                                    camera.turn(0, -slider.value)
-                                } else if (index === 6) { // 左
-                                    camera.turn(slider.value, 0)
-                                } else if (index === 7) { // 右
-                                    camera.turn(-slider.value, 0)
-                                }
-                            }
-                        }
-
-                        Timer {
-                            id: sendingTimer
-                            running: false
-                            interval: 100
-
-                            property bool enableSending: false
-
-                            onTriggered: {
-                                enableSending = true
-                            }
+            Image { // 录像
+                id: video
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                MouseArea {
+                    id: videoMA
+                    anchors.fill: parent
+                    onPressed: {
+                        if (camera.isRecording) {
+                            camera.sendRecodingCommand(SiYiCamera.CloseRecording)
+                        } else {
+                            camera.sendRecodingCommand(SiYiCamera.OpenRecording)
                         }
                     }
+                }
+                ColorOverlay {
+                    anchors.fill: video
+                    source: video
+                    color: {
+                        if (camera.isRecording) {
+                            return "red"
+                        } else {
+                            return videoMA.pressed ? "green" : "white"
+                        }
+                    }
+                }
+            }
+
+            Image { // 远景
+                id: far
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: "qrc:/resources/SiYi/far.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                visible: camera.enableFocus
+                MouseArea {
+                    id: farMA
+                    anchors.fill: parent
+                    onPressed: camera.focus(1)
+                    onReleased: camera.focus(0)
+                }
+                ColorOverlay {
+                    anchors.fill: far
+                    source: far
+                    color: farMA.pressed ? "green" : "white"
+                }
+            }
+
+            Image { // 近景
+                id: neer
+                sourceSize.width: btText.width
+                sourceSize.height: width
+                source: "qrc:/resources/SiYi/neer.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                mipmap: true
+                visible: camera.enableFocus
+                MouseArea {
+                    id: neerMA
+                    anchors.fill: parent
+                    onPressed: camera.focus(-1)
+                    onReleased: camera.focus(0)
+                }
+                ColorOverlay {
+                    anchors.fill: neer
+                    source: neer
+                    color: neerMA.pressed ? "green" : "white"
                 }
             }
         }

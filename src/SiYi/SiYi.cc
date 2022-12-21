@@ -18,17 +18,12 @@ SiYi::SiYi(QObject *parent)
     });
 
     connect(camera_, &SiYiCamera::ipChanged, this, [=](){
-        if (isTransmitterConnected_) {
-            if (camera_->isRunning()) {
-                camera_->exit();
-                camera_->wait();
-            }
-            camera_->start();
-        } else {
-            qInfo() << QString("Ip changed:%1, "
-                               "but transmitter is not connected!")
-                       .arg(camera_->property("ip").toString());
+        if (camera_->isRunning()) {
+            camera_->exit();
+            camera_->wait();
         }
+
+        camera_->start();
     });
 
 #ifdef Q_OS_ANDROID

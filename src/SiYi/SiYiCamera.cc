@@ -8,6 +8,8 @@ SiYiCamera::SiYiCamera(QObject *parent)
 {
     connect(this, &SiYiCamera::connected,
             this, &SiYiCamera::GetRecordingState);
+    connect(this, &SiYiCamera::connected,
+            this, &SiYiCamera::GetCamerVersion);
 }
 
 SiYiCamera::~SiYiCamera()
@@ -193,6 +195,8 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x80(packet);
                 } else if (msg.header.cmdId == 0x81) {
                     messageHandle0x81(packet);
+                } else if (msg.header.cmdId == 0x94) {
+                    messageHandle0x94(packet);
                 } else if (msg.header.cmdId == 0x98) {
                     messageHandle0x98(packet);
                 } else if (msg.header.cmdId == 0x9e) {
@@ -341,6 +345,15 @@ bool SiYiCamera::unpackMessage(ProtocolMessageContext *ctx,
     return false;
 }
 
+void SiYiCamera::GetCamerVersion()
+{
+    uint8_t cmdId = 0x94;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
+
 void SiYiCamera::messageHandle0x80(const QByteArray &msg)
 {
     struct ACK {
@@ -373,6 +386,42 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
 
         isRecording_ = ctx->isStarted;
         emit isRecordingChanged();
+    }
+}
+
+void SiYiCamera::messageHandle0x94(const QByteArray &msg)
+{
+    struct ACK {
+        quint32 version;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        /*
+        0x6C：R1卡录摄像头
+        0x6E：ZR10 10倍变焦云台相机
+        0x72：A8 mini云台相机
+        0x74：A2 mini云台相机
+        0x77：ZR30云台相机
+        */
+        int type = ctx->version >> 24;
+        if (type == 0x6e || type == 0x77) {
+            enableFocus_ = true;
+            enableZoom_ = true;
+        } else if (type == 0x72) {
+            enableFocus_ = false;
+            enableZoom_ = true;
+        } else {
+            enableFocus_ = false;
+            enableZoom_ = true;
+        }
+
+        emit enableFocusChanged();
+        emit enableZoomChanged();
     }
 }
 

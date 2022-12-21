@@ -266,45 +266,50 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
         }
     }
-    Row {
-        spacing: 10
+    Column {
         anchors.right: brandingLogo.source ? brandingLogo.left : parent.right
         anchors.rightMargin: 32
         anchors.verticalCenter: parent.verticalCenter
         visible: transmitter.isConnected
-        Image {
-            id: emiterImage2
-            source: "qrc:/resources/SiYi/Emiter.svg"
-            sourceSize.width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
-            sourceSize.height: width
-            anchors.verticalCenter: parent.verticalCenter
-            ColorOverlay {
-                anchors.fill: emiterImage2
-                source: emiterImage2
+        Row {
+            spacing: 10
+            Image {
+                id: emiterImage2
+                source: "qrc:/resources/SiYi/Emiter.svg"
+                sourceSize.width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+                sourceSize.height: width
+                anchors.verticalCenter: parent.verticalCenter
+                ColorOverlay {
+                    anchors.fill: emiterImage2
+                    source: emiterImage2
+                    color: SiYi.isAndroid ? "black" : "white"
+                }
+            }
+            QGCLabel {
+                text: transmitter.isConnected ? transmitter.rssi + "dbm" : "--"
                 color: SiYi.isAndroid ? "black" : "white"
+                anchors.verticalCenter: parent.verticalCenter
             }
         }
-        QGCLabel {
-            text: transmitter.isConnected ? transmitter.rssi + "dbm" : "--"
-            color: SiYi.isAndroid ? "black" : "white"
-            anchors.verticalCenter: parent.verticalCenter
-        }
-        Image {
-            id: photoImage2
-            source: "qrc:/resources/SiYi/data.svg"
-            sourceSize.width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
-            sourceSize.height: width
-            anchors.verticalCenter: parent.verticalCenter
-            ColorOverlay {
-                anchors.fill: photoImage2
-                source: photoImage2
-                color: SiYi.isAndroid ? "black" : "white"
+        Row {
+            spacing: 10
+            Image {
+                id: photoImage2
+                source: "qrc:/resources/SiYi/data.svg"
+                sourceSize.width: SiYi.isAndroid ? transmitterStateText.font.pixelSize : 32
+                sourceSize.height: width
+                anchors.verticalCenter: parent.verticalCenter
+                ColorOverlay {
+                    anchors.fill: photoImage2
+                    source: photoImage2
+                    color: SiYi.isAndroid ? "black" : "white"
+                }
             }
-        }
-        QGCLabel {
-            text: transmitter.isConnected ? (transmitter.downStream/1024).toFixed(1) + "KB" : "--"
-            color: SiYi.isAndroid ? "black" : "white"
-            anchors.verticalCenter: parent.verticalCenter
+            QGCLabel {
+                text: transmitter.isConnected ? (transmitter.downStream/1024).toFixed(1) + "KB" : "--"
+                color: SiYi.isAndroid ? "black" : "white"
+                anchors.verticalCenter: parent.verticalCenter
+            }
         }
     }
 }
