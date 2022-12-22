@@ -130,30 +130,6 @@ Rectangle {
         property int currentY: 0
     }
 
-    Grid {
-        id: infoGrid
-        columns: 2
-        anchors.left: parent.left
-        anchors.leftMargin: 150
-        visible: false
-        Repeater {
-            model: [
-                qsTr("信道:"), transmitter.channel,
-                qsTr("信号质量:"), transmitter.signalQuality,
-                qsTr("信号强度:"), transmitter.rssi,
-                qsTr("延时时间:"), transmitter.inactiveTime + "ms",
-                qsTr("上行数据量:"), (transmitter.upStream/1024).toFixed(3) + "KB",
-                qsTr("下行数据量:"), (transmitter.downStream/1024).toFixed(3) + "KB",
-                qsTr("上行带宽:"), (transmitter.txBanWidth/1024).toFixed(1) + "Mbps",
-                qsTr("下行带宽:"), (transmitter.rxBanWidth/1024).toFixed(1) + "Mbps",
-            ]
-            QGCLabel {
-                text: modelData
-                color: "white"
-            }
-        }
-    }
-
     Rectangle {
         id: controlRectangle
         color: "#00000000"
@@ -333,57 +309,6 @@ Rectangle {
                     source: neer
                     color: neerMA.pressed ? "green" : "white"
                 }
-            }
-        }
-    }
-
-    QGCLabel {
-        id: zoomMultipleLabel
-        text: (zoomMultipleLabel.zoomMultiple/10).toFixed(1)
-        anchors.centerIn: parent
-        color: "white"
-        visible: false
-
-        Timer {
-            id: visibleTimer
-            interval: 5000
-            running: false
-            repeat: false
-            onTriggered: zoomMultipleLabel.visible = false
-        }
-
-        property real zoomMultiple: siYiCamera.zoomMultiple
-        onZoomMultipleChanged: {
-            //zoomMultipleLabel.visible = true
-            //visibleTimer.restart()
-        }
-    }
-
-    QGCLabel {
-        id: resultLabel
-        anchors.centerIn: parent
-        color: "white"
-        visible: false
-
-        Timer {
-            id: resultTimer
-            interval: 5000
-            running: false
-            repeat: false
-            onTriggered: resultLabel.visible = false
-        }
-
-        Connections {
-            target: siYiCamera
-            onOperationResultChanged: {
-                if (result === 0) {
-                    resultLabel.text = qsTr("拍照成功")
-                } else if (result === 1) {
-                    resultLabel.text = qsTr("拍照失败")
-                }
-
-                //resultTimer.restart()
-                //resultLabel.visible = true
             }
         }
     }
