@@ -368,6 +368,14 @@
         <file>resources/SiYi/data.svg</file>
         <file>resources/SiYi/far.svg</file>
         <file>resources/SiYi/neer.svg</file>
+        <file>resources/SiYi/Photo.png</file>
+        <file>resources/SiYi/far.png</file>
+        <file>resources/SiYi/neer.png</file>
+        <file>resources/SiYi/Reset.png</file>
+        <file>resources/SiYi/Video.png</file>
+        <file>resources/SiYi/ZoomIn.png</file>
+        <file>resources/SiYi/ZoomOut.png</file>
+        <file>resources/SiYi/empty.png</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>

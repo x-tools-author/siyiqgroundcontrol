@@ -130,19 +130,18 @@ Rectangle {
         property int currentY: 0
     }
 
-    Rectangle {
+    Item {
         id: controlRectangle
-        color: "#00000000"
         anchors.left: parent.left
         anchors.leftMargin: 150
         anchors.topMargin: 10
         width: controlColumn.width
         height: controlColumn.height
         anchors.top: parent.top
-        visible: camera.isConnected
+        //visible: camera.isConnected
         Text {
             id: btText
-            text: "Hiden"
+            text: "1234"
             anchors.verticalCenter: parent.verticalCenter
             visible: false
         }
@@ -152,14 +151,13 @@ Rectangle {
             spacing: 20
 
             Image { // 放大
-                id: zoomIn
+                id: zoomInImage
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: "qrc:/resources/SiYi/ZoomIn.svg"
+                sourceSize.height: btText.width
+                source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomIn.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
-                visible: camera.enableZoom
+                cache: false
                 MouseArea {
                     id: zoomInMA
                     anchors.fill: parent
@@ -167,8 +165,8 @@ Rectangle {
                     onReleased: camera.zoom(0)
                 }
                 ColorOverlay {
-                    anchors.fill: zoomIn
-                    source: zoomIn
+                    anchors.fill: zoomInImage
+                    source: zoomInImage
                     color: zoomInMA.pressed ? "green" : "white"
                 }
             }
@@ -176,12 +174,12 @@ Rectangle {
             Image { // 缩小
                 id: zoomOut
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: "qrc:/resources/SiYi/ZoomOut.svg"
+                sourceSize.height: btText.width
+                source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomOut.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
-                visible: camera.enableZoom
+                //visible: camera.enableZoom
+                cache: false
                 MouseArea {
                     id: zoomOutMA
                     anchors.fill: parent
@@ -198,11 +196,11 @@ Rectangle {
             Image { // 回中
                 id: reset
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: "qrc:/resources/SiYi/Reset.svg"
+                sourceSize.height: btText.width
+                source: "qrc:/resources/SiYi/Reset.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
+                cache: false
                 MouseArea {
                     id: resetMA
                     anchors.fill: parent
@@ -218,11 +216,11 @@ Rectangle {
             Image { // 拍照
                 id: photo
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: "qrc:/resources/SiYi/Photo.svg"
+                sourceSize.height: btText.width
+                source: "qrc:/resources/SiYi/Photo.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
+                cache: false
                 MouseArea {
                     id: photoMA
                     anchors.fill: parent
@@ -238,11 +236,11 @@ Rectangle {
             Image { // 录像
                 id: video
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.svg"
+                sourceSize.height: btText.width
+                source: camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
+                cache: false
                 MouseArea {
                     id: videoMA
                     anchors.fill: parent
@@ -270,12 +268,12 @@ Rectangle {
             Image { // 远景
                 id: far
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: "qrc:/resources/SiYi/far.svg"
+                sourceSize.height: btText.width
+                source: camera.enableFocus ? "qrc:/resources/SiYi/far.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
-                visible: camera.enableFocus
+                //visible: camera.enableFocus
+                cache: false
                 MouseArea {
                     id: farMA
                     anchors.fill: parent
@@ -292,12 +290,12 @@ Rectangle {
             Image { // 近景
                 id: neer
                 sourceSize.width: btText.width
-                sourceSize.height: width
-                source: "qrc:/resources/SiYi/neer.svg"
+                sourceSize.height: btText.width
+                source: camera.enableFocus ? "qrc:/resources/SiYi/neer.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                mipmap: true
-                visible: camera.enableFocus
+                //visible: camera.enableFocus
+                cache: false
                 MouseArea {
                     id: neerMA
                     anchors.fill: parent
