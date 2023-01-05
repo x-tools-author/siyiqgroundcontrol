@@ -178,7 +178,7 @@ Rectangle {
                 source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomOut.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                //visible: camera.enableZoom
+                visible: camera.enableZoom
                 cache: false
                 MouseArea {
                     id: zoomOutMA
@@ -272,7 +272,7 @@ Rectangle {
                 source: camera.enableFocus ? "qrc:/resources/SiYi/far.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                //visible: camera.enableFocus
+                visible: camera.enableFocus
                 cache: false
                 MouseArea {
                     id: farMA
@@ -294,7 +294,7 @@ Rectangle {
                 source: camera.enableFocus ? "qrc:/resources/SiYi/neer.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                //visible: camera.enableFocus
+                visible: camera.enableFocus
                 cache: false
                 MouseArea {
                     id: neerMA

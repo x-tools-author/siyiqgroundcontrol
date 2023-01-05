@@ -13,6 +13,8 @@ class SiYiCamera : public SiYiTcpClient
     Q_PROPERTY(int zoomMultiple READ zoomMultiple NOTIFY zoomMultipleChanged)
     Q_PROPERTY(bool enableZoom READ enableZoom NOTIFY enableZoomChanged)
     Q_PROPERTY(bool enableFocus READ enableFocus NOTIFY enableFocusChanged)
+    Q_PROPERTY(bool enablePhoto READ enablePhoto NOTIFY enablePhotoChanged)
+    Q_PROPERTY(bool enableVideo READ enableVideo NOTIFY enableVideoChanged)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -90,6 +92,14 @@ private:
     bool enableFocus_{false};
     bool enableFocus(){return enableFocus_;}
     Q_SIGNAL void enableFocusChanged();
+
+    bool enablePhoto_{false};
+    bool enablePhoto(){return enablePhoto_;}
+    Q_SIGNAL void enablePhotoChanged();
+
+    bool enableVideo_{false};
+    bool enableVideo(){return enableVideo_;}
+    Q_SIGNAL void enableVideoChanged();
 };
 
 #endif // SIYICAMERA_H
