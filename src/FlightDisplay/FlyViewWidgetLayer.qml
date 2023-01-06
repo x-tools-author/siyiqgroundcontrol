@@ -218,6 +218,8 @@ Item {
                         resultLabel.text = qsTr("拍照成功")
                     } else if (result === 1) {
                         resultLabel.text = qsTr("拍照失败")
+                    } else if (result === 4) {
+                        resultLabel.text = qsTr("录像失败")
                     }
 
                     resultTimer.restart()

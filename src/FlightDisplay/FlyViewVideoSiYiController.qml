@@ -157,6 +157,7 @@ Rectangle {
                 source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomIn.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
+                visible: camera.enableZoom
                 cache: false
                 MouseArea {
                     id: zoomInMA
@@ -220,6 +221,7 @@ Rectangle {
                 source: "qrc:/resources/SiYi/Photo.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
+                visible: camera.enablePhoto
                 cache: false
                 MouseArea {
                     id: photoMA
@@ -240,6 +242,7 @@ Rectangle {
                 source: camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
+                visible: camera.enableVideo
                 cache: false
                 MouseArea {
                     id: videoMA
