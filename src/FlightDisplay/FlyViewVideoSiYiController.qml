@@ -157,7 +157,6 @@ Rectangle {
                 source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomIn.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                visible: camera.enableZoom
                 cache: false
                 MouseArea {
                     id: zoomInMA
@@ -179,7 +178,6 @@ Rectangle {
                 source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomOut.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                visible: camera.enableZoom
                 cache: false
                 MouseArea {
                     id: zoomOutMA
@@ -218,10 +216,9 @@ Rectangle {
                 id: photo
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: "qrc:/resources/SiYi/Photo.png"
+                source: camera.enablePhoto ? "qrc:/resources/SiYi/Photo.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                visible: camera.enablePhoto
                 cache: false
                 MouseArea {
                     id: photoMA
@@ -239,10 +236,12 @@ Rectangle {
                 id: video
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.png"
+                source: camera.enableVideo
+                        ? camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.png"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                visible: camera.enableVideo
+
                 cache: false
                 MouseArea {
                     id: videoMA
@@ -275,7 +274,6 @@ Rectangle {
                 source: camera.enableFocus ? "qrc:/resources/SiYi/far.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                visible: camera.enableFocus
                 cache: false
                 MouseArea {
                     id: farMA
@@ -297,7 +295,6 @@ Rectangle {
                 source: camera.enableFocus ? "qrc:/resources/SiYi/neer.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-                visible: camera.enableFocus
                 cache: false
                 MouseArea {
                     id: neerMA

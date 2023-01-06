@@ -386,6 +386,9 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
 
         isRecording_ = ctx->isStarted;
         emit isRecordingChanged();
+        if (ctx->result == 0) {
+            emit operationResultChanged(4);
+        }
     }
 }
 
