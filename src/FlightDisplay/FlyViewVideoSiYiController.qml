@@ -161,13 +161,31 @@ Rectangle {
                 MouseArea {
                     id: zoomInMA
                     anchors.fill: parent
-                    onPressed: camera.zoom(1)
-                    onReleased: camera.zoom(0)
+                    onPressed: {
+                        //camera.zoom(1)
+                        zoomInTimer.start()
+                        console.info("zoomIn start--------------------------------")
+                    }
+                    onReleased: {
+                        zoomInTimer.stop()
+                        camera.zoom(0)
+                        console.info("zoomIn stop--------------------------------")
+                    }
                 }
                 ColorOverlay {
                     anchors.fill: zoomInImage
                     source: zoomInImage
                     color: zoomInMA.pressed ? "green" : "white"
+                }
+                Timer {
+                    id: zoomInTimer
+                    interval: 100
+                    repeat: false
+                    running: false
+                    onTriggered: {
+                        camera.zoom(1)
+                        zoomInTimer.start()
+                    }
                 }
             }
 
@@ -182,13 +200,29 @@ Rectangle {
                 MouseArea {
                     id: zoomOutMA
                     anchors.fill: parent
-                    onPressed: camera.zoom(-1)
-                    onReleased: camera.zoom(0)
+                    onPressed: {
+                        //camera.zoom(-1)
+                        zoomOutTimer.start()
+                    }
+                    onReleased: {
+                        zoomOutTimer.stop()
+                        camera.zoom(0)
+                    }
                 }
                 ColorOverlay {
                     anchors.fill: zoomOut
                     source: zoomOut
                     color: zoomOutMA.pressed ? "green" : "white"
+                }
+                Timer {
+                    id: zoomOutTimer
+                    interval: 100
+                    repeat: false
+                    running: false
+                    onTriggered: {
+                        camera.zoom(-1)
+                        zoomOutTimer.start()
+                    }
                 }
             }
 
@@ -196,7 +230,7 @@ Rectangle {
                 id: reset
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: "qrc:/resources/SiYi/Reset.png"
+                source: camera.enableControl ? "qrc:/resources/SiYi/Reset.png" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -278,13 +312,29 @@ Rectangle {
                 MouseArea {
                     id: farMA
                     anchors.fill: parent
-                    onPressed: camera.focus(1)
-                    onReleased: camera.focus(0)
+                    onPressed: {
+                        //camera.focus(1)
+                        farTimer.start()
+                    }
+                    onReleased: {
+                        farTimer.stop()
+                        camera.focus(0)
+                    }
                 }
                 ColorOverlay {
                     anchors.fill: far
                     source: far
                     color: farMA.pressed ? "green" : "white"
+                }
+                Timer {
+                    id: farTimer
+                    interval: 100
+                    repeat: false
+                    running: false
+                    onTriggered: {
+                        camera.focus(1)
+                        farTimer.start()
+                    }
                 }
             }
 
@@ -299,13 +349,29 @@ Rectangle {
                 MouseArea {
                     id: neerMA
                     anchors.fill: parent
-                    onPressed: camera.focus(-1)
-                    onReleased: camera.focus(0)
+                    onPressed: {
+                        //camera.focus(-1)
+                        neerTimer.start()
+                    }
+                    onReleased: {
+                        neerTimer.stop()
+                        camera.focus(0)
+                    }
                 }
                 ColorOverlay {
                     anchors.fill: neer
                     source: neer
                     color: neerMA.pressed ? "green" : "white"
+                }
+                Timer {
+                    id: neerTimer
+                    interval: 100
+                    repeat: false
+                    running: false
+                    onTriggered: {
+                        camera.focus(-1)
+                        neerTimer.start()
+                    }
                 }
             }
         }

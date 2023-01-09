@@ -417,32 +417,38 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enableZoom_ = true;
             enablePhoto_ = true;
             enableVideo_ = true;
+            enableControl_ = true;
         } else if (type == 0x6c) { // R1
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = true;
+            enableControl_ = false;
         } else if (type == 0x72) { // A8
             enableFocus_ = false;
             enableZoom_ = true;
             enablePhoto_ = true;
             enableVideo_ = true;
+            enableControl_ = true;
         } else if (type == 0x74) { // A2
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = false;
+            enableControl_ = true;
         } else {
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = false;
+            enableControl_ = false;
         }
 
         emit enableFocusChanged();
         emit enableZoomChanged();
         emit enablePhotoChanged();
         emit enableVideoChanged();
+        emit enableControlChanged();
     }
 }
 

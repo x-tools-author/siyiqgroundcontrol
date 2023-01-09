@@ -15,6 +15,7 @@ class SiYiCamera : public SiYiTcpClient
     Q_PROPERTY(bool enableFocus READ enableFocus NOTIFY enableFocusChanged)
     Q_PROPERTY(bool enablePhoto READ enablePhoto NOTIFY enablePhotoChanged)
     Q_PROPERTY(bool enableVideo READ enableVideo NOTIFY enableVideoChanged)
+    Q_PROPERTY(bool enableControl READ enableControl NOTIFY enableControlChanged)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -100,6 +101,10 @@ private:
     bool enableVideo_{false};
     bool enableVideo(){return enableVideo_;}
     Q_SIGNAL void enableVideoChanged();
+
+    bool enableControl_{false};
+    bool enableControl(){return enableControl_;}
+    Q_SIGNAL void enableControlChanged();
 };
 
 #endif // SIYICAMERA_H
