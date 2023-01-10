@@ -89,18 +89,28 @@ Rectangle {
                     /*console.info(controlMouseArea.yaw, controlMouseArea.pitch,
                                  controlMouseArea.originX, controlMouseArea.originY,
                                  controlMouseArea.currentX, controlMouseArea.currentY)*/
+                    var minDelta = 15
+                    if (Math.abs(controlMouseArea.pitch) > minDelta) {
+                        controlMouseArea.prePitch = controlMouseArea.pitch
+                    }
+
+                    if (Math.abs(controlMouseArea.yaw) > minDelta) {
+                        controlMouseArea.preYaw = controlMouseArea.yaw
+                    }
+
                     if (SiYi.isAndroid) {
-                        camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
+                        camera.turn(Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
+                                    Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch)
                     } else {
                         var delta = 5 // 变化小于该值时，不转动云台
                         var yaw = controlMouseArea.yaw
                         var pitch = controlMouseArea.pitch
 
                         if (Math.abs(controlMouseArea.yaw) < delta) {
-                            yaw = 0
+                            yaw = controlMouseArea.preYaw
                         }
                         if (Math.abs(controlMouseArea.pitch) < delta) {
-                            pitch = 0
+                            pitch = controlMouseArea.prePitch
                         }
 
                         camera.turn(yaw, -pitch)
@@ -124,6 +134,8 @@ Rectangle {
         property bool enableControl: false
         property int pitch: 0
         property int yaw: 0
+        property int prePitch: 0
+        property int preYaw: 0
         property int originX: 0
         property int originY: 0
         property int currentX: 0
