@@ -34,6 +34,7 @@ Rectangle {
     property SiYiCamera camera: siyi.camera
     property SiYiTransmitter transmitter: siyi.transmitter
     property bool isRecording: camera.isRecording
+    property int minDelta: 15
 
     MouseArea {
         id: controlMouseArea
@@ -59,6 +60,17 @@ Rectangle {
             controlMouseArea.currentY = mouse.y
             controlMouseArea.yaw = controlMouseArea.currentX - controlMouseArea.originX
             controlMouseArea.pitch = controlMouseArea.currentY - controlMouseArea.originY
+            if (Math.abs(controlMouseArea.yaw) > Math.abs(controlMouseArea.pitch)) {
+                if (Math.abs(controlMouseArea.yaw) > minDelta) {
+                    controlMouseArea.pitch = 0
+                    controlMouseArea.isYDirection = false
+                }
+            } else {
+                if (Math.abs(controlMouseArea.pitch) > minDelta) {
+                    controlMouseArea.yaw = 0
+                    controlMouseArea.isYDirection = true
+                }
+            }
         }
         onDoubleClicked: camera.resetPostion()
         onClicked: camera.autoFocus()
@@ -89,7 +101,6 @@ Rectangle {
                     /*console.info(controlMouseArea.yaw, controlMouseArea.pitch,
                                  controlMouseArea.originX, controlMouseArea.originY,
                                  controlMouseArea.currentX, controlMouseArea.currentY)*/
-                    var minDelta = 15
                     if (Math.abs(controlMouseArea.pitch) > minDelta) {
                         controlMouseArea.prePitch = controlMouseArea.pitch
                     }
@@ -99,8 +110,9 @@ Rectangle {
                     }
 
                     if (SiYi.isAndroid) {
-                        camera.turn(Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
-                                    Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch)
+                        camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
+                                    controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
+                        //camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
                     } else {
                         var delta = 5 // 变化小于该值时，不转动云台
                         var yaw = controlMouseArea.yaw
@@ -140,6 +152,7 @@ Rectangle {
         property int originY: 0
         property int currentX: 0
         property int currentY: 0
+        property bool isYDirection: false
     }
 
     Item {
