@@ -16,6 +16,7 @@ class SiYiCamera : public SiYiTcpClient
     Q_PROPERTY(bool enablePhoto READ enablePhoto NOTIFY enablePhotoChanged)
     Q_PROPERTY(bool enableVideo READ enableVideo NOTIFY enableVideoChanged)
     Q_PROPERTY(bool enableControl READ enableControl NOTIFY enableControlChanged)
+    Q_PROPERTY(bool is4k READ is4k NOTIFY is4kChanged)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -40,6 +41,15 @@ public:
     };
     Q_ENUM(CameraVideoCommand);
 
+    enum CameraType {
+        CameraTypeR1 = 0x6c,
+        CameraTypeZR10 = 0x6e,
+        CameraTypeA8 = 0x72,
+        CameraTypeA2 = 0x74,
+        CameraTypeZR30 = 0x77
+    };
+    Q_ENUM(CameraType);
+
 signals:
     void operationResultChanged(int result);
 
@@ -56,11 +66,20 @@ public:
     Q_INVOKABLE bool focus(int option);
     Q_INVOKABLE bool sendCommand(int cmd);
     Q_INVOKABLE bool sendRecodingCommand(int cmd);
-    bool GetRecordingState();
+    bool getRecordingState();
+    void getResolution();
     Q_INVOKABLE void analyzeIp(QString videoUrl);
+    Q_INVOKABLE void emitOperationResultChanged(int result);
+
 protected:
     QByteArray heartbeatMessage() override;
     void analyzeMessage() override;
+
+private:
+    qint8 recording_state_{0};
+    qint8 camera_type_{-1};
+    qint16 resolutionWidth_{0};
+
 private:
     QByteArray packMessage(quint8 control, quint8 cmd,
                            const QByteArray &payload);
@@ -68,11 +87,12 @@ private:
     quint32 packetCheckSum32(ProtocolMessageContext *ctx);
     bool unpackMessage(ProtocolMessageContext *ctx,
                        const QByteArray &msg);
-    void GetCamerVersion();
+    void getCamerVersion();
 
 private:
     void messageHandle0x80(const QByteArray &msg);
     void messageHandle0x81(const QByteArray &msg);
+    void messageHandle0x83(const QByteArray &msg);
     void messageHandle0x94(const QByteArray &msg);
     void messageHandle0x98(const QByteArray &msg);
     void messageHandle0x9e(const QByteArray &msg);
@@ -80,7 +100,7 @@ private:
 private:
     bool isRecording_{false};
     bool isRecording(){return isRecording_;}
-    Q_SIGNAL void isRecordingChanged();
+    //Q_SIGNAL void isRecordingChanged();
 
     int zoomMultiple_{1};
     int zoomMultiple(){return zoomMultiple_;}
@@ -100,11 +120,19 @@ private:
 
     bool enableVideo_{false};
     bool enableVideo(){return enableVideo_;}
-    Q_SIGNAL void enableVideoChanged();
+    //Q_SIGNAL void enableVideoChanged();
 
     bool enableControl_{false};
     bool enableControl(){return enableControl_;}
     Q_SIGNAL void enableControlChanged();
+
+    bool is4k_{false};
+    bool is4k(){return is4k_;}
+    Q_SIGNAL void is4kChanged();
+
+signals:
+    void isRecordingChanged();
+    void enableVideoChanged();
 };
 
 #endif // SIYICAMERA_H

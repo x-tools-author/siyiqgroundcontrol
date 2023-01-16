@@ -7,9 +7,11 @@ SiYiCamera::SiYiCamera(QObject *parent)
     : SiYiTcpClient("192.168.144.25", 37256)
 {
     connect(this, &SiYiCamera::connected,
-            this, &SiYiCamera::GetRecordingState);
+            this, &SiYiCamera::getRecordingState);
     connect(this, &SiYiCamera::connected,
-            this, &SiYiCamera::GetCamerVersion);
+            this, &SiYiCamera::getCamerVersion);
+    connect(this, &SiYiCamera::connected,
+            this, &SiYiCamera::getResolution);
 }
 
 SiYiCamera::~SiYiCamera()
@@ -103,7 +105,7 @@ bool SiYiCamera::sendRecodingCommand(int cmd)
     return true;
 }
 
-bool SiYiCamera::GetRecordingState()
+bool SiYiCamera::getRecordingState()
 {
     uint8_t cmdId = 0x80;
     QByteArray body;
@@ -111,6 +113,15 @@ bool SiYiCamera::GetRecordingState()
     QByteArray msg = packMessage(0x01, cmdId, body);
     sendMessage(msg);
     return true;
+}
+
+void SiYiCamera::getResolution()
+{
+    uint8_t cmdId = 0x83;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
 }
 
 void SiYiCamera::analyzeIp(QString videoUrl)
@@ -127,6 +138,11 @@ void SiYiCamera::analyzeIp(QString videoUrl)
             }
         }
     }
+}
+
+void SiYiCamera::emitOperationResultChanged(int result)
+{
+    emit operationResultChanged(result);
 }
 
 QByteArray SiYiCamera::heartbeatMessage()
@@ -195,6 +211,8 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x80(packet);
                 } else if (msg.header.cmdId == 0x81) {
                     messageHandle0x81(packet);
+                }  else if (msg.header.cmdId == 0x83) {
+                    messageHandle0x83(packet);
                 } else if (msg.header.cmdId == 0x94) {
                     messageHandle0x94(packet);
                 } else if (msg.header.cmdId == 0x98) {
@@ -345,7 +363,7 @@ bool SiYiCamera::unpackMessage(ProtocolMessageContext *ctx,
     return false;
 }
 
-void SiYiCamera::GetCamerVersion()
+void SiYiCamera::getCamerVersion()
 {
     uint8_t cmdId = 0x94;
     QByteArray body;
@@ -368,6 +386,15 @@ void SiYiCamera::messageHandle0x80(const QByteArray &msg)
 
         isRecording_ = (ctx->state == 1);
         emit isRecordingChanged();
+
+        if (camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30) {
+            if (recording_state_ != ctx->state) {
+                recording_state_ = ctx->state;
+                if (recording_state_ != 0) {
+                     emit operationResultChanged(4);
+                }
+            }
+        }
     }
 }
 
@@ -386,8 +413,27 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
 
         isRecording_ = ctx->isStarted;
         emit isRecordingChanged();
-        if (ctx->result == 0) {
-            emit operationResultChanged(4);
+
+        if (!(camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30)) {
+            if (ctx->result == 0) {
+                emit operationResultChanged(4);
+            }
+        }
+    }
+}
+
+void SiYiCamera::messageHandle0x83(const QByteArray &msg)
+{
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + 10 + 4)) {
+        const char *ptr = msg.constData();
+        char *cookedPtr = const_cast<char*>(ptr);
+        int offset = 3;
+        qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+        resolutionWidth_ = *ptr16;
+        if (resolutionWidth_ == 4096) {
+            is4k_ = true;
+            emit is4kChanged();
         }
     }
 }
@@ -412,25 +458,26 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
         0x77：ZR30云台相机
         */
         int type = ctx->version >> 24;
-        if (type == 0x6e || type == 0x77) { // ZR10,ZR30
+        camera_type_ = type;
+        if (type == CameraTypeZR10 || type == CameraTypeZR30) { // ZR10,ZR30
             enableFocus_ = true;
             enableZoom_ = true;
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
-        } else if (type == 0x6c) { // R1
+        } else if (type == CameraTypeR1) { // R1
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = true;
             enableControl_ = false;
-        } else if (type == 0x72) { // A8
+        } else if (type == CameraTypeA8) { // A8
             enableFocus_ = false;
             enableZoom_ = true;
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
-        } else if (type == 0x74) { // A2
+        } else if (type == CameraTypeA2) { // A2
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;

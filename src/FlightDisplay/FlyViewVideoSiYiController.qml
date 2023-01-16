@@ -109,24 +109,31 @@ Rectangle {
                         controlMouseArea.preYaw = controlMouseArea.yaw
                     }
 
-                    if (SiYi.isAndroid) {
-                        camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
-                                    controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
-                        //camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
-                    } else {
-                        var delta = 5 // 变化小于该值时，不转动云台
-                        var yaw = controlMouseArea.yaw
-                        var pitch = controlMouseArea.pitch
-
-                        if (Math.abs(controlMouseArea.yaw) < delta) {
-                            yaw = controlMouseArea.preYaw
-                        }
-                        if (Math.abs(controlMouseArea.pitch) < delta) {
-                            pitch = controlMouseArea.prePitch
-                        }
-
-                        camera.turn(yaw, -pitch)
+                    if (Math.abs(controlMouseArea.pitch) < minDelta
+                            && Math.abs(controlMouseArea.yaw) < minDelta) {
+                        return
                     }
+
+                    camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
+                                controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
+//                    if (SiYi.isAndroid) {
+//                        camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
+//                                    controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
+//                        //camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
+//                    } else {
+//                        var delta = 5 // 变化小于该值时，不转动云台
+//                        var yaw = controlMouseArea.yaw
+//                        var pitch = controlMouseArea.pitch
+
+//                        if (Math.abs(controlMouseArea.yaw) < delta) {
+//                            yaw = controlMouseArea.preYaw
+//                        }
+//                        if (Math.abs(controlMouseArea.pitch) < delta) {
+//                            pitch = controlMouseArea.prePitch
+//                        }
+
+//                        camera.turn(yaw, -pitch)
+//                    }
                 }
 
                 controlMouseArea.originX = controlMouseArea.currentX
@@ -187,9 +194,13 @@ Rectangle {
                     id: zoomInMA
                     anchors.fill: parent
                     onPressed: {
-                        //camera.zoom(1)
-                        zoomInTimer.start()
-                        console.info("zoomIn start--------------------------------")
+                        if (camera.is4k) {
+                            camera.emitOperationResultChanged(-1)
+                        } else {
+                            //camera.zoom(1)
+                            zoomInTimer.start()
+                            console.info("zoomIn start--------------------------------")
+                        }
                     }
                     onReleased: {
                         zoomInTimer.stop()
@@ -226,8 +237,12 @@ Rectangle {
                     id: zoomOutMA
                     anchors.fill: parent
                     onPressed: {
-                        //camera.zoom(-1)
-                        zoomOutTimer.start()
+                        if (camera.is4k) {
+                            camera.emitOperationResultChanged(-1)
+                        } else {
+                            //camera.zoom(-1)
+                            zoomOutTimer.start()
+                        }
                     }
                     onReleased: {
                         zoomOutTimer.stop()
@@ -293,15 +308,24 @@ Rectangle {
 
             Image { // 录像
                 id: video
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
-                source: camera.enableVideo
-                        ? camera.isRecording ? "qrc:/resources/SiYi/Stop.svg" : "qrc:/resources/SiYi/Video.png"
-                        : "qrc:/resources/SiYi/empty.png"
+                //sourceSize.width: btText.width
+                //sourceSize.height: btText.width
+                width: btText.width
+                height: btText.width
+                cache: false
+//                source: {
+//                    if (camera.enableVideo) {
+//                        if (camera.isRecording) {
+//                            return "qrc:/resources/SiYi/Stop.svg"
+//                        } else {
+//                            return "qrc:/resources/SiYi/Video.png"
+//                        }
+//                    } else {
+//                        return "qrc:/resources/SiYi/empty.png"
+//                    }
+//                }
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
-
-                cache: false
                 MouseArea {
                     id: videoMA
                     anchors.fill: parent
@@ -313,14 +337,36 @@ Rectangle {
                         }
                     }
                 }
-                ColorOverlay {
-                    anchors.fill: video
-                    source: video
-                    color: {
+//                ColorOverlay {
+//                    anchors.fill: video
+//                    source: video
+//                    color: {
+//                        if (camera.isRecording) {
+//                            return "red"
+//                        } else {
+//                            return videoMA.pressed ? "green" : "white"
+//                        }
+//                    }
+//                }
+                Connections {
+                    target: camera
+                    function onEnableVideoChanged() {
+                        video.source = "qrc:/resources/SiYi/empty.png"
+                        if (camera.enableVideo) {
+                            if (camera.isRecording) {
+                                video.source = "qrc:/resources/SiYi/Stop.svg"
+                            } else {
+                                video.source = "qrc:/resources/SiYi/Video.png"
+                            }
+                        }
+                    }
+
+                    function onIsRecordingChanged() {
+                        video.source = "qrc:/resources/SiYi/empty.png"
                         if (camera.isRecording) {
-                            return "red"
+                            video.source = "qrc:/resources/SiYi/Stop.svg"
                         } else {
-                            return videoMA.pressed ? "green" : "white"
+                            video.source = "qrc:/resources/SiYi/Video.png"
                         }
                     }
                 }

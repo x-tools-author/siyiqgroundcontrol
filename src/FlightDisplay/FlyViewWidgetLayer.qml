@@ -220,6 +220,8 @@ Item {
                         resultLabel.text = qsTr("拍照失败")
                     } else if (result === 4) {
                         resultLabel.text = qsTr("录像失败")
+                    } else if (result === -1) {
+                        resultLabel.text = qsTr("4K视频不支持变倍")
                     }
 
                     resultTimer.restart()
