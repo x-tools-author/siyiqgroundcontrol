@@ -376,6 +376,13 @@
         <file>resources/SiYi/ZoomIn.png</file>
         <file>resources/SiYi/ZoomOut.png</file>
         <file>resources/SiYi/empty.png</file>
+        <file>resources/SiYi/farGreen.svg</file>
+        <file>resources/SiYi/neerGreen.svg</file>
+        <file>resources/SiYi/PhotoGreen.svg</file>
+        <file>resources/SiYi/ResetGreen.svg</file>
+        <file>resources/SiYi/VideoGreen.svg</file>
+        <file>resources/SiYi/ZoomInGreen.svg</file>
+        <file>resources/SiYi/ZoomOutGreen.svg</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>

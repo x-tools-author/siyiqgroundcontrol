@@ -182,11 +182,32 @@ Rectangle {
             id: controlColumn
             spacing: 20
 
+//            Repeater {
+//                model: [
+//                    ["qrc:/resources/SiYi/ZoomIn.png", "qrc:/resources/SiYi/ZoomInGreen.svg"],
+//                    ["qrc:/resources/SiYi/ZoomOut.svg", "qrc:/resources/SiYi/ZoomOutGreen.svg"],
+//                    ["qrc:/resources/SiYi/Reset.svg", "qrc:/resources/SiYi/ResetGreen.svg"],
+//                    ["qrc:/resources/SiYi/Photo.svg", "qrc:/resources/SiYi/PhotoGreen.svg"],
+//                    ["qrc:/resources/SiYi/Video.svg", "qrc:/resources/SiYi/VideoGreen.svg"],
+//                    ["qrc:/resources/SiYi/far.svg", "qrc:/resources/SiYi/farGreen.svg"],
+//                    ["qrc:/resources/SiYi/neer.svg", "qrc:/resources/SiYi/neerGreen.svg"]
+//                ]
+//                Image {
+//                    sourceSize.width: btText.width
+//                    sourceSize.height: btText.width
+//                    MouseArea {
+//                        id: imageMouseArea
+//                    }
+//                }
+//            }
+
             Image { // 放大
                 id: zoomInImage
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomIn.png" : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableZoom
+                        ? zoomInMA.pressed ? "qrc:/resources/SiYi/ZoomInGreen.svg" : "qrc:/resources/SiYi/ZoomIn.svg"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -208,11 +229,11 @@ Rectangle {
                         console.info("zoomIn stop--------------------------------")
                     }
                 }
-                ColorOverlay {
-                    anchors.fill: zoomInImage
-                    source: zoomInImage
-                    color: zoomInMA.pressed ? "green" : "white"
-                }
+//                ColorOverlay {
+//                    anchors.fill: zoomInImage
+//                    source: zoomInImage
+//                    color: zoomInMA.pressed ? "green" : "white"
+//                }
                 Timer {
                     id: zoomInTimer
                     interval: 100
@@ -229,7 +250,9 @@ Rectangle {
                 id: zoomOut
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableZoom ? "qrc:/resources/SiYi/ZoomOut.png" : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableZoom
+                        ? zoomOutMA.pressed ? "qrc:/resources/SiYi/ZoomOutGreen.svg" : "qrc:/resources/SiYi/ZoomOut.svg"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -249,11 +272,11 @@ Rectangle {
                         camera.zoom(0)
                     }
                 }
-                ColorOverlay {
-                    anchors.fill: zoomOut
-                    source: zoomOut
-                    color: zoomOutMA.pressed ? "green" : "white"
-                }
+//                ColorOverlay {
+//                    anchors.fill: zoomOut
+//                    source: zoomOut
+//                    color: zoomOutMA.pressed ? "green" : "white"
+//                }
                 Timer {
                     id: zoomOutTimer
                     interval: 100
@@ -270,7 +293,9 @@ Rectangle {
                 id: reset
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableControl ? "qrc:/resources/SiYi/Reset.png" : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableControl
+                        ? resetMA.pressed ? "qrc:/resources/SiYi/ResetGreen.svg" : "qrc:/resources/SiYi/Reset.svg"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -279,18 +304,20 @@ Rectangle {
                     anchors.fill: parent
                     onPressed: camera.resetPostion()
                 }
-                ColorOverlay {
-                    anchors.fill: reset
-                    source: reset
-                    color: resetMA.pressed ? "green" : "white"
-                }
+//                ColorOverlay {
+//                    anchors.fill: reset
+//                    source: reset
+//                    color: resetMA.pressed ? "green" : "white"
+//                }
             }
 
             Image { // 拍照
                 id: photo
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enablePhoto ? "qrc:/resources/SiYi/Photo.png" : "qrc:/resources/SiYi/empty.png"
+                source: camera.enablePhoto
+                        ? photoMA.pressed ? "qrc:/resources/SiYi/PhotoGreen.svg" : "qrc:/resources/SiYi/Photo.svg"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -299,11 +326,11 @@ Rectangle {
                     anchors.fill: parent
                     onPressed: camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
                 }
-                ColorOverlay {
-                    anchors.fill: photo
-                    source: photo
-                    color: photoMA.pressed ? "green" : "white"
-                }
+//                ColorOverlay {
+//                    anchors.fill: photo
+//                    source: photo
+//                    color: photoMA.pressed ? "green" : "white"
+//                }
             }
 
             Image { // 录像
@@ -376,7 +403,9 @@ Rectangle {
                 id: far
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableFocus ? "qrc:/resources/SiYi/far.png" : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableFocus
+                        ? farMA.pressed ? "qrc:/resources/SiYi/farGreen.svg" : "qrc:/resources/SiYi/far.svg"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -392,11 +421,11 @@ Rectangle {
                         camera.focus(0)
                     }
                 }
-                ColorOverlay {
-                    anchors.fill: far
-                    source: far
-                    color: farMA.pressed ? "green" : "white"
-                }
+//                ColorOverlay {
+//                    anchors.fill: far
+//                    source: far
+//                    color: farMA.pressed ? "green" : "white"
+//                }
                 Timer {
                     id: farTimer
                     interval: 100
@@ -413,7 +442,9 @@ Rectangle {
                 id: neer
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableFocus ? "qrc:/resources/SiYi/neer.png" : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableFocus
+                        ? neerMA.pressed ? "qrc:/resources/SiYi/neerGreen.svg" : "qrc:/resources/SiYi/neer.svg"
+                        : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -429,11 +460,11 @@ Rectangle {
                         camera.focus(0)
                     }
                 }
-                ColorOverlay {
-                    anchors.fill: neer
-                    source: neer
-                    color: neerMA.pressed ? "green" : "white"
-                }
+//                ColorOverlay {
+//                    anchors.fill: neer
+//                    source: neer
+//                    color: neerMA.pressed ? "green" : "white"
+//                }
                 Timer {
                     id: neerTimer
                     interval: 100
