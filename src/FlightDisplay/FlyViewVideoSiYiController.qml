@@ -34,7 +34,7 @@ Rectangle {
     property SiYiCamera camera: siyi.camera
     property SiYiTransmitter transmitter: siyi.transmitter
     property bool isRecording: camera.isRecording
-    property int minDelta: 15
+    property int minDelta: 5
 
     MouseArea {
         id: controlMouseArea
@@ -60,6 +60,8 @@ Rectangle {
             controlMouseArea.currentY = mouse.y
             controlMouseArea.yaw = controlMouseArea.currentX - controlMouseArea.originX
             controlMouseArea.pitch = controlMouseArea.currentY - controlMouseArea.originY
+            controlMouseArea.yaw = controlMouseArea.yaw/5
+            controlMouseArea.pitch = controlMouseArea.pitch/5
             if (Math.abs(controlMouseArea.yaw) > Math.abs(controlMouseArea.pitch)) {
                 if (Math.abs(controlMouseArea.yaw) > minDelta) {
                     controlMouseArea.pitch = 0
@@ -136,8 +138,8 @@ Rectangle {
 //                    }
                 }
 
-                controlMouseArea.originX = controlMouseArea.currentX
-                controlMouseArea.originY = controlMouseArea.currentY
+                //controlMouseArea.originX = controlMouseArea.currentX
+                //controlMouseArea.originY = controlMouseArea.currentY
             }
             onRunningChanged: {
                 if (!running) {
@@ -353,6 +355,7 @@ Rectangle {
 //                }
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
+                visible: camera.enableVideo
                 MouseArea {
                     id: videoMA
                     anchors.fill: parent

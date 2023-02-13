@@ -6,12 +6,21 @@
 SiYiCamera::SiYiCamera(QObject *parent)
     : SiYiTcpClient("192.168.144.25", 37256)
 {
-    connect(this, &SiYiCamera::connected,
-            this, &SiYiCamera::getRecordingState);
+#if 0
     connect(this, &SiYiCamera::connected,
             this, &SiYiCamera::getCamerVersion);
     connect(this, &SiYiCamera::connected,
             this, &SiYiCamera::getResolution);
+    connect(this, &SiYiCamera::connected,
+            this, &SiYiCamera::getRecordingState);
+#else
+    connect(this, &SiYiCamera::connected,
+            this, [=](){
+        getCamerVersion();
+        getResolution();
+        getRecordingState();
+    });
+#endif
 }
 
 SiYiCamera::~SiYiCamera()
@@ -390,7 +399,7 @@ void SiYiCamera::messageHandle0x80(const QByteArray &msg)
         if (camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30) {
             if (recording_state_ != ctx->state) {
                 recording_state_ = ctx->state;
-                if (recording_state_ != 0) {
+                if (recording_state_ != 1) {
                      emit operationResultChanged(4);
                 }
             }
@@ -411,10 +420,13 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK*>(ptr);
 
-        isRecording_ = ctx->isStarted;
-        emit isRecordingChanged();
 
-        if (!(camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30)) {
+        if (camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30) {
+            // Nothing to do...
+        } else {
+            isRecording_ = ctx->isStarted;
+            emit isRecordingChanged();
+
             if (ctx->result == 0) {
                 emit operationResultChanged(4);
             }
