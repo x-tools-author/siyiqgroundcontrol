@@ -395,7 +395,7 @@ void SiYiCamera::messageHandle0x80(const QByteArray &msg)
 
         isRecording_ = (ctx->state == 1);
         emit isRecordingChanged();
-
+#if 0
         if (camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30) {
             if (recording_state_ != ctx->state) {
                 recording_state_ = ctx->state;
@@ -404,6 +404,7 @@ void SiYiCamera::messageHandle0x80(const QByteArray &msg)
                 }
             }
         }
+#endif
     }
 }
 
@@ -420,7 +421,7 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK*>(ptr);
 
-
+#if 0
         if (camera_type_ == CameraTypeA8 || camera_type_ == CameraTypeZR30) {
             // Nothing to do...
         } else {
@@ -431,6 +432,14 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
                 emit operationResultChanged(4);
             }
         }
+#else
+        isRecording_ = ctx->isStarted;
+        emit isRecordingChanged();
+
+        if (ctx->result == 0) {
+            emit operationResultChanged(4);
+        }
+#endif
     }
 }
 
