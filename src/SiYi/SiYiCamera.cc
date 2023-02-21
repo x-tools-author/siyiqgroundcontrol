@@ -486,7 +486,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
-        } else if (type == CameraTypeR1) { // R1
+        } else if (type == CameraTypeR1 || type == CameraTypeR1M) { // R1
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;

@@ -44,6 +44,7 @@ public:
     enum CameraType {
         CameraTypeR1 = 0x6c,
         CameraTypeZR10 = 0x6e,
+        CameraTypeR1M = 0x71,
         CameraTypeA8 = 0x72,
         CameraTypeA2 = 0x74,
         CameraTypeZR30 = 0x77
