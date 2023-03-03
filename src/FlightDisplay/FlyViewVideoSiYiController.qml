@@ -220,7 +220,7 @@ Rectangle {
                         if (camera.is4k) {
                             camera.emitOperationResultChanged(-1)
                         } else {
-                            //camera.zoom(1)
+                            camera.zoom(1)
                             zoomInTimer.start()
                             console.info("zoomIn start--------------------------------")
                         }
@@ -265,7 +265,7 @@ Rectangle {
                         if (camera.is4k) {
                             camera.emitOperationResultChanged(-1)
                         } else {
-                            //camera.zoom(-1)
+                            camera.zoom(-1)
                             zoomOutTimer.start()
                         }
                     }
@@ -416,7 +416,7 @@ Rectangle {
                     id: farMA
                     anchors.fill: parent
                     onPressed: {
-                        //camera.focus(1)
+                        camera.focus(1)
                         farTimer.start()
                     }
                     onReleased: {
@@ -455,7 +455,7 @@ Rectangle {
                     id: neerMA
                     anchors.fill: parent
                     onPressed: {
-                        //camera.focus(-1)
+                        camera.focus(-1)
                         neerTimer.start()
                     }
                     onReleased: {
