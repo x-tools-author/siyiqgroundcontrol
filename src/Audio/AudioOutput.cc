@@ -26,6 +26,7 @@ AudioOutput::AudioOutput(QGCApplication* app, QGCToolbox* toolbox)
         return;
     }
 
+#ifndef Q_OS_WIN
     _tts = new QTextToSpeech(this);
 
     //-- Force TTS engine to English as all incoming messages from the autopilot
@@ -34,6 +35,7 @@ AudioOutput::AudioOutput(QGCApplication* app, QGCToolbox* toolbox)
     _tts->setLocale(QLocale("en_US"));
 #endif
     connect(_tts, &QTextToSpeech::stateChanged, this, &AudioOutput::_stateChanged);
+#endif
 }
 
 void AudioOutput::say(const QString& inText)
