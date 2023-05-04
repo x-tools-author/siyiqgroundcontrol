@@ -47,7 +47,8 @@ public:
         CameraTypeR1M = 0x71,
         CameraTypeA8 = 0x72,
         CameraTypeA2 = 0x74,
-        CameraTypeZR30 = 0x77
+        CameraTypeZR30 = 0x77,
+        CameraTypeZT30 = 0x7B
     };
     Q_ENUM(CameraType);
 

@@ -480,7 +480,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
         */
         int type = ctx->version >> 24;
         camera_type_ = type;
-        if (type == CameraTypeZR10 || type == CameraTypeZR30) { // ZR10,ZR30
+        if (type == CameraTypeZR10 || type == CameraTypeZR30 || type == CameraTypeZT30) { // ZR10,ZR30
             enableFocus_ = true;
             enableZoom_ = true;
             enablePhoto_ = true;
