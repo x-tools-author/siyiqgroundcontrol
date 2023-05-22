@@ -230,6 +230,10 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x9e(packet);
                 }
 
+                if (!(msg.header.cmdId == 0x90)) {
+                    qInfo() << "Rx:" << packet.toHex(' ');
+                }
+
                 rxBytes_.remove(0, msgLen);
             }
         } else {

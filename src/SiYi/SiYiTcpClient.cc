@@ -79,7 +79,7 @@ void SiYiTcpClient::run()
         this->rxBytes_.append(bytes);
         this->rxBytesMutex_.unlock();
 
-        qInfo() << info << "Rx:" << bytes.toHex(' ');
+        //qInfo() << info << "Rx:" << bytes.toHex(' ');
     });
 
     // 定时发送
@@ -104,7 +104,7 @@ void SiYiTcpClient::run()
     });
 
     // 定时处理接收数据
-    rxTimer->setInterval(10);
+    rxTimer->setInterval(1);
     rxTimer->setSingleShot(true);
     connect(rxTimer, &QTimer::timeout, rxTimer, [=](){
         analyzeMessage();
