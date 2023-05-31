@@ -115,6 +115,20 @@ void SiYiTcpClient::run()
     heartbeatTimer->setInterval(1500);
     heartbeatTimer->setSingleShot(true);
     connect(heartbeatTimer, &QTimer::timeout, heartbeatTimer, [=](){
+        // 心跳超时后退出线程
+        this->timeoutCountMutex.lock();
+        int count = this->timeoutCount;
+        this->timeoutCountMutex.unlock();
+
+        if (count > 3) {
+            this->timeoutCountMutex.lock();
+            this->timeoutCount = 0;
+            this->timeoutCountMutex.unlock();
+
+            qWarning() << "Heartbeat timeout, the client will be restart soon!";
+            this->exit();
+        }
+
         QByteArray msg = heartbeatMessage();
         sendMessage(msg);
         heartbeatTimer->start();

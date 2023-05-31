@@ -157,6 +157,10 @@ quint32 SiYiTransmitter::packetCheckSum32(ProtocolMessageContext *ctx)
 
 void SiYiTransmitter::onHeartbeatMessageReceived(const QByteArray &msg)
 {
+    timeoutCountMutex.lock();
+    timeoutCount = 0;
+    timeoutCountMutex.unlock();
+
     int headerLnegth = 4 + 1 + 2 + 2 + 1 + 4;
     if (msg.length() == int(headerLnegth + sizeof(HeartbeatAckContext) + 4)) {
         const char *ptr = msg.constData();

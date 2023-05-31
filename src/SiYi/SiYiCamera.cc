@@ -387,6 +387,10 @@ void SiYiCamera::getCamerVersion()
 
 void SiYiCamera::messageHandle0x80(const QByteArray &msg)
 {
+    timeoutCountMutex.lock();
+    timeoutCount = 0;
+    timeoutCountMutex.unlock();
+
     struct ACK {
         quint8 state;
     };

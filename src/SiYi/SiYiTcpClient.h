@@ -25,6 +25,8 @@ protected:
     QMutex txMessageVectorMutex_;
     QByteArray rxBytes_;
     QMutex rxBytesMutex_;
+    int timeoutCount = 0;
+    QMutex timeoutCountMutex;
 protected:
     quint16 sequence();
     void run() override;
