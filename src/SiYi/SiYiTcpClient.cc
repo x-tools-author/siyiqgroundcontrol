@@ -53,6 +53,7 @@ void SiYiTcpClient::run()
 
     connect(tcpClient, &QTcpSocket::connected, tcpClient, [=](){
         heartbeatTimer->start();
+        txTimer->start();
         emit connected();
         this->isConnected_ = true;
         emit isConnectedChanged();
@@ -91,12 +92,17 @@ void SiYiTcpClient::run()
                 ? QByteArray() : txMessageVector_.takeFirst();
         txMessageVectorMutex_.unlock();
 
-        if ((!msg.isEmpty())
-                && (tcpClient->state() == QTcpSocket::ConnectedState)) {
-            if (tcpClient->write(msg) != -1) {
-                qInfo() << info << "Tx:" << msg.toHex(' ');
+        if ((!msg.isEmpty())) {
+            if ((tcpClient->state() == QTcpSocket::ConnectedState)) {
+                if (tcpClient->write(msg) != -1) {
+                    qInfo() << info << "Tx:" << msg.toHex(' ');
+                } else {
+                    qInfo() << info << tcpClient->errorString();
+                }
             } else {
+                qInfo() << info << "Not connected state, the state is:" << tcpClient->state();
                 qInfo() << info << tcpClient->errorString();
+                exit();
             }
         }
 
@@ -129,6 +135,10 @@ void SiYiTcpClient::run()
             this->exit();
         }
 
+        this->timeoutCountMutex.lock();
+        this->timeoutCount += 1;
+        this->timeoutCountMutex.unlock();
+
         QByteArray msg = heartbeatMessage();
         sendMessage(msg);
         heartbeatTimer->start();
@@ -136,7 +146,7 @@ void SiYiTcpClient::run()
 
     tcpClient->connectToHost(ip_, port_);
 
-    txTimer->start();
+    //txTimer->start();
     rxTimer->start();
     exec();
     txTimer->deleteLater();
