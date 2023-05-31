@@ -74,6 +74,7 @@ void SiYiTransmitter::analyzeMessage()
 
                 if ((msg.header.cmdId == 0x83) || (msg.header.cmdId == 0x2f)) {
                     QByteArray packet = QByteArray(rxBytes_.data(), msgLen);
+                    qInfo() << "Rx:" << packet.toHex(' ');
                     onHeartbeatMessageReceived(packet);
                 } else if (msg.header.cmdId == 0x8a) {
                     // Nothing to do yet
