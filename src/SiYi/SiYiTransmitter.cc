@@ -18,7 +18,6 @@ QByteArray SiYiTransmitter::heartbeatMessage()
 
 void SiYiTransmitter::analyzeMessage()
 {
-    rxBytesMutex_.lock();
     while (rxBytes_.length() >= 4) {
         if (rxBytes_.at(0) == char(0x55)
                 && rxBytes_.at(1) == char(0x66)
@@ -73,8 +72,9 @@ void SiYiTransmitter::analyzeMessage()
                 }
 
                 if ((msg.header.cmdId == 0x83) || (msg.header.cmdId == 0x2f)) {
+                    const QString info = QString("[%1:%2]:").arg(ip_, QString::number(port_));
                     QByteArray packet = QByteArray(rxBytes_.data(), msgLen);
-                    qInfo() << "Rx:" << packet.toHex(' ');
+                    qInfo() << info << "Rx:" << packet.toHex(' ');
                     onHeartbeatMessageReceived(packet);
                 } else if (msg.header.cmdId == 0x8a) {
                     // Nothing to do yet
@@ -88,7 +88,6 @@ void SiYiTransmitter::analyzeMessage()
             rxBytes_.remove(0, 1);
         }
     }
-    rxBytesMutex_.unlock();
 }
 
 QByteArray SiYiTransmitter::packMessage(quint8 control, quint8 cmd,

@@ -52,45 +52,44 @@ void SiYiTcpClient::run()
     const QString info = QString("[%1:%2]:").arg(ip_, QString::number(port_));
 
     connect(tcpClient, &QTcpSocket::connected, tcpClient, [=](){
+        qInfo() << info << "Connect to server successfully!";
+
         heartbeatTimer->start();
         txTimer->start();
-        emit connected();
+
         this->isConnected_ = true;
+
+        emit connected();
         emit isConnectedChanged();
-        qInfo() << info << "Connect to server successfully!";
     });
     connect(tcpClient, &QTcpSocket::disconnected, tcpClient, [=](){
+        qInfo() << info << "Disconnect from server!";
+
         this->isConnected_ = false;
+        this->txMessageVectorMutex_.lock();
+        this->txMessageVector_.clear();
+        this->txMessageVectorMutex_.unlock();
+
         emit isConnectedChanged();
-        txMessageVectorMutex_.lock();
-        txMessageVector_.clear();
-        txMessageVectorMutex_.unlock();
+
         heartbeatTimer->stop();
         exit();
-        qInfo() << info << "Disconnect from server!";
     });
     connect(tcpClient, &QTcpSocket::errorOccurred, tcpClient, [=](){
         heartbeatTimer->stop();
         exit();
         qInfo() << info << tcpClient->errorString();
     });
-    connect(tcpClient, &QTcpSocket::readyRead, tcpClient, [=](){
-        QByteArray bytes = tcpClient->readAll();
-        this->rxBytesMutex_.lock();
-        this->rxBytes_.append(bytes);
-        this->rxBytesMutex_.unlock();
-
-        //qInfo() << info << "Rx:" << bytes.toHex(' ');
-    });
 
     // 定时发送
     txTimer->setInterval(10);
     txTimer->setSingleShot(true);
     connect(txTimer, &QTimer::timeout, txTimer, [=](){
-        txMessageVectorMutex_.lock();
-        QByteArray msg = txMessageVector_.isEmpty()
-                ? QByteArray() : txMessageVector_.takeFirst();
-        txMessageVectorMutex_.unlock();
+        this->txMessageVectorMutex_.lock();
+        QByteArray msg = this->txMessageVector_.isEmpty()
+                             ? QByteArray()
+                             : this->txMessageVector_.takeFirst();
+        this->txMessageVectorMutex_.unlock();
 
         if ((!msg.isEmpty())) {
             if ((tcpClient->state() == QTcpSocket::ConnectedState)) {
@@ -113,7 +112,15 @@ void SiYiTcpClient::run()
     rxTimer->setInterval(1);
     rxTimer->setSingleShot(true);
     connect(rxTimer, &QTimer::timeout, rxTimer, [=](){
+        this->rxBytesMutex_.lock();
+
+        QByteArray bytes = tcpClient->readAll();
+        this->rxBytes_.append(bytes);
+
         analyzeMessage();
+
+        this->rxBytesMutex_.unlock();
+
         rxTimer->start();
     });
 

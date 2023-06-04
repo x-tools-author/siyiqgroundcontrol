@@ -27,6 +27,8 @@ protected:
     QMutex rxBytesMutex_;
     int timeoutCount = 0;
     QMutex timeoutCountMutex;
+    QString ip_;
+    quint16 port_;
 protected:
     quint16 sequence();
     void run() override;
@@ -34,8 +36,6 @@ protected:
     void resetIp(const QString &ip);
 private:
     quint16 sequence_;
-    QString ip_;
-    quint16 port_;
 signals:
     void connected();
     void disconnected();

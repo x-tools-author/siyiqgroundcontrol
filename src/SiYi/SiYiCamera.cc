@@ -161,12 +161,8 @@ QByteArray SiYiCamera::heartbeatMessage()
 
 void SiYiCamera::analyzeMessage()
 {
-    rxBytesMutex_.lock();
     while (rxBytes_.length() >= 4) {
-        if (rxBytes_.at(0) == char(0x55)
-                && rxBytes_.at(1) == char(0x66)
-                && rxBytes_.at(3) == char(0xbb)
-                && rxBytes_.at(3) == char(0xbb)) {
+        if ((rxBytes_.at(0) == char(0x55)) && (rxBytes_.at(1) == char(0x66)) && (rxBytes_.at(3) == char(0xbb)) && (rxBytes_.at(3) == char(0xbb))) {
             int headerLength = 4+1+4+2+1+4;
             if (rxBytes_.length() >= headerLength) {
                 ProtocolMessageHeaderContext header;
@@ -216,6 +212,7 @@ void SiYiCamera::analyzeMessage()
                 }
 
                 QByteArray packet = QByteArray(rxBytes_.data(), msgLen);
+                const QString info = QString("[%1:%2]:").arg(ip_, QString::number(port_));
                 if (msg.header.cmdId == 0x80) {
                     messageHandle0x80(packet);
                 } else if (msg.header.cmdId == 0x81) {
@@ -228,10 +225,15 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x98(packet);
                 } else if (msg.header.cmdId == 0x9e) {
                     messageHandle0x9e(packet);
+                } else if (msg.header.cmdId == 0x90) {
+                    // Nothin to do yet.
+                } else {
+                    //QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
+                    //qWarning() << info << "Unknow message, cmd id:" << id;
                 }
 
                 if (!(msg.header.cmdId == 0x90)) {
-                    qInfo() << "Rx:" << packet.toHex(' ');
+                    qInfo() << info << "Rx:" << packet.toHex(' ');
                 }
 
                 rxBytes_.remove(0, msgLen);
@@ -240,7 +242,6 @@ void SiYiCamera::analyzeMessage()
             rxBytes_.remove(0, 1);
         }
     }
-    rxBytesMutex_.unlock();
 }
 
 QByteArray SiYiCamera::packMessage(quint8 control, quint8 cmd,
