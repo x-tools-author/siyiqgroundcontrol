@@ -237,6 +237,8 @@ void SiYiCamera::analyzeMessage()
                 }
 
                 rxBytes_.remove(0, msgLen);
+            } else {
+                break;
             }
         } else {
             rxBytes_.remove(0, 1);
