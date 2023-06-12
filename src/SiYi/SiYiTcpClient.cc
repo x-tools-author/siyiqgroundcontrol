@@ -1,4 +1,4 @@
-#include <QTimer>
+﻿#include <QTimer>
 #include <QtEndian>
 #include <QDateTime>
 #include <QTcpSocket>

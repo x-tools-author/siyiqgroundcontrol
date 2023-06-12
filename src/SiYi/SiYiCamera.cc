@@ -1,4 +1,4 @@
-#include <QtEndian>
+﻿#include <QtEndian>
 #include <QTimerEvent>
 
 #include "SiYiCamera.h"
@@ -209,6 +209,9 @@ void SiYiCamera::analyzeMessage()
                     int offset = headerLength + header.dataLength;
                     msg.crc = *reinterpret_cast<quint16*>(rxBytes_.data() + offset);
                     msg.crc = qToBigEndian<quint32>(msg.crc);
+                } else {
+                    // 数据帧未完整
+                    break;
                 }
 
                 QByteArray packet = QByteArray(rxBytes_.data(), msgLen);

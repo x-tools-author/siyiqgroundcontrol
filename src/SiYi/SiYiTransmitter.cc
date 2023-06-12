@@ -1,4 +1,4 @@
-#include <QtEndian>
+﻿#include <QtEndian>
 #include "SiYiTransmitter.h"
 
 SiYiTransmitter::SiYiTransmitter(QObject *parent)
@@ -69,6 +69,9 @@ void SiYiTransmitter::analyzeMessage()
                     int offset = headerLength + header.dataLength;
                     msg.crc = *reinterpret_cast<quint16*>(rxBytes_.data() + offset);
                     msg.crc = qToBigEndian<quint32>(msg.crc);
+                } else {
+                    // 数据帧未完整
+                    break;
                 }
 
                 if ((msg.header.cmdId == 0x83) || (msg.header.cmdId == 0x2f)) {
