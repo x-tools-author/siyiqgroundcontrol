@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  *
  * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
@@ -74,8 +74,14 @@ Rectangle {
                 }
             }
         }
-        onDoubleClicked: camera.resetPostion()
-        onClicked: camera.autoFocus()
+        onDoubleClicked: {
+            console.info("camera.resetPostion()")
+            camera.resetPostion()
+        }
+        onClicked: {
+            console.info("camera.autoFocus()")
+            camera.autoFocus(mouse.x, mouse.y, root.width, root.height)
+        }
 
         Timer {
             id: contrlTimer

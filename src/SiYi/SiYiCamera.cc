@@ -51,11 +51,17 @@ bool SiYiCamera::resetPostion()
     return true;
 }
 
-bool SiYiCamera::autoFocus()
+bool SiYiCamera::autoFocus(int x, int y, int w, int h)
 {
     uint8_t cmdId = 0x97;
     QByteArray body;
     body.append(char(0x01));
+
+    quint16 cookedX = x*resolutionWidth_/w;
+    quint16 cookedY = y*resolutionWidth_/h;
+    qInfo() << cookedX << cookedY << x << y << w << h << resolutionWidth_ << resolutionHeight_;
+    body.append(reinterpret_cast<char*>(&cookedX), 2);
+    body.append(reinterpret_cast<char*>(&cookedY), 2);
 
     QByteArray msg = packMessage(0x01, cmdId, body);
     sendMessage(msg);
@@ -128,6 +134,7 @@ void SiYiCamera::getResolution()
 {
     uint8_t cmdId = 0x83;
     QByteArray body;
+    body.append(char(0x00));
 
     QByteArray msg = packMessage(0x01, cmdId, body);
     sendMessage(msg);
@@ -460,12 +467,15 @@ void SiYiCamera::messageHandle0x81(const QByteArray &msg)
 void SiYiCamera::messageHandle0x83(const QByteArray &msg)
 {
     int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
-    if (msg.length() == int(headerLength + 10 + 4)) {
+    if (msg.length() == int(headerLength + (1+1+2+2+2+1) + 4)) {
         const char *ptr = msg.constData();
         char *cookedPtr = const_cast<char*>(ptr);
-        int offset = 3;
+        int offset = headerLength + 2;
         qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
         resolutionWidth_ = *ptr16;
+        offset += 2;
+        ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+        resolutionHeight_ = *ptr16;
         if (resolutionWidth_ == 4096) {
             is4k_ = true;
             emit is4kChanged();

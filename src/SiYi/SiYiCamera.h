@@ -1,4 +1,4 @@
-#ifndef SIYICAMERA_H
+﻿#ifndef SIYICAMERA_H
 #define SIYICAMERA_H
 
 #include <QObject>
@@ -61,7 +61,7 @@ public:
 
     Q_INVOKABLE bool turn(int yaw, int pitch);
     Q_INVOKABLE bool resetPostion();
-    Q_INVOKABLE bool autoFocus();
+    Q_INVOKABLE bool autoFocus(int x, int y, int w, int h);
     // 1: 放大，0：停止，-1：缩小
     Q_INVOKABLE bool zoom(int option);
     // 1: 远景，0：停止，-1：近景
@@ -81,6 +81,7 @@ private:
     qint8 recording_state_{0};
     qint8 camera_type_{-1};
     qint16 resolutionWidth_{0};
+    qint16 resolutionHeight_{0};
 
 private:
     QByteArray packMessage(quint8 control, quint8 cmd,
