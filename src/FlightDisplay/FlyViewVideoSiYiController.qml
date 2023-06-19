@@ -332,7 +332,10 @@ Rectangle {
                 MouseArea {
                     id: photoMA
                     anchors.fill: parent
-                    onPressed: camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
+                    onPressed: {
+                        console.info("camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)")
+                        camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
+                    }
                 }
 //                ColorOverlay {
 //                    anchors.fill: photo
