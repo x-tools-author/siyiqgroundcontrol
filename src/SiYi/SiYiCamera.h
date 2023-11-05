@@ -70,7 +70,6 @@ public:
     Q_INVOKABLE bool sendRecodingCommand(int cmd);
     bool getRecordingState();
     void getResolution();
-    Q_INVOKABLE void analyzeIp(QString videoUrl);
     Q_INVOKABLE void emitOperationResultChanged(int result);
 
 protected:

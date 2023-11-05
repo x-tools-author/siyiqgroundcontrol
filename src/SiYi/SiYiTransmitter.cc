@@ -2,7 +2,7 @@
 #include "SiYiTransmitter.h"
 
 SiYiTransmitter::SiYiTransmitter(QObject *parent)
-    : SiYiTcpClient{"192.168.144.12", 5864, parent}
+    : SiYiTcpClient{"192.168.144.25", 5864, parent}
 {
 
 }
