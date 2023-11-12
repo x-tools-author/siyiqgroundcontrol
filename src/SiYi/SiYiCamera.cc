@@ -59,7 +59,15 @@ bool SiYiCamera::autoFocus(int x, int y, int w, int h)
 
     quint16 cookedX = x*resolutionWidth_/w;
     quint16 cookedY = y*resolutionWidth_/h;
-    qInfo() << cookedX << cookedY << x << y << w << h << resolutionWidth_ << resolutionHeight_;
+
+    if (camera_type_ == CameraTypeZT30) {
+        quint16 cookedX = x*m_resolutionWidthMain/w;
+        quint16 cookedY = y*m_resolutionHeightMain/h;
+        qInfo() << cookedX << cookedY << x << y << w << h << m_resolutionWidthMain << m_resolutionHeightMain;
+    } else {
+        qInfo() << cookedX << cookedY << x << y << w << h << resolutionWidth_ << resolutionHeight_;
+    }
+
     body.append(reinterpret_cast<char*>(&cookedX), 2);
     body.append(reinterpret_cast<char*>(&cookedY), 2);
 
@@ -140,10 +148,96 @@ void SiYiCamera::getResolution()
     sendMessage(msg);
 }
 
+void SiYiCamera::getResolutionMain()
+{
+    uint8_t cmdId = 0x83;
+    QByteArray body;
+    body.append(char(0x01));
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
 
 void SiYiCamera::emitOperationResultChanged(int result)
 {
     emit operationResultChanged(result);
+}
+
+void SiYiCamera::getLaserCoords()
+{
+    uint8_t cmdId = 0xA6;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
+
+void SiYiCamera::getLaserDistance()
+{
+    uint8_t cmdId = 0x89;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
+
+void SiYiCamera::setLaserState(int state)
+{
+    uint8_t cmdId = 0xBB;
+    QByteArray body;
+    body.append(char(state));
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
+
+/**
+ * @brief SiYiCamera::setAiModel: 设置AI追踪模式
+ * @param mode
+ */
+void SiYiCamera::setAiModel(int mode)
+{
+    uint8_t cmdId = 0xA3;
+    QByteArray body;
+    body.append(char(mode));
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
+
+/**
+ * @brief SiYiCamera::getAiModel 获取AI追踪模式
+ */
+void SiYiCamera::getAiModel()
+{
+    uint8_t cmdId = 0xA2;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
+}
+
+/**
+ * @brief SiYiCamera::setTrackingTarget 设置(取消设置)AI追踪目标
+ * @param tracking
+ * @param x
+ * @param y
+ */
+void SiYiCamera::setTrackingTarget(bool tracking, int x, int y)
+{
+    uint8_t cmdId = 0xAA;
+    uint8_t trackAction = tracking ? 1 : 0;
+    uint16_t trackX = x;
+    uint16_t trackY = y;
+
+
+    QByteArray body;
+    body.append(reinterpret_cast<char*>(&trackAction), 1);
+    body.append(reinterpret_cast<char*>(&trackX), 2);
+    body.append(reinterpret_cast<char*>(&trackY), 2);
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
+    sendMessage(msg);
 }
 
 QByteArray SiYiCamera::heartbeatMessage()
@@ -212,16 +306,30 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x80(packet);
                 } else if (msg.header.cmdId == 0x81) {
                     messageHandle0x81(packet);
-                }  else if (msg.header.cmdId == 0x83) {
+                } else if (msg.header.cmdId == 0x83) {
                     messageHandle0x83(packet);
+                } else if (msg.header.cmdId == 0x89) {
+                    messageHandle0x89(packet);
                 } else if (msg.header.cmdId == 0x94) {
                     messageHandle0x94(packet);
                 } else if (msg.header.cmdId == 0x98) {
                     messageHandle0x98(packet);
+                }else if (msg.header.cmdId == 0x90) {
+                    // Nothin to do yet.
                 } else if (msg.header.cmdId == 0x9e) {
                     messageHandle0x9e(packet);
-                } else if (msg.header.cmdId == 0x90) {
-                    // Nothin to do yet.
+                } else if (msg.header.cmdId == 0xa2) {
+                    messageHandle0xa2(packet);
+                } else if (msg.header.cmdId == 0xa3) {
+                    messageHandle0xa3(packet);
+                } else if (msg.header.cmdId == 0xa6) {
+                    messageHandle0xa6(packet);
+                } else if (msg.header.cmdId == 0xaa) {
+                    messageHandle0xaa(packet);
+                } else if (msg.header.cmdId == 0xab) {
+                    messageHandle0xab(packet);
+                }else if (msg.header.cmdId == 0xbb) {
+                    messageHandle0xbb(packet);
                 } else {
                     //QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
                     //qWarning() << info << "Unknow message, cmd id:" << id;
@@ -455,15 +563,55 @@ void SiYiCamera::messageHandle0x83(const QByteArray &msg)
     if (msg.length() == int(headerLength + (1+1+2+2+2+1) + 4)) {
         const char *ptr = msg.constData();
         char *cookedPtr = const_cast<char*>(ptr);
-        int offset = headerLength + 2;
-        qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
-        resolutionWidth_ = *ptr16;
-        offset += 2;
-        ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
-        resolutionHeight_ = *ptr16;
-        if (resolutionWidth_ == 4096) {
-            is4k_ = true;
-            emit is4kChanged();
+        char streamType = *cookedPtr;
+        if (streamType == 1) { // 主码流
+            int offset = headerLength + 2;
+            qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            m_resolutionWidthMain = *ptr16;
+            offset += 2;
+            ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            m_resolutionHeightMain = *ptr16;
+        } else if (streamType == 0) { // 录像流
+            int offset = headerLength + 2;
+            qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            resolutionWidth_ = *ptr16;
+            offset += 2;
+            ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            resolutionHeight_ = *ptr16;
+            if (resolutionWidth_ == 4096) {
+                is4k_ = true;
+                emit is4kChanged();
+            }
+
+            m_resolutionH = resolutionHeight_;
+            m_resolutionW = resolutionWidth_;
+        }
+    }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0x89 处理0x89（获取激光测距距离信息应答）消息
+ * @param msg 0x89消息
+ */
+void SiYiCamera::messageHandle0x89(const QByteArray &msg)
+{
+    struct ACK {
+        quint32 distance;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+        if (m_laserDistance != int(ctx->distance)) {
+            m_laserDistance = ctx->distance;
+            emit laserDistanceChanged();
+
+            double tmp = m_laserDistance;
+            tmp /= 10.0;
+            m_cookedLaserDistance = QString::number(tmp, 'f', 1);
+            emit laserDistanceChanged();
         }
     }
 }
@@ -495,30 +643,41 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
+            if (type == CameraTypeZT30) {
+                m_enableLaser = true;
+                getResolutionMain();
+                getLaserCoords();
+            } else {
+                m_enableLaser = false;
+            }
         } else if (type == CameraTypeR1 || type == CameraTypeR1M) { // R1
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = true;
             enableControl_ = false;
+            m_enableLaser = false;
         } else if (type == CameraTypeA8) { // A8
             enableFocus_ = false;
             enableZoom_ = true;
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
+            m_enableLaser = false;
         } else if (type == CameraTypeA2) { // A2
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = false;
             enableControl_ = true;
+            m_enableLaser = false;
         } else {
             enableFocus_ = false;
             enableZoom_ = false;
             enablePhoto_ = false;
             enableVideo_ = false;
             enableControl_ = false;
+            m_enableLaser = false;
         }
 
         emit enableFocusChanged();
@@ -526,6 +685,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
         emit enablePhotoChanged();
         emit enableVideoChanged();
         emit enableControlChanged();
+        emit enableLaserChanged();
     }
 }
 
@@ -559,5 +719,152 @@ void SiYiCamera::messageHandle0x9e(const QByteArray &msg)
         auto ctx = reinterpret_cast<const ACK*>(ptr);
 
         emit operationResultChanged(ctx->result);
+    }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0xa2 获取AI追踪模式应答
+ * @param msg
+ */
+void SiYiCamera::messageHandle0xa2(const QByteArray &msg)
+{
+    struct ACK {
+        qint8 mode;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        bool on = (ctx->mode == AiModeOn);
+        if (on != m_aiModeOn) {
+            m_aiModeOn = on;
+            emit aiModeOnChanged();
+        }
+    }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0xa3 设置AI追踪模式应答
+ * @param msg
+ */
+void SiYiCamera::messageHandle0xa3(const QByteArray &msg)
+{
+    struct ACK {
+        qint8 mode;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        bool on = (ctx->mode == AiModeOn);
+        if (on != m_aiModeOn) {
+            m_aiModeOn = on;
+            emit aiModeOnChanged();
+        }
+    }
+}
+
+void SiYiCamera::messageHandle0xa6(const QByteArray &msg)
+{
+    struct ACK {
+        qint16 x;
+        qint16 y;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        if (m_laserCoordsX != ctx->x) {
+            m_laserCoordsX = ctx->x;
+            emit laserCoordsXChanged();
+        }
+
+        if (m_laserCoordsY != ctx->y) {
+            m_laserCoordsY = ctx->y;
+            emit laserCoordsYChanged();
+        }
+    }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0xaa 设置(取消设置)AI追踪目标应答
+ * @param msg
+ */
+void SiYiCamera::messageHandle0xaa(const QByteArray &msg)
+{
+    struct ACK {
+        qint8 result;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        if (ctx->result == 0) {
+            emit operationResultChanged(TipOptionSettingFailed);
+        } else if (ctx->result == 1) {
+            emit operationResultChanged(TipOptionSettingOK);
+        } else if (ctx->result == 2) {
+            emit operationResultChanged(TipOptionIsNotAiTrackingMode);
+        } else if (ctx->result == 3) {
+            emit operationResultChanged(TipOptionStreamNotSupportedAiTracking);
+        }
+    }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0xab AI追踪目标信息推送
+ * @param msg
+ */
+void SiYiCamera::messageHandle0xab(const QByteArray &msg)
+{
+    struct ACK {
+        qint16 x;
+        qint16 y;
+        qint16 w;
+        qint16 h;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+
+        emit aiInfoChanged(ctx->x, ctx->y, ctx->w, ctx->h);
+    }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0xbb 激光测距关闭/开启应答
+ * @param msg
+ */
+void SiYiCamera::messageHandle0xbb(const QByteArray &msg)
+{
+    struct ACK {
+        qint8 result;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK*>(ptr);
+        bool offState = (ctx->result == 0);
+        if ((!offState) != m_laserStateOn) {
+            m_laserStateOn = !offState;
+            emit laserStateOnChanged();
+        }
     }
 }

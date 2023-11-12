@@ -222,6 +222,16 @@ Item {
                         resultLabel.text = qsTr("录像失败")
                     } else if (result === -1) {
                         resultLabel.text = qsTr("4K视频不支持变倍")
+                    } else if (resul === SiYiCamera.TipOptionLaserNotInRange) {
+                        resultLabel.text = qsTr("激光测距不在范围内")
+                    } else if (resul === SiYiCamera.TipOptionSettingOK) {
+                        resultLabel.text = qsTr("设置成功")
+                    } else if (resul === SiYiCamera.TipOptionSettingFailed) {
+                        resultLabel.text = qsTr("设置失败")
+                    } else if (resul === SiYiCamera.TipOptionIsNotAiTrackingMode) {
+                        resultLabel.text = qsTr("当前模式不是Ai追踪模式")
+                    } else if (resul === SiYiCamera.TipOptionStreamNotSupportedAiTracking) {
+                        resultLabel.text = qsTr("当前码流不支持AI追踪功能")
                     }
 
                     resultTimer.restart()

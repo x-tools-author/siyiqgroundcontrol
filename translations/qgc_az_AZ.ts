@@ -7600,6 +7600,42 @@ Click Ok to start the auto-tuning process.
     </message>
 </context>
 <context>
+    <name>FlyViewVideoSiYiController</name>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="498"/>
+        <source>关闭目标追踪</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="505"/>
+        <source>设置追踪目标</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="530"/>
+        <source>激光测距: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FlyViewVideoSiYiControllerAiSettings</name>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="196"/>
+        <source>确定</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="209"/>
+        <source>取消</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="216"/>
+        <source>关闭</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FlyViewWidgetLayer</name>
     <message>
         <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="95"/>
@@ -7629,6 +7665,31 @@ Click Ok to start the auto-tuning process.
     <message>
         <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="224"/>
         <source>4K视频不支持变倍</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="226"/>
+        <source>激光测距不在范围内</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="228"/>
+        <source>设置成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="230"/>
+        <source>设置失败</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="232"/>
+        <source>当前模式不是Ai追踪模式</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="234"/>
+        <source>当前码流不支持AI追踪功能</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

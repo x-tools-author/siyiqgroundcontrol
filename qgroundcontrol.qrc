@@ -285,6 +285,7 @@
         <file alias="VirtualJoystick.qml">src/FlightDisplay/VirtualJoystick.qml</file>
         <file alias="VTOLLandingPatternEditor.qml">src/PlanView/VTOLLandingPatternEditor.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewVideoSiYiController.qml">src/FlightDisplay/FlyViewVideoSiYiController.qml</file>
+        <file alias="QGroundControl/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml">src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml</file>
     </qresource>
     <qresource prefix="/FirstRunPromptDialogs">
         <file alias="UnitsFirstRunPrompt.qml">src/FirstRunPromptDialogs/UnitsFirstRunPrompt.qml</file>
@@ -383,6 +384,11 @@
         <file>resources/SiYi/VideoGreen.svg</file>
         <file>resources/SiYi/ZoomInGreen.svg</file>
         <file>resources/SiYi/ZoomOutGreen.svg</file>
+        <file>resources/SiYi/LaserDistance.png</file>
+        <file>resources/SiYi/LaserDistance.svg</file>
+        <file>resources/SiYi/LaserDistanceGreen.svg</file>
+        <file>resources/SiYi/Ai.svg</file>
+        <file>resources/SiYi/AiGreen.svg</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>

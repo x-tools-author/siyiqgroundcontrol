@@ -10,6 +10,7 @@
 
 import QtQuick                          2.11
 import QtQuick.Controls                 2.4
+import QtQuick.Layouts                  1.15
 
 import QGroundControl                   1.0
 import QGroundControl.FlightDisplay     1.0
@@ -23,6 +24,7 @@ import QGroundControl.Controllers       1.0
 import SiYi.Object 1.0
 import QtGraphicalEffects 1.12
 import "qrc:/qml/QGroundControl/Controls"
+import "qrc:/qml/QGroundControl/FlightDisplay"
 
 Rectangle {
     id:     root
@@ -280,11 +282,6 @@ Rectangle {
                         camera.zoom(0)
                     }
                 }
-//                ColorOverlay {
-//                    anchors.fill: zoomOut
-//                    source: zoomOut
-//                    color: zoomOutMA.pressed ? "green" : "white"
-//                }
                 Timer {
                     id: zoomOutTimer
                     interval: 100
@@ -312,11 +309,6 @@ Rectangle {
                     anchors.fill: parent
                     onPressed: camera.resetPostion()
                 }
-//                ColorOverlay {
-//                    anchors.fill: reset
-//                    source: reset
-//                    color: resetMA.pressed ? "green" : "white"
-//                }
             }
 
             Image { // 拍照
@@ -337,11 +329,6 @@ Rectangle {
                         camera.sendCommand(SiYiCamera.CameraCommandTakePhoto)
                     }
                 }
-//                ColorOverlay {
-//                    anchors.fill: photo
-//                    source: photo
-//                    color: photoMA.pressed ? "green" : "white"
-//                }
             }
 
             Image { // 录像
@@ -351,17 +338,6 @@ Rectangle {
                 width: btText.width
                 height: btText.width
                 cache: false
-//                source: {
-//                    if (camera.enableVideo) {
-//                        if (camera.isRecording) {
-//                            return "qrc:/resources/SiYi/Stop.svg"
-//                        } else {
-//                            return "qrc:/resources/SiYi/Video.png"
-//                        }
-//                    } else {
-//                        return "qrc:/resources/SiYi/empty.png"
-//                    }
-//                }
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 visible: camera.enableVideo
@@ -376,17 +352,6 @@ Rectangle {
                         }
                     }
                 }
-//                ColorOverlay {
-//                    anchors.fill: video
-//                    source: video
-//                    color: {
-//                        if (camera.isRecording) {
-//                            return "red"
-//                        } else {
-//                            return videoMA.pressed ? "green" : "white"
-//                        }
-//                    }
-//                }
                 Connections {
                     target: camera
                     function onEnableVideoChanged() {
@@ -433,11 +398,6 @@ Rectangle {
                         camera.focus(0)
                     }
                 }
-//                ColorOverlay {
-//                    anchors.fill: far
-//                    source: far
-//                    color: farMA.pressed ? "green" : "white"
-//                }
                 Timer {
                     id: farTimer
                     interval: 100
@@ -472,11 +432,6 @@ Rectangle {
                         camera.focus(0)
                     }
                 }
-//                ColorOverlay {
-//                    anchors.fill: neer
-//                    source: neer
-//                    color: neerMA.pressed ? "green" : "white"
-//                }
                 Timer {
                     id: neerTimer
                     interval: 100
@@ -488,6 +443,131 @@ Rectangle {
                     }
                 }
             }
+            Image { // 激光测距状态设置：0关闭，1开启
+                id: laserDistance
+                sourceSize.width: btText.width
+                sourceSize.height: btText.width
+                source: {
+                    if (camera.enableLaser) {
+                        if (camera.laserStateOn) {
+                            return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                        } else {
+                            if (laserDistanceMouseArea.pressed) {
+                                return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                            } else {
+                                return "qrc:/resources/SiYi/LaserDistance.svg"
+                            }
+                        }
+                    } else {
+                        return "qrc:/resources/SiYi/empty.png"
+                    }
+                }
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                cache: false
+                MouseArea {
+                    id: laserDistanceMouseArea
+                    anchors.fill: parent
+
+                    onClicked: {
+                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
+                        camera.setLaserState(camera.laserStateOn ? 0 : 1)
+                    }
+                }
+            }
+            Image { // AI模块状态设置：0关闭，1开启
+                id: aiControl
+                sourceSize.width: btText.width
+                sourceSize.height: btText.width
+                source: camera.aiModeOn
+                        ? "qrc:/resources/SiYi/AiGreen.svg"
+                        : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg"
+                                                     : "qrc:/resources/SiYi/Ai.svg"
+                anchors.horizontalCenter: parent.horizontalCenter
+                fillMode: Image.PreserveAspectFit
+                cache: false
+                MouseArea {
+                    id: aiControlMouseArea
+                    anchors.fill: parent
+
+                    onClicked: aiMenu.popup()
+                }
+                QGCMenu {
+                    id: aiMenu
+                    QGCMenuItem{
+                        text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("关闭目标追踪")
+                        onTriggered: {
+                            console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
+                            camera.setAiModel(camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
+                        }
+                    }
+                    QGCMenuItem{
+                        text: qsTr("设置追踪目标")
+                        onTriggered: aiSettings.visible = true
+                    }
+                }
+            }
+        }
+    }
+
+    Rectangle {
+        id: laserInfoRect
+        x: camera.resolutionW < 100 ? 100 : camera.laserCoordsX*parent.width/camera.m_socketWidth
+        y: camera.resolutionH < 100 ? 100 : camera.laserCoordsY*parent.height/camera.m_socketHeight
+        color: "white"
+        width: ctxGridLayout.width + 20
+        height: ctxGridLayout.height + 20
+        radius: 5
+        visible: camera.enableLaser && camera.laserStateOn
+
+        GridLayout {
+            id: ctxGridLayout
+            columns: 2
+            anchors.centerIn: parent
+            QGCLabel {
+                id: laserInfoLabel
+                font.pixelSize: 48
+                text: qsTr("激光测距: ") + camera.cookedLaserDistance + "m"
+                color: "black"
+                Layout.columnSpan: 2
+            }
+            QGCLabel {
+                color: "black"
+                text: "x:" + camera.laserCoordsX
+                font.pixelSize: 32
+            }
+            QGCLabel {
+                color: "black"
+                text: "y:" + camera.laserCoordsY
+                font.pixelSize: 32
+            }
+        }
+    }
+    FlyViewVideoSiYiControllerAiSettings {
+        id: aiInfo
+        visible: false
+        anchors.fill: parent
+        videoW: camera.resolutionW
+        videoH: camera.resolutionH
+        Connections {
+            target: camera
+            function onAiInfoChanged(x, y, w, h) {
+                aiInfo.visible = true
+                aiInfo.updatePosition(x, y, w, h);
+            }
+        }
+    }
+    FlyViewVideoSiYiControllerAiSettings {
+        id: aiSettings
+        anchors.fill: parent
+        visible: false
+        videoW: camera.resolutionW
+        videoH: camera.resolutionH
+        onConfirmTimeout: aiSettings.visible = false
+        onInvokeTrackingTarget: function (tracking, x, y) {
+            console.info("Set tracking target: ", tracking, x, y)
+            camera.setTrackingTarget(tracking, x, y)
+            visible = false
         }
     }
 }
