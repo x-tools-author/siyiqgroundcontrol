@@ -25,6 +25,14 @@ SiYi::SiYi(QObject *parent)
 
         camera_->start();
     });
+    connect(transmitter_, &SiYiCamera::ipChanged, this, [=](){
+        if (transmitter_->isRunning()) {
+            transmitter_->exit();
+            transmitter_->wait();
+        }
+
+        transmitter_->start();
+    });
 
 #ifdef Q_OS_ANDROID
     isAndroid_ = true;
