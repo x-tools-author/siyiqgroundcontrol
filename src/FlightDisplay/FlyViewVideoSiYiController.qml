@@ -188,6 +188,41 @@ Rectangle {
             visible: false
         }
 
+        Image { // AI模块状态设置：0关闭，1开启
+            id: aiControl
+            sourceSize.width: btText.width
+            sourceSize.height: btText.width
+            source: camera.aiModeOn
+                    ? "qrc:/resources/SiYi/AiGreen.svg"
+                    : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg"
+                                                 : "qrc:/resources/SiYi/Ai.svg"
+            fillMode: Image.PreserveAspectFit
+            cache: false
+            MouseArea {
+                id: aiControlMouseArea
+                anchors.fill: parent
+
+                onClicked: aiMenu.popup()
+            }
+            QGCMenu {
+                id: aiMenu
+                QGCMenuItem{
+                    text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("关闭目标追踪")
+                    onTriggered: {
+                        console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
+                        camera.setAiModel(camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
+                    }
+                }
+                QGCMenuItem{
+                    text: qsTr("设置追踪目标")
+                    onTriggered: aiSettings.visible = true
+                }
+            }
+            anchors.top: controlColumn.top
+            anchors.left: controlColumn.right
+            anchors.leftMargin: 10
+        }
+
         Column {
             id: controlColumn
             spacing: 20
@@ -472,38 +507,6 @@ Rectangle {
                     onClicked: {
                         console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
                         camera.setLaserState(camera.laserStateOn ? 0 : 1)
-                    }
-                }
-            }
-            Image { // AI模块状态设置：0关闭，1开启
-                id: aiControl
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
-                source: camera.aiModeOn
-                        ? "qrc:/resources/SiYi/AiGreen.svg"
-                        : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg"
-                                                     : "qrc:/resources/SiYi/Ai.svg"
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                cache: false
-                MouseArea {
-                    id: aiControlMouseArea
-                    anchors.fill: parent
-
-                    onClicked: aiMenu.popup()
-                }
-                QGCMenu {
-                    id: aiMenu
-                    QGCMenuItem{
-                        text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("关闭目标追踪")
-                        onTriggered: {
-                            console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
-                            camera.setAiModel(camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
-                        }
-                    }
-                    QGCMenuItem{
-                        text: qsTr("设置追踪目标")
-                        onTriggered: aiSettings.visible = true
                     }
                 }
             }
