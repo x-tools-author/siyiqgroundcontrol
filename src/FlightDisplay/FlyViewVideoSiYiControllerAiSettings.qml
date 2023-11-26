@@ -2,12 +2,14 @@
 import QtQuick.Controls 2.15
 //import "qrc:/qml/QGroundControl/Controls"
 
+import SiYi.Object 1.0
+
 Item {
     id: root
     width: 200
     height: 200
 
-    property int minW: 70
+    property int minW: SiYi.isAndroid ? 4*70 : 70
     property int minH: 70
     property string targetColor: "red"
     property int targetLength: 30

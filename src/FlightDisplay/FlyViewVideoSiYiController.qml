@@ -201,8 +201,9 @@ Rectangle {
             MouseArea {
                 id: aiControlMouseArea
                 anchors.fill: parent
-
-                onClicked: aiMenu.popup()
+                onClicked: {
+                    aiMenu.popup()
+                }
             }
             QGCMenu {
                 id: aiMenu
