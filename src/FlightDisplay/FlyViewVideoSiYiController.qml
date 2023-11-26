@@ -207,7 +207,7 @@ Rectangle {
             QGCMenu {
                 id: aiMenu
                 QGCMenuItem{
-                    text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("关闭目标追踪")
+                    text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("开启目标追踪")
                     onTriggered: {
                         console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
                         camera.setAiModel(camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
