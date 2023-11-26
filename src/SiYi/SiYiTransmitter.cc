@@ -2,7 +2,7 @@
 #include "SiYiTransmitter.h"
 
 SiYiTransmitter::SiYiTransmitter(QObject *parent)
-    : SiYiTcpClient{"192.168.144.25", 5864, parent}
+    : SiYiTcpClient{"192.168.144.12", 5864, parent}
 {
 
 }
@@ -77,7 +77,9 @@ void SiYiTransmitter::analyzeMessage()
                 if ((msg.header.cmdId == 0x83) || (msg.header.cmdId == 0x2f)) {
                     const QString info = QString("[%1:%2]:").arg(ip_, QString::number(port_));
                     QByteArray packet = QByteArray(rxBytes_.data(), msgLen);
+#if 0
                     qInfo() << info << "Rx:" << packet.toHex(' ');
+#endif
                     onHeartbeatMessageReceived(packet);
                 } else if (msg.header.cmdId == 0x8a) {
                     // Nothing to do yet
