@@ -16,7 +16,7 @@ SiYiTcpClient::SiYiTcpClient(const QString ip, quint16 port, QObject *parent)
 {
     sequence_ = quint16(QDateTime::currentMSecsSinceEpoch());
     // 自动重连
-    connect(this, &SiYiTcpClient::finished, this, [=](){start();});
+    connect(this, &SiYiTcpClient::finished, this, [=]() { start(); });
 }
 
 SiYiTcpClient::~SiYiTcpClient()
@@ -38,17 +38,27 @@ void SiYiTcpClient::sendMessage(const QByteArray &msg)
 
 void SiYiTcpClient::analyzeIp(QString videoUrl)
 {
-    qDebug() << videoUrl;
+    qWarning() << videoUrl;
     videoUrl = videoUrl.remove(QString("rtsp://"));
     QStringList strList = videoUrl.split('/');
     if (!strList.isEmpty()) {
         QString ip = strList.first();
-        if (ip.split(':').length() == 2) {
-            ip = ip.split(':').first();
+        if (ip.contains(":")) {
+            if (ip.split(':').length() == 2) {
+                ip = ip.split(':').first();
+                if (ip.split('.').length() == 4) {
+                    resetIp(ip);
+                }
+            }
+        } else {
             if (ip.split('.').length() == 4) {
                 resetIp(ip);
+            } else {
+                qWarning() << "rtsp url is invalid:" << videoUrl;
             }
         }
+    } else {
+        qWarning() << "rtsp url is invalid:" << videoUrl;
     }
 }
 
