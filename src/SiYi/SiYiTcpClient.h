@@ -17,7 +17,7 @@ public:
     ~SiYiTcpClient();
 
     void sendMessage(const QByteArray &msg);
-    Q_INVOKABLE void analyzeIp(QString videoUrl);
+    Q_INVOKABLE virtual void analyzeIp(QString videoUrl);
 
 protected:
     virtual void analyzeMessage() = 0;

@@ -95,6 +95,8 @@ public:
     explicit SiYiCamera(QObject *parent = nullptr);
     ~SiYiCamera();
 
+    Q_INVOKABLE void analyzeIp(QString videoUrl) override;
+
     Q_INVOKABLE bool turn(int yaw, int pitch);
     Q_INVOKABLE bool resetPostion();
     Q_INVOKABLE bool autoFocus(int x, int y, int w, int h);

@@ -1,5 +1,7 @@
-﻿#include <QtEndian>
+﻿#include <QSettings>
+#include <QStandardPaths>
 #include <QTimerEvent>
+#include <QtEndian>
 
 #include "SiYiCamera.h"
 
@@ -21,11 +23,28 @@ SiYiCamera::SiYiCamera(QObject *parent)
         getRecordingState();
     });
 #endif
+
+    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+                           + "/config.ini",
+                       QSettings::IniFormat);
+    QString tmp = settings.value("siyiCameraIp").toString();
+    if (!tmp.isEmpty()) {
+        ip_ = tmp;
+    }
 }
 
 SiYiCamera::~SiYiCamera()
 {
 
+}
+
+void SiYiCamera::analyzeIp(QString videoUrl)
+{
+    SiYiTcpClient::analyzeIp(videoUrl);
+    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+                           + "/config.ini",
+                       QSettings::IniFormat);
+    settings.setValue("siyiCameraIp", ip_);
 }
 
 bool SiYiCamera::turn(int yaw, int pitch)
