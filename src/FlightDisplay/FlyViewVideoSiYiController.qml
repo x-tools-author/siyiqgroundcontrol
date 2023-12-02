@@ -1,4 +1,6 @@
-﻿/****************************************************************************
+﻿
+
+/****************************************************************************
  *
  * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
  *
@@ -6,20 +8,18 @@
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
+import QtQuick 2.11
+import QtQuick.Controls 2.4
+import QtQuick.Layouts 1.15
 
-
-import QtQuick                          2.11
-import QtQuick.Controls                 2.4
-import QtQuick.Layouts                  1.15
-
-import QGroundControl                   1.0
-import QGroundControl.FlightDisplay     1.0
-import QGroundControl.FlightMap         1.0
-import QGroundControl.ScreenTools       1.0
-import QGroundControl.Controls          1.0
-import QGroundControl.Palette           1.0
-import QGroundControl.Vehicle           1.0
-import QGroundControl.Controllers       1.0
+import QGroundControl 1.0
+import QGroundControl.FlightDisplay 1.0
+import QGroundControl.FlightMap 1.0
+import QGroundControl.ScreenTools 1.0
+import QGroundControl.Controls 1.0
+import QGroundControl.Palette 1.0
+import QGroundControl.Vehicle 1.0
+import QGroundControl.Controllers 1.0
 
 import SiYi.Object 1.0
 import QtGraphicalEffects 1.12
@@ -27,8 +27,8 @@ import "qrc:/qml/QGroundControl/Controls"
 import "qrc:/qml/QGroundControl/FlightDisplay"
 
 Rectangle {
-    id:     root
-    clip:   true
+    id: root
+    clip: true
     anchors.fill: parent
     color: "#00000000"
 
@@ -62,9 +62,10 @@ Rectangle {
             controlMouseArea.currentY = mouse.y
             controlMouseArea.yaw = controlMouseArea.currentX - controlMouseArea.originX
             controlMouseArea.pitch = controlMouseArea.currentY - controlMouseArea.originY
-            controlMouseArea.yaw = controlMouseArea.yaw/5
-            controlMouseArea.pitch = controlMouseArea.pitch/5
-            if (Math.abs(controlMouseArea.yaw) > Math.abs(controlMouseArea.pitch)) {
+            controlMouseArea.yaw = controlMouseArea.yaw / 5
+            controlMouseArea.pitch = controlMouseArea.pitch / 5
+            if (Math.abs(controlMouseArea.yaw) > Math.abs(
+                        controlMouseArea.pitch)) {
                 if (Math.abs(controlMouseArea.yaw) > minDelta) {
                     controlMouseArea.pitch = 0
                     controlMouseArea.isYDirection = false
@@ -108,6 +109,7 @@ Rectangle {
                         controlMouseArea.pitch = 100
                     }
 
+
                     /*console.info(controlMouseArea.yaw, controlMouseArea.pitch,
                                  controlMouseArea.originX, controlMouseArea.originY,
                                  controlMouseArea.currentX, controlMouseArea.currentY)*/
@@ -119,31 +121,33 @@ Rectangle {
                         controlMouseArea.preYaw = controlMouseArea.yaw
                     }
 
-                    if (Math.abs(controlMouseArea.pitch) < minDelta
-                            && Math.abs(controlMouseArea.yaw) < minDelta) {
+                    if (Math.abs(controlMouseArea.pitch) < minDelta && Math.abs(
+                                controlMouseArea.yaw) < minDelta) {
                         return
                     }
 
-                    camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
-                                controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
-//                    if (SiYi.isAndroid) {
-//                        camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
-//                                    controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
-//                        //camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
-//                    } else {
-//                        var delta = 5 // 变化小于该值时，不转动云台
-//                        var yaw = controlMouseArea.yaw
-//                        var pitch = controlMouseArea.pitch
+                    camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(
+                                                                    controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
+                                controlMouseArea.isYDirection ? Math.abs(
+                                                                    controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
+                    //                    if (SiYi.isAndroid) {
+                    //                        camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
+                    //                                    controlMouseArea.isYDirection ? Math.abs(controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
+                    //                        //camera.turn(controlMouseArea.yaw, -controlMouseArea.pitch)
+                    //                    } else {
+                    //                        var delta = 5 // 变化小于该值时，不转动云台
+                    //                        var yaw = controlMouseArea.yaw
+                    //                        var pitch = controlMouseArea.pitch
 
-//                        if (Math.abs(controlMouseArea.yaw) < delta) {
-//                            yaw = controlMouseArea.preYaw
-//                        }
-//                        if (Math.abs(controlMouseArea.pitch) < delta) {
-//                            pitch = controlMouseArea.prePitch
-//                        }
+                    //                        if (Math.abs(controlMouseArea.yaw) < delta) {
+                    //                            yaw = controlMouseArea.preYaw
+                    //                        }
+                    //                        if (Math.abs(controlMouseArea.pitch) < delta) {
+                    //                            pitch = controlMouseArea.prePitch
+                    //                        }
 
-//                        camera.turn(yaw, -pitch)
-//                    }
+                    //                        camera.turn(yaw, -pitch)
+                    //                    }
                 }
 
                 //controlMouseArea.originX = controlMouseArea.currentX
@@ -188,72 +192,145 @@ Rectangle {
             visible: false
         }
 
-        Image { // AI模块状态设置：0关闭，1开启
-            id: aiControl
-            sourceSize.width: btText.width
-            sourceSize.height: btText.width
-            source: camera.aiModeOn
-                    ? "qrc:/resources/SiYi/AiGreen.svg"
-                    : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg"
-                                                 : "qrc:/resources/SiYi/Ai.svg"
-            fillMode: Image.PreserveAspectFit
-            cache: false
-            MouseArea {
-                id: aiControlMouseArea
-                anchors.fill: parent
-                onClicked: {
-                    aiMenu.popup()
-                }
-            }
-            QGCMenu {
-                id: aiMenu
-                QGCMenuItem{
-                    text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("开启目标追踪")
-                    onTriggered: {
-                        console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
-                        camera.setAiModel(camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
-                    }
-                }
-                QGCMenuItem{
-                    text: qsTr("设置追踪目标")
-                    onTriggered: aiSettings.visible = true
-                }
-            }
+        Column {
             anchors.top: controlColumn.top
             anchors.left: controlColumn.right
             anchors.leftMargin: 10
+            Image {
+                // AI模块状态设置：0关闭，1开启
+                id: aiControl
+                sourceSize.width: btText.width
+                sourceSize.height: btText.width
+                source: camera.aiModeOn ? "qrc:/resources/SiYi/AiGreen.svg" : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg"
+                fillMode: Image.PreserveAspectFit
+                cache: false
+                MouseArea {
+                    id: aiControlMouseArea
+                    anchors.fill: parent
+                    onClicked: {
+                        console.info("Set AI mode: ",
+                                     camera.aiModeOn ? "OFF" : "ON")
+                        camera.setAiModel(
+                                    camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
+                    }
+                }
+                // QGCMenu {
+                //     id: aiMenu
+                //     QGCMenuItem {
+                //         text: camera.aiModeOn ? qsTr("关闭目标追踪") : qsTr("开启目标追踪")
+                //         onTriggered: {
+                //             console.info("Set AI mode: ",
+                //                          camera.aiModeOn ? "OFF" : "ON")
+                //             camera.setAiModel(
+                //                         camera.aiModeOn ? SiYiCamera.AiModeOff : SiYiCamera.AiModeOn)
+                //         }
+                //     }
+                //     QGCMenuItem {
+                //         text: qsTr("设置追踪目标")
+                //         onTriggered: aiSettings.visible = true
+                //     }
+                // }
+            }
+            Image {
+                // 激光测距状态设置：0关闭，1开启
+                id: laserDistance
+                sourceSize.width: btText.width
+                sourceSize.height: btText.width
+                source: {
+                    if (laserDistanceMouseArea.containsMouse) {
+                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                    }
+
+                    if (camera.enableLaser) {
+                        if (camera.laserStateOn) {
+                            return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                        } else {
+                            if (laserDistanceMouseArea.pressed) {
+                                return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                            } else {
+                                return "qrc:/resources/SiYi/LaserDistance.svg"
+                            }
+                        }
+                    } else {
+                        //return "qrc:/resources/SiYi/empty.png"
+                        return "qrc:/resources/SiYi/LaserDistance.svg"
+                    }
+                }
+                fillMode: Image.PreserveAspectFit
+                cache: false
+                MouseArea {
+                    id: laserDistanceMouseArea
+                    anchors.fill: parent
+                    onClicked: {
+                        console.info("Set laser state: ",
+                                     camera.laserStateOn ? "OFF" : "ON")
+                        camera.setLaserState(camera.laserStateOn ? 0 : 1)
+                    }
+                }
+
+                Rectangle {
+                    width: infoRow.width + 20
+                    height: infoRow.height + 20
+                    visible: camera.laserStateOn
+                    anchors.left: parent.right
+                    anchors.leftMargin: 10
+                    anchors.verticalCenter: parent.verticalCenter
+                    GridLayout {
+                        id: infoRow
+                        columns: 2
+                        anchors.centerIn: parent
+                        QGCLabel {
+                            font.pixelSize: 48
+                            text: qsTr("激光测距: ") + camera.cookedLaserDistance + "m"
+                            color: "black"
+                            Layout.columnSpan: 2
+                            anchors.verticalCenter: parent.verticalAlignment
+                        }
+                        QGCLabel {
+                            color: "black"
+                            text: "x:" + camera.laserCoordsX
+                            font.pixelSize: 36
+                            anchors.verticalCenter: parent.verticalAlignment
+                        }
+                        QGCLabel {
+                            color: "black"
+                            text: "y:" + camera.laserCoordsY
+                            font.pixelSize: 36
+                            anchors.verticalCenter: parent.verticalAlignment
+                        }
+                    }
+                }
+            }
         }
 
         Column {
             id: controlColumn
             spacing: 20
 
-//            Repeater {
-//                model: [
-//                    ["qrc:/resources/SiYi/ZoomIn.png", "qrc:/resources/SiYi/ZoomInGreen.svg"],
-//                    ["qrc:/resources/SiYi/ZoomOut.svg", "qrc:/resources/SiYi/ZoomOutGreen.svg"],
-//                    ["qrc:/resources/SiYi/Reset.svg", "qrc:/resources/SiYi/ResetGreen.svg"],
-//                    ["qrc:/resources/SiYi/Photo.svg", "qrc:/resources/SiYi/PhotoGreen.svg"],
-//                    ["qrc:/resources/SiYi/Video.svg", "qrc:/resources/SiYi/VideoGreen.svg"],
-//                    ["qrc:/resources/SiYi/far.svg", "qrc:/resources/SiYi/farGreen.svg"],
-//                    ["qrc:/resources/SiYi/neer.svg", "qrc:/resources/SiYi/neerGreen.svg"]
-//                ]
-//                Image {
-//                    sourceSize.width: btText.width
-//                    sourceSize.height: btText.width
-//                    MouseArea {
-//                        id: imageMouseArea
-//                    }
-//                }
-//            }
-
-            Image { // 放大
+            //            Repeater {
+            //                model: [
+            //                    ["qrc:/resources/SiYi/ZoomIn.png", "qrc:/resources/SiYi/ZoomInGreen.svg"],
+            //                    ["qrc:/resources/SiYi/ZoomOut.svg", "qrc:/resources/SiYi/ZoomOutGreen.svg"],
+            //                    ["qrc:/resources/SiYi/Reset.svg", "qrc:/resources/SiYi/ResetGreen.svg"],
+            //                    ["qrc:/resources/SiYi/Photo.svg", "qrc:/resources/SiYi/PhotoGreen.svg"],
+            //                    ["qrc:/resources/SiYi/Video.svg", "qrc:/resources/SiYi/VideoGreen.svg"],
+            //                    ["qrc:/resources/SiYi/far.svg", "qrc:/resources/SiYi/farGreen.svg"],
+            //                    ["qrc:/resources/SiYi/neer.svg", "qrc:/resources/SiYi/neerGreen.svg"]
+            //                ]
+            //                Image {
+            //                    sourceSize.width: btText.width
+            //                    sourceSize.height: btText.width
+            //                    MouseArea {
+            //                        id: imageMouseArea
+            //                    }
+            //                }
+            //            }
+            Image {
+                // 放大
                 id: zoomInImage
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableZoom
-                        ? zoomInMA.pressed ? "qrc:/resources/SiYi/ZoomInGreen.svg" : "qrc:/resources/SiYi/ZoomIn.svg"
-                        : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableZoom ? zoomInMA.pressed ? "qrc:/resources/SiYi/ZoomInGreen.svg" : "qrc:/resources/SiYi/ZoomIn.svg" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -275,11 +352,11 @@ Rectangle {
                         console.info("zoomIn stop--------------------------------")
                     }
                 }
-//                ColorOverlay {
-//                    anchors.fill: zoomInImage
-//                    source: zoomInImage
-//                    color: zoomInMA.pressed ? "green" : "white"
-//                }
+                //                ColorOverlay {
+                //                    anchors.fill: zoomInImage
+                //                    source: zoomInImage
+                //                    color: zoomInMA.pressed ? "green" : "white"
+                //                }
                 Timer {
                     id: zoomInTimer
                     interval: 100
@@ -292,13 +369,12 @@ Rectangle {
                 }
             }
 
-            Image { // 缩小
+            Image {
+                // 缩小
                 id: zoomOut
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableZoom
-                        ? zoomOutMA.pressed ? "qrc:/resources/SiYi/ZoomOutGreen.svg" : "qrc:/resources/SiYi/ZoomOut.svg"
-                        : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableZoom ? zoomOutMA.pressed ? "qrc:/resources/SiYi/ZoomOutGreen.svg" : "qrc:/resources/SiYi/ZoomOut.svg" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -330,13 +406,12 @@ Rectangle {
                 }
             }
 
-            Image { // 回中
+            Image {
+                // 回中
                 id: reset
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableControl
-                        ? resetMA.pressed ? "qrc:/resources/SiYi/ResetGreen.svg" : "qrc:/resources/SiYi/Reset.svg"
-                        : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableControl ? resetMA.pressed ? "qrc:/resources/SiYi/ResetGreen.svg" : "qrc:/resources/SiYi/Reset.svg" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -347,13 +422,12 @@ Rectangle {
                 }
             }
 
-            Image { // 拍照
+            Image {
+                // 拍照
                 id: photo
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enablePhoto
-                        ? photoMA.pressed ? "qrc:/resources/SiYi/PhotoGreen.svg" : "qrc:/resources/SiYi/Photo.svg"
-                        : "qrc:/resources/SiYi/empty.png"
+                source: camera.enablePhoto ? photoMA.pressed ? "qrc:/resources/SiYi/PhotoGreen.svg" : "qrc:/resources/SiYi/Photo.svg" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -367,7 +441,8 @@ Rectangle {
                 }
             }
 
-            Image { // 录像
+            Image {
+                // 录像
                 id: video
                 //sourceSize.width: btText.width
                 //sourceSize.height: btText.width
@@ -382,7 +457,8 @@ Rectangle {
                     anchors.fill: parent
                     onPressed: {
                         if (camera.isRecording) {
-                            camera.sendRecodingCommand(SiYiCamera.CloseRecording)
+                            camera.sendRecodingCommand(
+                                        SiYiCamera.CloseRecording)
                         } else {
                             camera.sendRecodingCommand(SiYiCamera.OpenRecording)
                         }
@@ -412,13 +488,12 @@ Rectangle {
                 }
             }
 
-            Image { // 远景
+            Image {
+                // 远景
                 id: far
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableFocus
-                        ? farMA.pressed ? "qrc:/resources/SiYi/farGreen.svg" : "qrc:/resources/SiYi/far.svg"
-                        : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableFocus ? farMA.pressed ? "qrc:/resources/SiYi/farGreen.svg" : "qrc:/resources/SiYi/far.svg" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -446,13 +521,12 @@ Rectangle {
                 }
             }
 
-            Image { // 近景
+            Image {
+                // 近景
                 id: neer
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.enableFocus
-                        ? neerMA.pressed ? "qrc:/resources/SiYi/neerGreen.svg" : "qrc:/resources/SiYi/neer.svg"
-                        : "qrc:/resources/SiYi/empty.png"
+                source: camera.enableFocus ? neerMA.pressed ? "qrc:/resources/SiYi/neerGreen.svg" : "qrc:/resources/SiYi/neer.svg" : "qrc:/resources/SiYi/empty.png"
                 anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
@@ -479,45 +553,15 @@ Rectangle {
                     }
                 }
             }
-            Image { // 激光测距状态设置：0关闭，1开启
-                id: laserDistance
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
-                source: {
-                    if (camera.enableLaser) {
-                        if (camera.laserStateOn) {
-                            return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
-                        } else {
-                            if (laserDistanceMouseArea.pressed) {
-                                return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
-                            } else {
-                                return "qrc:/resources/SiYi/LaserDistance.svg"
-                            }
-                        }
-                    } else {
-                        return "qrc:/resources/SiYi/empty.png"
-                    }
-                }
-                anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
-                cache: false
-                MouseArea {
-                    id: laserDistanceMouseArea
-                    anchors.fill: parent
-
-                    onClicked: {
-                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
-                        camera.setLaserState(camera.laserStateOn ? 0 : 1)
-                    }
-                }
-            }
         }
     }
 
     Rectangle {
         id: laserInfoRect
-        x: camera.resolutionW < 100 ? 100 : camera.laserCoordsX*parent.width/camera.m_socketWidth
-        y: camera.resolutionH < 100 ? 100 : camera.laserCoordsY*parent.height/camera.m_socketHeight
+        x: camera.resolutionW < 100 ? 100 : camera.laserCoordsX * parent.width
+                                      / camera.m_socketWidth
+        y: camera.resolutionH < 100 ? 100 : camera.laserCoordsY * parent.height
+                                      / camera.m_socketHeight
         color: "white"
         width: ctxGridLayout.width + 20
         height: ctxGridLayout.height + 20
@@ -553,13 +597,13 @@ Rectangle {
         anchors.fill: parent
         videoW: camera.resolutionW
         videoH: camera.resolutionH
-        Connections {
-            target: camera
-            function onAiInfoChanged(x, y, w, h) {
-                aiInfo.visible = true
-                aiInfo.updatePosition(x, y, w, h);
-            }
-        }
+        // Connections {
+        //     target: camera
+        //     function onAiInfoChanged(x, y, w, h) {
+        //         aiInfo.visible = true
+        //         aiInfo.updatePosition(x, y, w, h);
+        //     }
+        // }
     }
     FlyViewVideoSiYiControllerAiSettings {
         id: aiSettings
@@ -567,11 +611,11 @@ Rectangle {
         visible: false
         videoW: camera.resolutionW
         videoH: camera.resolutionH
-        onConfirmTimeout: aiSettings.visible = false
-        onInvokeTrackingTarget: function (tracking, x, y) {
-            console.info("Set tracking target: ", tracking, x, y)
-            camera.setTrackingTarget(tracking, x, y)
-            visible = false
-        }
+        // onConfirmTimeout: aiSettings.visible = false
+        // onInvokeTrackingTarget: function (tracking, x, y) {
+        //     console.info("Set tracking target: ", tracking, x, y)
+        //     camera.setTrackingTarget(tracking, x, y)
+        //     visible = false
+        // }
     }
 }

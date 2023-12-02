@@ -656,7 +656,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
         */
         int type = ctx->version >> 24;
         camera_type_ = type;
-        qInfo() << "The camera type is: " << QString("0x").arg(QString::number(type, 16), 2, '0');
+        qInfo() << "The camera type is: " << QString("0x%1").arg(QString::number(type, 16), 2, '0');
         if (type == CameraTypeZR10 || type == CameraTypeZR30 || type == CameraTypeZT30) { // ZR10,ZR30
             enableFocus_ = true;
             enableZoom_ = true;
