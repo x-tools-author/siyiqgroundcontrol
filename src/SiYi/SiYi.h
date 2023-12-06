@@ -14,6 +14,7 @@ class SiYi : public QObject
     Q_PROPERTY(QVariant camera READ camera CONSTANT)
     Q_PROPERTY(QVariant transmitter READ transmitter CONSTANT)
     Q_PROPERTY(bool isAndroid READ isAndroid CONSTANT)
+    Q_PROPERTY(bool hideWidgets READ hideWidgets WRITE setHideWidgets NOTIFY hideWidgetsChanged FINAL)
 public:
     explicit SiYi(QObject *parent = nullptr);
     static SiYi *instance();
@@ -30,6 +31,15 @@ private:
 private:
     bool isAndroid_;
     bool isAndroid(){return isAndroid_;}
+
+    bool hideWidgets_{false};
+    bool hideWidgets() { return hideWidgets_; }
+    void setHideWidgets(bool hideWidgets)
+    {
+        hideWidgets_ = hideWidgets;
+        emit hideWidgetsChanged();
+    }
+    Q_SIGNAL void hideWidgetsChanged();
 };
 
 #endif // SIYI_H

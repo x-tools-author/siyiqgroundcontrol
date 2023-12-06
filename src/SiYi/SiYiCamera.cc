@@ -76,16 +76,11 @@ bool SiYiCamera::autoFocus(int x, int y, int w, int h)
     QByteArray body;
     body.append(char(0x01));
 
-    quint16 cookedX = x*resolutionWidth_/w;
-    quint16 cookedY = y*resolutionWidth_/h;
+    quint16 cookedX = x * m_resolutionWidthMain / w;
+    quint16 cookedY = y * m_resolutionHeightMain / h;
 
-    if (camera_type_ == CameraTypeZT30) {
-        quint16 cookedX = x*m_resolutionWidthMain/w;
-        quint16 cookedY = y*m_resolutionHeightMain/h;
-        qInfo() << cookedX << cookedY << x << y << w << h << m_resolutionWidthMain << m_resolutionHeightMain;
-    } else {
-        qInfo() << cookedX << cookedY << x << y << w << h << resolutionWidth_ << resolutionHeight_;
-    }
+    qInfo() << "autoFocus" << cookedX << cookedY << x << y << w << h << m_resolutionWidthMain
+            << m_resolutionWidthMain;
 
     body.append(reinterpret_cast<char*>(&cookedX), 2);
     body.append(reinterpret_cast<char*>(&cookedY), 2);
@@ -355,7 +350,7 @@ void SiYiCamera::analyzeMessage()
                 }
 
                 if (!(msg.header.cmdId == 0x90)) {
-                    qInfo() << info << "Rx:" << packet.toHex(' ');
+                    //qInfo() << info << "Rx:" << packet.toHex(' ');
                 }
 
                 rxBytes_.remove(0, msgLen);
@@ -581,29 +576,30 @@ void SiYiCamera::messageHandle0x83(const QByteArray &msg)
     int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
     if (msg.length() == int(headerLength + (1+1+2+2+2+1) + 4)) {
         const char *ptr = msg.constData();
-        char *cookedPtr = const_cast<char*>(ptr);
+        char *cookedPtr = const_cast<char *>(ptr + headerLength);
         char streamType = *cookedPtr;
         if (streamType == 1) { // 主码流
-            int offset = headerLength + 2;
-            qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            quint16 *ptr16 = reinterpret_cast<quint16 *>(cookedPtr + 2);
             m_resolutionWidthMain = *ptr16;
-            offset += 2;
-            ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            ptr16 = reinterpret_cast<quint16 *>(cookedPtr + 4);
             m_resolutionHeightMain = *ptr16;
         } else if (streamType == 0) { // 录像流
-            int offset = headerLength + 2;
-            qint16 *ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            quint16 *ptr16 = reinterpret_cast<quint16 *>(cookedPtr + 2);
             resolutionWidth_ = *ptr16;
-            offset += 2;
-            ptr16 = reinterpret_cast<qint16*>(cookedPtr + offset);
+            ptr16 = reinterpret_cast<quint16 *>(cookedPtr + 4);
             resolutionHeight_ = *ptr16;
             if (resolutionWidth_ == 4096) {
                 is4k_ = true;
                 emit is4kChanged();
             }
 
-            m_resolutionH = resolutionHeight_;
-            m_resolutionW = resolutionWidth_;
+            m_resolutionH = resolutionWidth_;
+            m_resolutionW = resolutionHeight_;
+            emit resolutionHChanged();
+            emit resolutionWChanged();
+            qDebug() << "video resolution:" << resolutionWidth_ << "x" << resolutionHeight_;
+        } else {
+            qWarning() << "Unknown stream(resolution) type:" << int(streamType) << msg.toHex(' ');
         }
     }
 }
@@ -663,6 +659,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
+            m_enableAi = true;
             if (type == CameraTypeZT30) {
                 m_enableLaser = true;
                 getResolutionMain();
@@ -684,6 +681,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enableVideo_ = true;
             enableControl_ = true;
             m_enableLaser = false;
+            m_enableAi = true;
         } else if (type == CameraTypeA2) { // A2
             enableFocus_ = false;
             enableZoom_ = false;
@@ -707,6 +705,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
         emit enableVideoChanged();
         emit enableControlChanged();
         emit enableLaserChanged();
+        emit enableAiChanged();
     }
 }
 

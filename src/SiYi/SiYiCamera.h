@@ -24,9 +24,10 @@ class SiYiCamera : public SiYiTcpClient
     Q_PROPERTY(int laserCoordsY READ laserCoordsY NOTIFY laserCoordsYChanged FINAL)
     Q_PROPERTY(QString cookedLaserDistance READ cookedLaserDistance NOTIFY cookedLaserDistanceChanged FINAL)
 
-    Q_PROPERTY(qreal resolutionW READ resolutionW NOTIFY resolutionWChanged FINAL)
-    Q_PROPERTY(qreal resolutionH READ resolutionH NOTIFY resolutionHChanged FINAL)
+    Q_PROPERTY(quint16 resolutionW READ resolutionW NOTIFY resolutionWChanged FINAL)
+    Q_PROPERTY(quint16 resolutionH READ resolutionH NOTIFY resolutionHChanged FINAL)
 
+    Q_PROPERTY(bool enableAi READ enableAi NOTIFY enableAiChanged FINAL)
     Q_PROPERTY(bool aiModeOn READ aiModeOn NOTIFY aiModeOnChanged FINAL)
 public:
     struct ProtocolMessageHeaderContext {
@@ -124,10 +125,10 @@ protected:
 private:
     qint8 recording_state_{0};
     qint8 camera_type_{-1};
-    qint16 resolutionWidth_{0};
-    qint16 resolutionHeight_{0};
-    qint16 m_resolutionWidthMain{0};
-    qint16 m_resolutionHeightMain{0};
+    quint16 resolutionWidth_{0};
+    quint16 resolutionHeight_{0};
+    quint16 m_resolutionWidthMain{0};
+    quint16 m_resolutionHeightMain{0};
 
 private:
     QByteArray packMessage(quint8 control, quint8 cmd,
@@ -210,17 +211,21 @@ private:
     QString cookedLaserDistance(){return m_cookedLaserDistance;}
     Q_SIGNAL void cookedLaserDistanceChanged();
 
-    qreal m_resolutionW{1920};
-    qreal resolutionW(){return m_resolutionW;}
+    quint16 m_resolutionW{1920};
+    quint16 resolutionW() { return m_resolutionW; }
     Q_SIGNAL void resolutionWChanged();
 
-    qreal m_resolutionH{1080};
-    qreal resolutionH(){return m_resolutionH;}
+    quint16 m_resolutionH{1080};
+    quint16 resolutionH() { return m_resolutionH; }
     Q_SIGNAL void resolutionHChanged();
 
     bool m_aiModeOn{false};
     bool aiModeOn(){return m_aiModeOn;}
     Q_SIGNAL void aiModeOnChanged();
+
+    bool m_enableAi{false};
+    bool enableAi() { return m_enableAi; }
+    Q_SIGNAL void enableAiChanged();
 
 signals:
     void isRecordingChanged();
