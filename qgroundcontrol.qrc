@@ -389,6 +389,10 @@
         <file>resources/SiYi/LaserDistanceGreen.svg</file>
         <file>resources/SiYi/Ai.svg</file>
         <file>resources/SiYi/AiGreen.svg</file>
+        <file>resources/SiYi/expend.svg</file>
+        <file>resources/SiYi/nav.svg</file>
+        <file>resources/SiYi/NavRed.svg</file>
+        <file>resources/SiYi/buttonRight.svg</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>
