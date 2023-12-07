@@ -37,10 +37,12 @@ Rectangle {
     property SiYiTransmitter transmitter: siyi.transmitter
     property bool isRecording: camera.isRecording
     property int minDelta: 5
+    property bool hasBeenMoved: false
 
-    property int videoW: camera.resolutionW
-    property int videoH: camera.resolutionH
+    property real videoW: using1080p ? 1920 : 1280 //camera.resolutionW //1280
+    property real videoH: using1080p ? 1080 : 720 //camera.resolutionH //720
     property bool expended: true
+    property bool using1080p: true
 
     MouseArea {
         id: controlMouseArea
@@ -48,6 +50,10 @@ Rectangle {
         hoverEnabled: true
         visible: camera.isConnected
         onPressed: {
+            if (!camera.aiModeOn) {
+
+                // Nothing to do yet.
+            }
             enableControl = true
             controlMouseArea.originX = mouse.x
             controlMouseArea.originY = mouse.y
@@ -58,6 +64,8 @@ Rectangle {
             contrlTimer.start()
         }
         onReleased: {
+            camera.turn(0, 0)
+            console.info("camera.turn(0, 0)")
             enableControl = false
             contrlTimer.stop()
         }
@@ -90,9 +98,12 @@ Rectangle {
                 var h = root.height
                 var x = mouse.x
                 var y = mouse.y
-                var cookedX = x * videoW / root.width
-                var cookedY = y * videoH / root.height
-                camera.setTrackingTarget(true, x, y)
+                var cookedX = (x * videoW) / root.width
+                var cookedY = (y * videoH) / root.height
+                console.info("camera.setTrackingTarget()", cookedX, cookedY, root.width,
+                             root.height)
+                camera.setTrackingTarget(false, cookedX, cookedY)
+                camera.setTrackingTarget(true, cookedX, cookedY)
             } else {
                 console.info("camera.autoFocus()")
                 camera.autoFocus(mouse.x, mouse.y, root.width, root.height)
@@ -135,6 +146,7 @@ Rectangle {
                         return
                     }
 
+                    hasBeenMoved = true
                     camera.turn(controlMouseArea.isYDirection ? 0 : Math.abs(
                                                                     controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
                                 controlMouseArea.isYDirection ? Math.abs(
@@ -195,7 +207,7 @@ Rectangle {
                 }
             }
             Image {
-                source: SiYi.hideWidgets ? "qrc:/resources/SiYi/NavRed.svg" : "qrc:/resources/SiYi/nav.svg"
+                source: SiYi.hideWidgets ? using1080p ? "qrc:/resources/SiYi/NavGreen.svg" : "qrc:/resources/SiYi/NavRed.svg" : "qrc:/resources/SiYi/nav.svg"
                 fillMode: Image.PreserveAspectFit
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
@@ -203,6 +215,10 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: SiYi.hideWidgets = !SiYi.hideWidgets
+                    onPressAndHold: {
+                        using1080p = !using1080p
+                        console.info("using1080p", using1080p)
+                    }
                 }
             }
 
@@ -448,7 +464,7 @@ Rectangle {
                     onClicked: {
                         console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
                         if (camera.aiModeOn) {
-                            camera.setTrackingTarget(false, x, y)
+                            //camera.setTrackingTarget(false, x, y)
                             camera.setAiModel(SiYiCamera.AiModeOff)
                         } else {
                             camera.setAiModel(SiYiCamera.AiModeOn)

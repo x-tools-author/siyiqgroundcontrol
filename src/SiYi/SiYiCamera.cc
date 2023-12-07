@@ -244,13 +244,13 @@ void SiYiCamera::setTrackingTarget(bool tracking, int x, int y)
     uint16_t trackX = x;
     uint16_t trackY = y;
 
-
     QByteArray body;
     body.append(reinterpret_cast<char*>(&trackAction), 1);
     body.append(reinterpret_cast<char*>(&trackX), 2);
     body.append(reinterpret_cast<char*>(&trackY), 2);
 
     QByteArray msg = packMessage(0x01, cmdId, body);
+    qInfo() << "camera.setTrackingTarget()" << trackX << trackY << msg.toHex(' ');
     sendMessage(msg);
 }
 
@@ -583,6 +583,7 @@ void SiYiCamera::messageHandle0x83(const QByteArray &msg)
             m_resolutionWidthMain = *ptr16;
             ptr16 = reinterpret_cast<quint16 *>(cookedPtr + 4);
             m_resolutionHeightMain = *ptr16;
+            //qDebug() << "video resolution(main):" << resolutionWidth_ << "x" << resolutionHeight_;
         } else if (streamType == 0) { // 录像流
             quint16 *ptr16 = reinterpret_cast<quint16 *>(cookedPtr + 2);
             resolutionWidth_ = *ptr16;

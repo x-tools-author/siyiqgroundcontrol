@@ -253,6 +253,7 @@ Item {
         id: telemetryPanel
         x: recalcXPosition()
         anchors.margins: _toolsMargin
+        visible: !SiYi.hideWidgets
 
         // States for custom layout support
         states: [
