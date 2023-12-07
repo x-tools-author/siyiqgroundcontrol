@@ -42,7 +42,7 @@ Rectangle {
     property real videoW: using1080p ? 1920 : 1280 //camera.resolutionW //1280
     property real videoH: using1080p ? 1080 : 720 //camera.resolutionH //720
     property bool expended: true
-    property bool using1080p: true
+    property bool using1080p: camera.using1080p
 
     MouseArea {
         id: controlMouseArea
@@ -216,7 +216,7 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: SiYi.hideWidgets = !SiYi.hideWidgets
                     onPressAndHold: {
-                        using1080p = !using1080p
+                        camera.using1080p = !camera.using1080p
                         console.info("using1080p", using1080p)
                     }
                 }

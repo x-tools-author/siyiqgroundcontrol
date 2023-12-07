@@ -29,6 +29,8 @@ class SiYiCamera : public SiYiTcpClient
 
     Q_PROPERTY(bool enableAi READ enableAi NOTIFY enableAiChanged FINAL)
     Q_PROPERTY(bool aiModeOn READ aiModeOn NOTIFY aiModeOnChanged FINAL)
+
+    Q_PROPERTY(bool using1080p READ using1080p WRITE setUsing1080p NOTIFY using1080pChanged FINAL)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -226,6 +228,10 @@ private:
     bool m_enableAi{false};
     bool enableAi() { return m_enableAi; }
     Q_SIGNAL void enableAiChanged();
+
+    bool using1080p();
+    void setUsing1080p(bool using1080p);
+    Q_SIGNAL void using1080pChanged();
 
 signals:
     void isRecordingChanged();

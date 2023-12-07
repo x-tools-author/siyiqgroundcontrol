@@ -889,3 +889,25 @@ void SiYiCamera::messageHandle0xbb(const QByteArray &msg)
         }
     }
 }
+
+bool SiYiCamera::using1080p()
+{
+    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+                           + "/config.ini",
+                       QSettings::IniFormat);
+    QVariant tmp = settings.value("using1080p");
+    if (tmp.isNull()) {
+        return true;
+    }
+
+    return tmp.toBool();
+}
+
+void SiYiCamera::setUsing1080p(bool using1080p)
+{
+    QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
+                           + "/config.ini",
+                       QSettings::IniFormat);
+    settings.setValue("using1080p", using1080p);
+    emit using1080pChanged();
+}
