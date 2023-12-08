@@ -394,6 +394,7 @@
         <file>resources/SiYi/NavRed.svg</file>
         <file>resources/SiYi/buttonRight.svg</file>
         <file>resources/SiYi/NavGreen.svg</file>
+        <file>resources/SiYi/AiRed.svg</file>
     </qresource>
     <qresource prefix="/qm"/>
     <qresource prefix="/q"/>
