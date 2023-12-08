@@ -249,8 +249,21 @@ void SiYiCamera::setTrackingTarget(bool tracking, int x, int y)
     body.append(reinterpret_cast<char*>(&trackX), 2);
     body.append(reinterpret_cast<char*>(&trackY), 2);
 
+    m_isCancelingTracking = !tracking;
     QByteArray msg = packMessage(0x01, cmdId, body);
     qInfo() << "camera.setTrackingTarget()" << trackX << trackY << msg.toHex(' ');
+    sendMessage(msg);
+}
+
+/**
+ * @brief SiYiCamera::getTrackingState 获取跟踪状态
+ */
+void SiYiCamera::getTrackingState()
+{
+    uint8_t cmdId = 0xAC;
+    QByteArray body;
+
+    QByteArray msg = packMessage(0x01, cmdId, body);
     sendMessage(msg);
 }
 
@@ -342,7 +355,9 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0xaa(packet);
                 } else if (msg.header.cmdId == 0xab) {
                     messageHandle0xab(packet);
-                }else if (msg.header.cmdId == 0xbb) {
+                } else if (msg.header.cmdId == 0xac) {
+                    messageHandle0xac(packet);
+                } else if (msg.header.cmdId == 0xbb) {
                     messageHandle0xbb(packet);
                 } else {
                     //QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
@@ -707,6 +722,11 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
         emit enableControlChanged();
         emit enableLaserChanged();
         emit enableAiChanged();
+
+        if (m_enableAi) {
+            getAiModel();
+            getTrackingState();
+        }
     }
 }
 
@@ -788,6 +808,11 @@ void SiYiCamera::messageHandle0xa3(const QByteArray &msg)
             m_aiModeOn = on;
             emit aiModeOnChanged();
         }
+
+        if (!on) {
+            m_isTracking = false;
+            emit isTrackingChanged();
+        }
     }
 }
 
@@ -831,16 +856,33 @@ void SiYiCamera::messageHandle0xaa(const QByteArray &msg)
         const char *ptr = msg.constData();
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK*>(ptr);
-
         if (ctx->result == 0) {
-            emit operationResultChanged(TipOptionSettingFailed);
+            // 取消ai追踪会有两条应答消息，第一个成功，第二个失败，此处忽略一个失败的消息
+            if (m_isCancelingTracking) {
+                m_isCancelingTracking = false;
+            } else {
+                emit operationResultChanged(TipOptionSettingFailed);
+            }
+
+            m_isTracking = false;
+            emit isTrackingChanged();
         } else if (ctx->result == 1) {
             emit operationResultChanged(TipOptionSettingOK);
+
+            m_isTracking = true;
+            emit isTrackingChanged();
         } else if (ctx->result == 2) {
             emit operationResultChanged(TipOptionIsNotAiTrackingMode);
+
+            m_isTracking = false;
+            emit isTrackingChanged();
         } else if (ctx->result == 3) {
             emit operationResultChanged(TipOptionStreamNotSupportedAiTracking);
+
+            m_isTracking = false;
+            emit isTrackingChanged();
         }
+        qInfo() << __FUNCTION__ << __LINE__ << m_isTracking << msg.toHex(' ');
     }
 }
 
@@ -865,6 +907,33 @@ void SiYiCamera::messageHandle0xab(const QByteArray &msg)
 
         emit aiInfoChanged(ctx->x, ctx->y, ctx->w, ctx->h);
     }
+}
+
+/**
+ * @brief SiYiCamera::messageHandle0xac 获取AI跟踪状态应答
+ * @param msg
+ */
+void SiYiCamera::messageHandle0xac(const QByteArray &msg)
+{
+    struct ACK
+    {
+        qint8 state;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK *>(ptr);
+
+        if (ctx->state == 1) {
+            m_isTracking = false;
+        } else {
+            m_isTracking = false;
+        }
+    }
+
+    qDebug() << __FUNCTION__ << "m_isTracking:" << m_isTracking << msg.toHex(' ');
 }
 
 /**

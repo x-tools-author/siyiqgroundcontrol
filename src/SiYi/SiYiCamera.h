@@ -29,6 +29,7 @@ class SiYiCamera : public SiYiTcpClient
 
     Q_PROPERTY(bool enableAi READ enableAi NOTIFY enableAiChanged FINAL)
     Q_PROPERTY(bool aiModeOn READ aiModeOn NOTIFY aiModeOnChanged FINAL)
+    Q_PROPERTY(bool isTracking READ isTracking NOTIFY isTrackingChanged FINAL)
 
     Q_PROPERTY(bool using1080p READ using1080p WRITE setUsing1080p NOTIFY using1080pChanged FINAL)
 public:
@@ -119,6 +120,7 @@ public:
     Q_INVOKABLE void setAiModel(int mode); // 设置AI模式
     Q_INVOKABLE void getAiModel(); // 获取AI模式
     Q_INVOKABLE void setTrackingTarget(bool tracking, int x, int y); // 设置/取消设置跟踪目标
+    Q_INVOKABLE void getTrackingState();
 
 protected:
     QByteArray heartbeatMessage() override;
@@ -131,6 +133,7 @@ private:
     quint16 resolutionHeight_{0};
     quint16 m_resolutionWidthMain{0};
     quint16 m_resolutionHeightMain{0};
+    bool m_isCancelingTracking{false};
 
 private:
     QByteArray packMessage(quint8 control, quint8 cmd,
@@ -154,6 +157,7 @@ private:
     void messageHandle0xa6(const QByteArray &msg);
     void messageHandle0xaa(const QByteArray &msg);
     void messageHandle0xab(const QByteArray &msg);
+    void messageHandle0xac(const QByteArray &msg);
     void messageHandle0xbb(const QByteArray &msg);
 
 private:
@@ -228,6 +232,10 @@ private:
     bool m_enableAi{false};
     bool enableAi() { return m_enableAi; }
     Q_SIGNAL void enableAiChanged();
+
+    bool m_isTracking{false};
+    bool isTracking() { return m_isTracking; }
+    Q_SIGNAL void isTrackingChanged();
 
     bool using1080p();
     void setUsing1080p(bool using1080p);

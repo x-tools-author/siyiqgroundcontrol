@@ -453,7 +453,7 @@ Rectangle {
                 id: aiControl
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.aiModeOn ? "qrc:/resources/SiYi/AiGreen.svg" : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg"
+                source: camera.aiModeOn ? (camera.isTracking ? "qrc:/resources/SiYi/AiRed.svg" : "qrc:/resources/SiYi/AiGreen.svg") : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg"
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 anchors.verticalCenter: parent.verticalCenter
@@ -462,15 +462,28 @@ Rectangle {
                     id: aiControlMouseArea
                     anchors.fill: parent
                     onClicked: {
-                        console.info("Set AI mode: ", camera.aiModeOn ? "OFF" : "ON")
                         if (camera.aiModeOn) {
-                            //camera.setTrackingTarget(false, x, y)
-                            camera.setAiModel(SiYiCamera.AiModeOff)
+                            if (camera.isTracking) {
+                                camera.setTrackingTarget(false, 0, 0)
+                            } else {
+                                camera.setAiModel(SiYiCamera.AiModeOff)
+                            }
                         } else {
                             camera.setAiModel(SiYiCamera.AiModeOn)
                         }
                     }
+
+                    property int step: 0
                 }
+
+                // Rectangle {
+                //     width: parent.width * 0.4
+                //     height: width
+                //     color: "red"
+                //     radius: width / 2
+                //     anchors.centerIn: parent
+                //     visible: camera.isTracking && camera.aiModeOn
+                // }
             }
             Image {
                 // 激光测距状态设置：0关闭，1开启
