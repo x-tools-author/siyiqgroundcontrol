@@ -513,7 +513,8 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
-                        camera.setLaserState(camera.laserStateOn ? 0 : 1)
+                        camera.setLaserState(
+                                    camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
                     }
                 }
 

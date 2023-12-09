@@ -60,6 +60,11 @@ public:
         AiModeOn
     };
     Q_ENUM(AiMode);
+    enum LaserState {
+        LaserStateOff,
+        LaserStateOn,
+    };
+    Q_ENUM(LaserState);
 
     enum CameraType {
         CameraTypeR1 = 0x6c,
@@ -110,12 +115,14 @@ public:
     Q_INVOKABLE bool focus(int option);
     Q_INVOKABLE bool sendCommand(int cmd);
     Q_INVOKABLE bool sendRecodingCommand(int cmd);
+    void setLogState(int state);
     bool getRecordingState();
     void getResolution();   // 获取录像流分辨率
     void getResolutionMain();// 获取主码流分辨率
     Q_INVOKABLE void emitOperationResultChanged(int result);
     Q_INVOKABLE void getLaserCoords();  // 获取激光测距指示坐标
     Q_INVOKABLE void getLaserDistance();  // 获取激光测距距离
+    Q_INVOKABLE void getLaserState();     // 获取激光测距开关状态
     Q_INVOKABLE void setLaserState(int state); // 激光测距开关，0: 关闭，1: 打开
     Q_INVOKABLE void setAiModel(int mode); // 设置AI模式
     Q_INVOKABLE void getAiModel(); // 获取AI模式
@@ -152,12 +159,14 @@ private:
     void messageHandle0x94(const QByteArray &msg);
     void messageHandle0x98(const QByteArray &msg);
     void messageHandle0x9e(const QByteArray &msg);
+    void messageHandle0xa1(const QByteArray &msg);
     void messageHandle0xa2(const QByteArray &msg);
     void messageHandle0xa3(const QByteArray &msg);
     void messageHandle0xa6(const QByteArray &msg);
     void messageHandle0xaa(const QByteArray &msg);
     void messageHandle0xab(const QByteArray &msg);
     void messageHandle0xac(const QByteArray &msg);
+    void messageHandle0xba(const QByteArray &msg);
     void messageHandle0xbb(const QByteArray &msg);
 
 private:
