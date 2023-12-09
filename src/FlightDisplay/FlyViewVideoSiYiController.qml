@@ -50,10 +50,10 @@ Rectangle {
         hoverEnabled: true
         visible: camera.isConnected
         onPressed: {
-            if (!camera.aiModeOn) {
-
-                // Nothing to do yet.
+            if (camera.isTracking) {
+                return
             }
+
             enableControl = true
             controlMouseArea.originX = mouse.x
             controlMouseArea.originY = mouse.y
@@ -64,12 +64,20 @@ Rectangle {
             contrlTimer.start()
         }
         onReleased: {
+            if (camera.isTracking) {
+                return
+            }
+
             camera.turn(0, 0)
             console.info("camera.turn(0, 0)")
             enableControl = false
             contrlTimer.stop()
         }
         onPositionChanged: {
+            if (camera.isTracking) {
+                return
+            }
+
             controlMouseArea.currentX = mouse.x
             controlMouseArea.currentY = mouse.y
             controlMouseArea.yaw = controlMouseArea.currentX - controlMouseArea.originX
@@ -89,6 +97,9 @@ Rectangle {
             }
         }
         onDoubleClicked: {
+            if (camera.isTracking) {
+                return
+            }
             console.info("camera.resetPostion()")
             camera.resetPostion()
         }
@@ -102,7 +113,6 @@ Rectangle {
                 var cookedY = (y * videoH) / root.height
                 console.info("camera.setTrackingTarget()", cookedX, cookedY, root.width,
                              root.height)
-                camera.setTrackingTarget(false, cookedX, cookedY)
                 camera.setTrackingTarget(true, cookedX, cookedY)
             } else {
                 console.info("camera.autoFocus()")
@@ -472,18 +482,7 @@ Rectangle {
                             camera.setAiModel(SiYiCamera.AiModeOn)
                         }
                     }
-
-                    property int step: 0
                 }
-
-                // Rectangle {
-                //     width: parent.width * 0.4
-                //     height: width
-                //     color: "red"
-                //     radius: width / 2
-                //     anchors.centerIn: parent
-                //     visible: camera.isTracking && camera.aiModeOn
-                // }
             }
             Image {
                 // 激光测距状态设置：0关闭，1开启

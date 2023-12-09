@@ -193,7 +193,7 @@ void SiYiTransmitter::onHeartbeatMessageReceived(const QByteArray &msg)
         emit rssiChanged();
         emit freqChanged();
         emit channelChanged();
-
+#if 0
         qInfo() << "signalQuality_:" << signalQuality_
                 << "inactiveTime_:" << inactiveTime_
                 << "upStream_:" << upStream_
@@ -203,6 +203,7 @@ void SiYiTransmitter::onHeartbeatMessageReceived(const QByteArray &msg)
                 << "rssi_:" << rssi_
                 << "freq_:" << freq_
                 << "channel_:" << channel_;
+#endif
 
     } else {
         qWarning() << "bad heartbeat message:" << msg.toHex(' ') ;

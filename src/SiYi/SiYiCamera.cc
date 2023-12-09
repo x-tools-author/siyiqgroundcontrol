@@ -857,30 +857,33 @@ void SiYiCamera::messageHandle0xaa(const QByteArray &msg)
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK*>(ptr);
         if (ctx->result == 0) {
-            // 取消ai追踪会有两条应答消息，第一个成功，第二个失败，此处忽略一个失败的消息
-            if (m_isCancelingTracking) {
-                m_isCancelingTracking = false;
-            } else {
-                emit operationResultChanged(TipOptionSettingFailed);
-            }
-
-            m_isTracking = false;
-            emit isTrackingChanged();
+            //emit operationResultChanged(TipOptionSettingFailed);
+            //m_isTracking = false;
+            //emit isTrackingChanged();
+            getTrackingState();
         } else if (ctx->result == 1) {
-            emit operationResultChanged(TipOptionSettingOK);
-
-            m_isTracking = true;
+            //emit operationResultChanged(TipOptionSettingOK);
+            if (m_isCancelingTracking) {
+                m_isTracking = false;
+            } else {
+                m_isTracking = true;
+            }
             emit isTrackingChanged();
+            getTrackingState();
         } else if (ctx->result == 2) {
             emit operationResultChanged(TipOptionIsNotAiTrackingMode);
-
-            m_isTracking = false;
-            emit isTrackingChanged();
+            getTrackingState();
+            //m_isTracking = false;
+            //emit isTrackingChanged();
         } else if (ctx->result == 3) {
             emit operationResultChanged(TipOptionStreamNotSupportedAiTracking);
+            getTrackingState();
+            //m_isTracking = false;
+            //emit isTrackingChanged();
+        }
 
-            m_isTracking = false;
-            emit isTrackingChanged();
+        if (m_isCancelingTracking) {
+            m_isCancelingTracking = false;
         }
         qInfo() << __FUNCTION__ << __LINE__ << m_isTracking << msg.toHex(' ');
     }
@@ -926,11 +929,8 @@ void SiYiCamera::messageHandle0xac(const QByteArray &msg)
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK *>(ptr);
 
-        if (ctx->state == 1) {
-            m_isTracking = false;
-        } else {
-            m_isTracking = false;
-        }
+        m_isTracking = !(ctx->state == 1);
+        emit isTrackingChanged();
     }
 
     qDebug() << __FUNCTION__ << "m_isTracking:" << m_isTracking << msg.toHex(' ');
