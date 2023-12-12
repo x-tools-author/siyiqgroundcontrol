@@ -8,24 +8,24 @@
 SiYiCamera::SiYiCamera(QObject *parent)
     : SiYiTcpClient("192.168.144.25", 37256)
 {
-#if 0
-    connect(this, &SiYiCamera::connected,
-            this, &SiYiCamera::getCamerVersion);
-    connect(this, &SiYiCamera::connected,
-            this, &SiYiCamera::getResolution);
-    connect(this, &SiYiCamera::connected,
-            this, &SiYiCamera::getRecordingState);
-#else
+    m_laserTimer = new QTimer(this);
+    m_laserTimer->setInterval(1000);
+    connect(m_laserTimer, &QTimer::timeout, this, [=]() {
+        getLaserCoords();
+        getLaserDistance();
+    });
+
     connect(this, &SiYiCamera::connected,
             this, [=](){
         getCamerVersion();
         getResolution();
         getRecordingState();
+        m_laserTimer->start();
 #if 0
         setLogState(1);
 #endif
     });
-#endif
+    connect(this, &SiYiCamera::disconnected, this, [=]() { m_laserTimer->stop(); });
 
     QSettings settings(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
                            + "/config.ini",
@@ -364,7 +364,9 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0x94(packet);
                 } else if (msg.header.cmdId == 0x98) {
                     messageHandle0x98(packet);
-                }else if (msg.header.cmdId == 0x90) {
+                } else if (msg.header.cmdId == 0x90) {
+                    // Nothin to do yet.
+                } else if (msg.header.cmdId == 0x91) {
                     // Nothin to do yet.
                 } else if (msg.header.cmdId == 0x9e) {
                     messageHandle0x9e(packet);
@@ -382,11 +384,15 @@ void SiYiCamera::analyzeMessage()
                     messageHandle0xab(packet);
                 } else if (msg.header.cmdId == 0xac) {
                     messageHandle0xac(packet);
+                } else if (msg.header.cmdId == 0xb0) {
+                    messageHandle0xb0(packet);
+                } else if (msg.header.cmdId == 0xba) {
+                    messageHandle0xba(packet);
                 } else if (msg.header.cmdId == 0xbb) {
                     messageHandle0xbb(packet);
                 } else {
-                    //QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
-                    //qWarning() << info << "Unknow message, cmd id:" << id;
+                    QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
+                    qWarning() << info << "Unknow message, cmd id:" << id;
                 }
 
                 if (!(msg.header.cmdId == 0x90)) {
@@ -671,6 +677,7 @@ void SiYiCamera::messageHandle0x89(const QByteArray &msg)
             qDebug() << "laser distance:" << m_laserDistance << "m";
         }
     }
+    qDebug() << "laser distance:" << m_laserDistance << "m";
 }
 
 void SiYiCamera::messageHandle0x94(const QByteArray &msg)
@@ -981,6 +988,24 @@ void SiYiCamera::messageHandle0xac(const QByteArray &msg)
     }
 
     qDebug() << __FUNCTION__ << "m_isTracking:" << m_isTracking << msg.toHex(' ');
+}
+
+void SiYiCamera::messageHandle0xb0(const QByteArray &msg)
+{
+    struct ACK
+    {
+        quint32 longtitude;
+        quint32 latitude;
+    };
+
+    int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
+    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+        const char *ptr = msg.constData();
+        ptr += headerLength;
+        auto ctx = reinterpret_cast<const ACK *>(ptr);
+
+        qDebug() << ctx->longtitude << ctx->latitude;
+    }
 }
 
 void SiYiCamera::messageHandle0xba(const QByteArray &msg)

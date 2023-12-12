@@ -553,4 +553,12 @@ Rectangle {
             }
         }
     }
+    Image {
+        source: "qrc:/resources/SiYi/+.svg"
+        x: camera.laserCoordsX * root.width / camera.resolutionW
+        y: camera.laserCoordsY * root.height / camera.resolutionH
+        sourceSize.width: btText.width
+        sourceSize.height: btText.width
+        visible: camera.laserStateOn
+    }
 }

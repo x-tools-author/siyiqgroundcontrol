@@ -1,8 +1,9 @@
 ﻿#ifndef SIYICAMERA_H
 #define SIYICAMERA_H
 
-#include <QObject>
 #include <QHostAddress>
+#include <QObject>
+#include <QTimer>
 
 #include "SiYiTcpClient.h"
 
@@ -32,6 +33,8 @@ class SiYiCamera : public SiYiTcpClient
     Q_PROPERTY(bool isTracking READ isTracking NOTIFY isTrackingChanged FINAL)
 
     Q_PROPERTY(bool using1080p READ using1080p WRITE setUsing1080p NOTIFY using1080pChanged FINAL)
+    Q_PROPERTY(QString cookedLongitude READ cookedLongitude NOTIFY cookedLongitudeChanged FINAL)
+    Q_PROPERTY(QString cookedLatitude READ cookedLatitude NOTIFY cookedLatitudeChanged FINAL)
 public:
     struct ProtocolMessageHeaderContext {
         quint32 stx;
@@ -142,6 +145,7 @@ private:
     quint16 m_resolutionWidthMain{0};
     quint16 m_resolutionHeightMain{0};
     bool m_isCancelingTracking{false};
+    QTimer *m_laserTimer{nullptr};
 
 private:
     QByteArray packMessage(quint8 control, quint8 cmd,
@@ -167,6 +171,7 @@ private:
     void messageHandle0xaa(const QByteArray &msg);
     void messageHandle0xab(const QByteArray &msg);
     void messageHandle0xac(const QByteArray &msg);
+    void messageHandle0xb0(const QByteArray &msg);
     void messageHandle0xba(const QByteArray &msg);
     void messageHandle0xbb(const QByteArray &msg);
 
@@ -250,6 +255,14 @@ private:
     bool using1080p();
     void setUsing1080p(bool using1080p);
     Q_SIGNAL void using1080pChanged();
+
+    QString m_cookedLongitude{"-.-"};
+    QString cookedLongitude() { return m_cookedLongitude; }
+    Q_SIGNAL void cookedLongitudeChanged();
+
+    QString m_cookedLatitude{"-.-"};
+    QString cookedLatitude() { return m_cookedLatitude; }
+    Q_SIGNAL void cookedLatitudeChanged();
 
 signals:
     void isRecordingChanged();
