@@ -224,6 +224,7 @@ void SiYiCamera::setLaserState(int state)
     body.append(char(state));
 
     QByteArray msg = packMessage(0x01, cmdId, body);
+    qDebug() << "Tx laser:" << msg.toHex(' ');
     sendMessage(msg);
 }
 
@@ -667,6 +668,7 @@ void SiYiCamera::messageHandle0x89(const QByteArray &msg)
             tmp /= 10.0;
             m_cookedLaserDistance = QString::number(tmp, 'f', 1);
             emit laserDistanceChanged();
+            qDebug() << "laser distance:" << m_laserDistance << "m";
         }
     }
 }
@@ -874,6 +876,8 @@ void SiYiCamera::messageHandle0xa6(const QByteArray &msg)
             m_laserCoordsY = ctx->y;
             emit laserCoordsYChanged();
         }
+
+        qDebug() << "laser coords: " << m_laserCoordsX << m_laserCoordsY;
     }
 }
 
@@ -986,6 +990,8 @@ void SiYiCamera::messageHandle0xbb(const QByteArray &msg)
     struct ACK {
         qint8 result;
     };
+
+    qDebug() << "laser" << msg.toHex(' ');
 
     int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
     if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {

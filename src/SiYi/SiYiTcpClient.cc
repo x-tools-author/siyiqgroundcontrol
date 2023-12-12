@@ -42,6 +42,7 @@ void SiYiTcpClient::analyzeIp(QString videoUrl)
     videoUrl = videoUrl.remove(QString("rtsp://"));
     QStringList strList = videoUrl.split('/');
     if (!strList.isEmpty()) {
+        // rtsp://192/168.144.24:8554/video1
         QString ip = strList.first();
         if (ip.contains(":")) {
             if (ip.split(':').length() == 2) {
@@ -51,6 +52,7 @@ void SiYiTcpClient::analyzeIp(QString videoUrl)
                 }
             }
         } else {
+            // rtsp://192.168.144.60/video
             if (ip.split('.').length() == 4) {
                 resetIp(ip);
             } else {
