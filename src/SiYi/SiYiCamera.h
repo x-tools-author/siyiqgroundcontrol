@@ -74,6 +74,7 @@ public:
         CameraTypeA2 = 0x74,
         CameraTypeZR30 = 0x77,
         CameraTypeZT30 = 0x7B,
+        CameraTypeMini = 0x82,
     };
     Q_ENUM(CameraType);
     enum CameraTipOption {

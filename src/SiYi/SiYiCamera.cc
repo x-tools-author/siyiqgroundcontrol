@@ -733,6 +733,13 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enableVideo_ = false;
             enableControl_ = true;
             m_enableLaser = false;
+        } else if (type == CameraTypeMini) {
+            enableFocus_ = false;
+            enableZoom_ = true;
+            enablePhoto_ = true;
+            enableVideo_ = true;
+            enableControl_ = true;
+            m_enableLaser = false;
         } else {
             enableFocus_ = false;
             enableZoom_ = false;
