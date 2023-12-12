@@ -391,8 +391,8 @@ void SiYiCamera::analyzeMessage()
                 } else if (msg.header.cmdId == 0xbb) {
                     messageHandle0xbb(packet);
                 } else {
-                    QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
-                    qWarning() << info << "Unknow message, cmd id:" << id;
+                    //QString id = QString("0x%1").arg(QString::number(msg.header.cmdId, 16), 2, '0');
+                    //qWarning() << info << "Unknow message, cmd id:" << id;
                 }
 
                 if (!(msg.header.cmdId == 0x90)) {
@@ -673,11 +673,10 @@ void SiYiCamera::messageHandle0x89(const QByteArray &msg)
             double tmp = m_laserDistance;
             tmp /= 10.0;
             m_cookedLaserDistance = QString::number(tmp, 'f', 1);
-            emit laserDistanceChanged();
+            emit cookedLaserDistanceChanged();
             qDebug() << "laser distance:" << m_laserDistance << "m";
         }
     }
-    qDebug() << "laser distance:" << m_laserDistance << "m";
 }
 
 void SiYiCamera::messageHandle0x94(const QByteArray &msg)
@@ -891,7 +890,7 @@ void SiYiCamera::messageHandle0xa6(const QByteArray &msg)
             emit laserCoordsYChanged();
         }
 
-        qDebug() << "laser coords: " << m_laserCoordsX << m_laserCoordsY;
+        //qDebug() << "laser coords: " << m_laserCoordsX << m_laserCoordsY;
     }
 }
 
@@ -1004,7 +1003,13 @@ void SiYiCamera::messageHandle0xb0(const QByteArray &msg)
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK *>(ptr);
 
-        qDebug() << ctx->longtitude << ctx->latitude;
+        qreal tmpLongtitude = qreal(ctx->longtitude) / 10000000.0;
+        qreal tmpLatitude = qreal(ctx->latitude) / 10000000.0;
+
+        m_cookedLongitude = QString::number(tmpLongtitude, 'f', 8);
+        m_cookedLatitude = QString::number(tmpLatitude, 'f', 8);
+        emit cookedLongitudeChanged();
+        emit cookedLatitudeChanged();
     }
 }
 

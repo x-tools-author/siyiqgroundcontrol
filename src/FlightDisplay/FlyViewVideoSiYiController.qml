@@ -10,7 +10,7 @@
  ****************************************************************************/
 import QtQuick 2.11
 import QtQuick.Controls 2.4
-import QtQuick.Layouts 1.15
+import QtQuick.Layouts 1.12
 
 import QGroundControl 1.0
 import QGroundControl.FlightDisplay 1.0
@@ -463,7 +463,8 @@ Rectangle {
                 id: aiControl
                 sourceSize.width: btText.width
                 sourceSize.height: btText.width
-                source: camera.aiModeOn ? (camera.isTracking ? "qrc:/resources/SiYi/AiRed.svg" : "qrc:/resources/SiYi/AiGreen.svg") : aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg"
+                source: camera.aiModeOn ? (camera.isTracking ? "qrc:/resources/SiYi/AiRed.svg" : "qrc:/resources/SiYi/AiGreen.svg") : (aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg")
+                //source: aiControl.step === 0 ? "qrc:/resources/SiYi/Ai.svg" : (aiControl.step === 1 ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/AiRed.svg")
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 anchors.verticalCenter: parent.verticalCenter
@@ -472,6 +473,10 @@ Rectangle {
                     id: aiControlMouseArea
                     anchors.fill: parent
                     onClicked: {
+                        // aiControl.step = aiControl.step + 1
+                        // if (aiControl.step > 2) {
+                        //     aiControl.step = 0
+                        // }
                         if (camera.aiModeOn) {
                             if (camera.isTracking) {
                                 camera.setTrackingTarget(false, 0, 0)
@@ -483,6 +488,7 @@ Rectangle {
                         }
                     }
                 }
+                property int step: 0
             }
             Image {
                 // 激光测距状态设置：0关闭，1开启
@@ -511,54 +517,73 @@ Rectangle {
                 MouseArea {
                     id: laserDistanceMouseArea
                     anchors.fill: parent
-                    onClicked: {
-                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
-                        camera.setLaserState(
-                                    camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
-                    }
-                }
-
-                Rectangle {
-                    width: infoRow.width + 20
-                    height: infoRow.height + 20
-                    visible: camera.laserStateOn
-                    anchors.left: parent.right
-                    anchors.leftMargin: 10
-                    anchors.verticalCenter: parent.verticalCenter
-                    GridLayout {
-                        id: infoRow
-                        columns: 2
-                        anchors.centerIn: parent
-                        QGCLabel {
-                            font.pixelSize: 48
-                            text: qsTr("激光测距: ") + camera.cookedLaserDistance + "m"
-                            color: "black"
-                            Layout.columnSpan: 2
-                            anchors.verticalCenter: parent.verticalAlignment
-                        }
-                        QGCLabel {
-                            color: "black"
-                            text: "x:" + camera.laserCoordsX
-                            font.pixelSize: 36
-                            anchors.verticalCenter: parent.verticalAlignment
-                        }
-                        QGCLabel {
-                            color: "black"
-                            text: "y:" + camera.laserCoordsY
-                            font.pixelSize: 36
-                            anchors.verticalCenter: parent.verticalAlignment
-                        }
-                    }
+                    onClicked: laserImage.visible = !laserImage.visible
+                    // onClicked: {
+                    //     console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
+                    //     camera.setLaserState(
+                    //                 camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
+                    // }
                 }
             }
         }
     }
     Image {
+        id: laserImage
         source: "qrc:/resources/SiYi/+.svg"
-        x: camera.laserCoordsX * root.width / camera.resolutionW
-        y: camera.laserCoordsY * root.height / camera.resolutionH
+        x: camera.laserCoordsX * root.width / 1280
+        y: camera.laserCoordsY * root.height / 720
         sourceSize.width: btText.width
         sourceSize.height: btText.width
-        visible: camera.laserStateOn
+
+        onXChanged: updateLaserInfoPos()
+        onYChanged: updateLaserInfoPos()
+    }
+
+    Rectangle {
+        id: laserInfo
+        width: infoGridLayout.width + 20
+        height: infoGridLayout.height + 20
+        radius: 4
+        color: "#bbffffff"
+        visible: laserImage.visible
+        GridLayout {
+            id: infoGridLayout
+            anchors.centerIn: parent
+            columns: 2
+            QGCLabel {
+                font.pixelSize: 48
+                text: qsTr("激光测距: ") + camera.cookedLaserDistance + "m"
+                color: "black"
+                Layout.columnSpan: 2
+            }
+            QGCLabel {
+                color: "black"
+                text: camera.cookedLongitude + "°"
+                font.pixelSize: 36
+            }
+            QGCLabel {
+                color: "black"
+                text: camera.cookedLatitude + "°"
+                font.pixelSize: 36
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        updateLaserInfoPos()
+    }
+
+    function updateLaserInfoPos() {
+        if (root.width - laserImage.x < laserInfo.width) {
+            laserInfo.x = laserImage.x - laserInfo.width
+        } else {
+            laserInfo.x = laserImage.x + laserImage.width
+        }
+
+        if (root.height - laserImage.y < laserInfo.height) {
+            laserInfo.y = laserImage.y - laserInfo.height
+        } else {
+            laserInfo.y = laserImage.y + laserImage.height
+        }
     }
 }
