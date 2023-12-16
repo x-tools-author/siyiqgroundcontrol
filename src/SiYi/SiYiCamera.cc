@@ -693,7 +693,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
 
         /*
         0x6C：R1卡录摄像头
-        0x6E：ZR10 10倍变焦云台相机
+        0x6E：ZR10 10倍变焦云台相机
         0x72：A8 mini云台相机
         0x74：A2 mini云台相机
         0x77：ZR30云台相机
@@ -739,13 +739,14 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             enableVideo_ = false;
             enableControl_ = true;
             m_enableLaser = false;
-        } else if (type == CameraTypeMini) {
+        } else if (type == CameraTypeZT6) {
             enableFocus_ = false;
             enableZoom_ = true;
             enablePhoto_ = true;
             enableVideo_ = true;
             enableControl_ = true;
             m_enableLaser = false;
+            m_enableAi = true;
         } else {
             enableFocus_ = false;
             enableZoom_ = false;
