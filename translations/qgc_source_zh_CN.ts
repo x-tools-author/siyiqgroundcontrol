@@ -6825,7 +6825,7 @@ Click Ok to start the auto-tuning process.
     <message>
         <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="559"/>
         <source>Distance: </source>
-        <translation>激光测距： </translation>
+        <translation>激光测距: </translation>
     </message>
 </context>
 <context>
