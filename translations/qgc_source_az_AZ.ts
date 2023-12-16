@@ -6823,35 +6823,25 @@ Click Ok to start the auto-tuning process.
 <context>
     <name>FlyViewVideoSiYiController</name>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="498"/>
-        <source>关闭目标追踪</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="505"/>
-        <source>设置追踪目标</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="530"/>
-        <source>激光测距: </source>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiController.qml" line="559"/>
+        <source>Distance: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>FlyViewVideoSiYiControllerAiSettings</name>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="196"/>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="198"/>
         <source>确定</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="209"/>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="211"/>
         <source>取消</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="216"/>
+        <location filename="../src/FlightDisplay/FlyViewVideoSiYiControllerAiSettings.qml" line="218"/>
         <source>关闭</source>
         <translation type="unfinished"></translation>
     </message>
@@ -6859,58 +6849,58 @@ Click Ok to start the auto-tuning process.
 <context>
     <name>FlyViewWidgetLayer</name>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="95"/>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="100"/>
         <source>Single</source>
         <translation type="unfinished">Single</translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="101"/>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="106"/>
         <source>Multi-Vehicle</source>
         <translation type="unfinished">Multi-Vehicle</translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="218"/>
-        <source>拍照成功</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="225"/>
+        <source>Take Photo Success</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="220"/>
-        <source>拍照失败</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="227"/>
+        <source>Take Photo Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="222"/>
-        <source>录像失败</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="229"/>
+        <source>Video Record Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="224"/>
-        <source>4K视频不支持变倍</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="231"/>
+        <source>Not supportted</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="226"/>
-        <source>激光测距不在范围内</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="233"/>
+        <source>Not in the range of laser</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="228"/>
-        <source>设置成功</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="235"/>
+        <source>Setting OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="230"/>
-        <source>设置失败</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="237"/>
+        <source>Setting Failed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="232"/>
-        <source>当前模式不是Ai追踪模式</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="239"/>
+        <source>Not in AI tracking mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="234"/>
-        <source>当前码流不支持AI追踪功能</source>
+        <location filename="../src/FlightDisplay/FlyViewWidgetLayer.qml" line="241"/>
+        <source>AI tracking not supportted</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -7003,109 +6993,109 @@ Click Ok to start the auto-tuning process.
 <context>
     <name>GeneralSettings</name>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="414"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="413"/>
         <source>Units</source>
         <translation>Bölmələr</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="434"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="433"/>
         <source>Area</source>
         <translation>Sahə</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="434"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="433"/>
         <source>Speed</source>
         <translation>Sürət</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="434"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="433"/>
         <source>Temperature</source>
         <translation>Temperatur</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="451"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="450"/>
         <source>Miscellaneous</source>
         <translation>Müxtəlif</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="475"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="474"/>
         <source>Language</source>
         <translation>Dil</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="486"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="485"/>
         <source>Color Scheme</source>
         <translation>Rəng sxemi</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="497"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="496"/>
         <source>Map Provider</source>
         <translation>Xəritə Provayderi</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="517"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="516"/>
         <source>Map Type</source>
         <translation>Xəritə növü</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="536"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="535"/>
         <source>Stream GCS Position</source>
         <translation>Axın GCS mövqeyi</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="618"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="617"/>
         <source>Mute all audio output</source>
         <translation>Bütün səs çıxışını səssizləşdirin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="633"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="632"/>
         <source>Clear all settings on next start</source>
         <translation>Növbəti başlanğıcda bütün parametrləri silin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="643"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="642"/>
         <source>Clear Settings</source>
         <translation>Parametrləri silin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="644"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="643"/>
         <source>All saved settings will be reset the next time you start %1. Is this really what you want?</source>
         <translation>Bütün yadda qalan parametrlər növbəti dəfə %1 başlayanda sıfırlanır. Həqiqətən istədiyiniz budur?</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="668"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="667"/>
         <source>Application Load/Save Path</source>
         <translation>Tətbiq Yükləyin / Yolu Saxla</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="672"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="671"/>
         <source>&lt;not set&gt;</source>
         <translation>&lt;not set&gt;</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="675"/>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1079"/>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1101"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="674"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1078"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1100"/>
         <source>Browse</source>
         <translation>Gözdən keçirin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="679"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="678"/>
         <source>Choose the location to save/load files</source>
         <translation>Faylları saxlamaq / yükləmək üçün yeri seçin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="692"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="691"/>
         <source>Telemetry Logs from Vehicle</source>
         <translation>Aparat telemetriya qeydləri</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="710"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="709"/>
         <source>Save log after each flight</source>
         <translation>Hər uçuşdan sonra qeyd edin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="718"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="717"/>
         <source>Save logs even if vehicle was not armed</source>
         <translation>Aparat xodlanmamış olsa da, qeydləri saxla</translation>
     </message>
@@ -7140,22 +7130,22 @@ Click Ok to start the auto-tuning process.
         <translation type="unfinished">Maximum Altitude</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="546"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="545"/>
         <source>UI Scaling</source>
         <translation>UI miqyası</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="611"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="610"/>
         <source>Use Vehicle Pairing</source>
         <translation>Aparat qoşulması istifadə edin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="625"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="624"/>
         <source>Check for Internet connection</source>
         <translation>İnternet bağlantısını yoxlayın</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="726"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="725"/>
         <source>Save CSV log of telemetry data</source>
         <translation>Telemetriya məlumatlarının CSV qeydini qeyd edin</translation>
     </message>
@@ -7215,133 +7205,133 @@ Click Ok to start the auto-tuning process.
         <translation type="unfinished">Source</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="303"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="302"/>
         <source>File Format</source>
         <translation type="unfinished">File Format</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="325"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="324"/>
         <source>Video decode priority</source>
         <translation type="unfinished">Video decode priority</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="352"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="351"/>
         <source>Auto-Delete Saved Recordings</source>
         <translation type="unfinished">Auto-Delete Saved Recordings</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="363"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="362"/>
         <source>Plan View</source>
         <translation>Plana bax</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="385"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="384"/>
         <source>Default Mission Altitude</source>
         <translation>Defolt Missiya Hündürlüyü</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="391"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="390"/>
         <source>VTOL TransitionDistance</source>
         <translation type="unfinished">VTOL TransitionDistance</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="399"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="398"/>
         <source>Use MAV_CMD_CONDITION_GATE for pattern generation</source>
         <translation>Nümunə yaratmaq üçün MAV_CMD_CONDITION_GATE istifadə edin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="404"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="403"/>
         <source>Missions Do Not Require Takeoff Item</source>
         <translation>Missiyalar Qalxış maddəsini tələb etmir</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="434"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="433"/>
         <source>Horizontal Distance</source>
         <translation type="unfinished">Horizontal Distance</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="434"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="433"/>
         <source>Vertical Distance</source>
         <translation type="unfinished">Vertical Distance</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="738"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="737"/>
         <source>AutoConnect to the following devices</source>
         <translation>Aşağıdakı cihazlara AutoConnect qoşun</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
         <source>Pixhawk</source>
         <translation>Pixhawk</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
         <source>SiK Radio</source>
         <translation>SiK Radio</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
         <source>PX4 Flow</source>
         <translation>PX4 Flow</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
         <source>LibrePilot</source>
         <translation>LibrePilot</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
         <source>UDP</source>
         <translation>UDP</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="854"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="853"/>
         <source>RTK GPS</source>
         <translation>RTK GPS</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="769"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="768"/>
         <source>Zero-Conf</source>
         <translation type="unfinished">Zero-Conf</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="788"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="787"/>
         <source>NMEA GPS Device</source>
         <translation>NMEA GPS cihazı</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="819"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="818"/>
         <source>NMEA GPS Baudrate</source>
         <translation>NMEA GPS Baudrate</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="839"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="838"/>
         <source>NMEA stream UDP port</source>
         <translation>NMEA stream UDP port</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="877"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="876"/>
         <source>Perform Survey-In</source>
         <translation>Anketi həyata keçirin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="911"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="910"/>
         <source>Use Specified Base Position</source>
         <translation>Müəyyən edilmiş baza mövqeyindən istifadə edin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="972"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="971"/>
         <source>Save Current Base Position</source>
         <translation>Mövcud baza mövqeyini qeyd edin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="988"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="987"/>
         <source>ADSB Server</source>
         <translation>ADSB Server</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1006"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1005"/>
         <source>Note: These setting are not meant for use with an ADSB transponder which is situated on the vehicle.</source>
         <translation>Qeyd: Bu parametr nəqliyyat vasitəsində yerləşən bir ADSB transponderi ilə istifadə üçün nəzərdə tutulmamışdır.</translation>
     </message>
@@ -7357,58 +7347,58 @@ Click Ok to start the auto-tuning process.
 </translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="282"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="281"/>
         <source>TCP URL</source>
         <translation>TCP URL</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="292"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="291"/>
         <source>Aspect Ratio</source>
         <translation>Aspekt nisbəti</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="338"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="337"/>
         <source>Disable When Disarmed</source>
         <translation>Xodda olmadıqda deaktiv edin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="345"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="344"/>
         <source>Low Latency Mode</source>
         <translation>Aşağı Gecikmə rejimi</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="314"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="313"/>
         <source>Max Storage Usage</source>
         <translation>Maksimum saxlama istifadəsi</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1051"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1050"/>
         <source>Brand Image</source>
         <translation>Marka şəkli</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1070"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1069"/>
         <source>Indoor Image</source>
         <translation>Daxili şəkil</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1083"/>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1105"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1082"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1104"/>
         <source>Choose custom brand image file</source>
         <translation>Xüsusi marka görünüş faylı seçin</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1092"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1091"/>
         <source>Outdoor Image</source>
         <translation>Xarici görünüş</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1113"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1112"/>
         <source>Reset Default Brand Image</source>
         <translation>Default marka görüntüsünü yenidən qurun</translation>
     </message>
     <message>
-        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1126"/>
+        <location filename="../src/ui/preferences/GeneralSettings.qml" line="1125"/>
         <source>%1 Version</source>
         <translation>%1 versiyası</translation>
     </message>
