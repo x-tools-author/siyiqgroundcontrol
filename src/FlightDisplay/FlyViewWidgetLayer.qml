@@ -222,23 +222,23 @@ Item {
                 target: siYiCamera
                 onOperationResultChanged: {
                     if (result === 0) {
-                        resultLabel.text = qsTr("拍照成功")
+                        resultLabel.text = qsTr("Take Photo Success")
                     } else if (result === 1) {
-                        resultLabel.text = qsTr("拍照失败")
+                        resultLabel.text = qsTr("Take Photo Failed")
                     } else if (result === 4) {
-                        resultLabel.text = qsTr("录像失败")
+                        resultLabel.text = qsTr("Video Record Failed")
                     } else if (result === -1) {
-                        resultLabel.text = qsTr("4K视频不支持变倍")
+                        resultLabel.text = qsTr("Not supportted") //4K视频不支持变倍
                     } else if (result === SiYiCamera.TipOptionLaserNotInRange) {
-                        resultLabel.text = qsTr("激光测距不在范围内")
+                        resultLabel.text = qsTr("Not in the range of laser")
                     } else if (result === SiYiCamera.TipOptionSettingOK) {
-                        resultLabel.text = qsTr("设置成功")
+                        resultLabel.text = qsTr("Setting OK")
                     } else if (result === SiYiCamera.TipOptionSettingFailed) {
-                        resultLabel.text = qsTr("设置失败")
+                        resultLabel.text = qsTr("Setting Failed")
                     } else if (result === SiYiCamera.TipOptionIsNotAiTrackingMode) {
-                        resultLabel.text = qsTr("当前模式不是Ai追踪模式")
+                        resultLabel.text = qsTr("Not in AI tracking mode") // 不支持AI跟踪模式
                     } else if (result === SiYiCamera.TipOptionStreamNotSupportedAiTracking) {
-                        resultLabel.text = qsTr("当前码流不支持AI追踪功能")
+                        resultLabel.text = qsTr("AI tracking not supportted") //AI跟踪不支持
                     }
 
                     resultTimer.restart()

@@ -19,6 +19,7 @@ SiYiCamera::SiYiCamera(QObject *parent)
             this, [=](){
         getCamerVersion();
         getResolution();
+        getResolutionMain();
         getRecordingState();
         m_laserTimer->start();
 #if 0

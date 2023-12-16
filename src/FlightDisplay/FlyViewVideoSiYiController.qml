@@ -39,10 +39,12 @@ Rectangle {
     property int minDelta: 5
     property bool hasBeenMoved: false
 
-    property real videoW: using1080p ? 1920 : 1280 //camera.resolutionW //1280
-    property real videoH: using1080p ? 1080 : 720 //camera.resolutionH //720
+    //property real videoW: using1080p ? 1920 : 1280 //camera.resolutionW //1280
+    //property real videoH: using1080p ? 1080 : 720 //camera.resolutionH //720
+    property real videoW: 1280
+    property real videoH: 720
     property bool expended: true
-    property bool using1080p: camera.using1080p
+    property bool using1080p: false //camera.using1080p
 
     MouseArea {
         id: controlMouseArea
@@ -115,6 +117,20 @@ Rectangle {
                              root.height)
                 camera.setTrackingTarget(true, cookedX, cookedY)
             } else {
+                // 中间区域10%才生效
+                if (mouse.x < root.width / 2 - root.width * 0.05) {
+                    return
+                }
+                if (mouse.x > root.width / 2 + root.width * 0.05) {
+                    return
+                }
+                if (mouse.y < root.height / 2 - root.height * 0.05) {
+                    return
+                }
+                if (mouse.y > root.height / 2 + root.height * 0.05) {
+                    return
+                }
+
                 console.info("camera.autoFocus()")
                 camera.autoFocus(mouse.x, mouse.y, root.width, root.height)
             }
@@ -204,7 +220,7 @@ Rectangle {
 
         Row {
             id: controlColumn
-            spacing: 20
+            spacing: 16
             Image {
                 source: "qrc:/resources/SiYi/buttonRight.svg"
                 fillMode: Image.PreserveAspectFit
@@ -348,10 +364,10 @@ Rectangle {
             Image {
                 // 录像
                 id: video
-                //sourceSize.width: btText.width
-                //sourceSize.height: btText.width
-                width: btText.width
-                height: btText.width
+                sourceSize.width: btText.width + (SiYi.isAndroid ? 10 : 0)
+                sourceSize.height: btText.width + (SiYi.isAndroid ? 10 : 0)
+                //width: btText.width
+                //height: btText.width
                 cache: false
                 anchors.verticalCenter: parent.verticalCenter
                 fillMode: Image.PreserveAspectFit
@@ -461,8 +477,8 @@ Rectangle {
             Image {
                 // AI模块状态设置：0关闭，1开启
                 id: aiControl
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width + (SiYi.isAndroid ? 10 : 0)
+                sourceSize.height: btText.width + (SiYi.isAndroid ? 10 : 0)
                 source: camera.aiModeOn ? (camera.isTracking ? "qrc:/resources/SiYi/AiRed.svg" : "qrc:/resources/SiYi/AiGreen.svg") : (aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg")
                 //source: aiControl.step === 0 ? "qrc:/resources/SiYi/Ai.svg" : (aiControl.step === 1 ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/AiRed.svg")
                 fillMode: Image.PreserveAspectFit
@@ -493,8 +509,8 @@ Rectangle {
             Image {
                 // 激光测距状态设置：0关闭，1开启
                 id: laserDistance
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width - (SiYi.isAndroid ? 10 : 0)
+                sourceSize.height: btText.width - (SiYi.isAndroid ? 10 : 0)
                 anchors.verticalCenter: parent.verticalCenter
                 visible: expended ? camera.enableLaser : false
                 source: {
@@ -502,7 +518,7 @@ Rectangle {
                         return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
                     }
 
-                    if (camera.laserStateOn) {
+                    if (laserImage.visible) {
                         return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
                     } else {
                         if (laserDistanceMouseArea.pressed) {
@@ -524,53 +540,58 @@ Rectangle {
                     //                 camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
                     // }
                 }
+                Rectangle {
+                    id: laserInfo
+                    width: infoGridLayout.width + 20
+                    height: infoGridLayout.height + 20
+                    radius: 4
+                    color: "#bbffffff"
+                    visible: laserImage.visible
+                    anchors.left: parent.right
+                    anchors.leftMargin: controlColumn.spacing
+                    anchors.top: parent.top
+                    ColumnLayout {
+                        id: infoGridLayout
+                        anchors.centerIn: parent
+                        //columns: 2
+                        QGCLabel {
+                            font.pixelSize: 48
+                            text: qsTr("Distance: ") + camera.cookedLaserDistance + "m"
+                            color: "black"
+                            //Layout.columnSpan: 2
+                        }
+                        QGCLabel {
+                            color: "black"
+                            text: camera.cookedLongitude + "°"
+                            font.pixelSize: 36
+                        }
+                        QGCLabel {
+                            color: "black"
+                            text: camera.cookedLatitude + "°"
+                            font.pixelSize: 36
+                        }
+                    }
+                }
             }
         }
     }
     Image {
         id: laserImage
         source: "qrc:/resources/SiYi/+.svg"
-        x: camera.laserCoordsX * root.width / 1280
-        y: camera.laserCoordsY * root.height / 720
+        visible: false
+        //x: camera.laserCoordsX * root.width / 1280
+        //y: camera.laserCoordsY * root.height / 720
+        anchors.centerIn: parent
         sourceSize.width: btText.width
         sourceSize.height: btText.width
 
-        onXChanged: updateLaserInfoPos()
-        onYChanged: updateLaserInfoPos()
-    }
-
-    Rectangle {
-        id: laserInfo
-        width: infoGridLayout.width + 20
-        height: infoGridLayout.height + 20
-        radius: 4
-        color: "#bbffffff"
-        visible: laserImage.visible
-        GridLayout {
-            id: infoGridLayout
-            anchors.centerIn: parent
-            columns: 2
-            QGCLabel {
-                font.pixelSize: 48
-                text: qsTr("激光测距: ") + camera.cookedLaserDistance + "m"
-                color: "black"
-                Layout.columnSpan: 2
-            }
-            QGCLabel {
-                color: "black"
-                text: camera.cookedLongitude + "°"
-                font.pixelSize: 36
-            }
-            QGCLabel {
-                color: "black"
-                text: camera.cookedLatitude + "°"
-                font.pixelSize: 36
-            }
-        }
+        //onXChanged: updateLaserInfoPos()
+        //onYChanged: updateLaserInfoPos()
     }
 
     Component.onCompleted: {
-        updateLaserInfoPos()
+
+        //updateLaserInfoPos()
     }
 
     function updateLaserInfoPos() {

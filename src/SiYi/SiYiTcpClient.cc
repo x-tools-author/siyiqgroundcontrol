@@ -52,7 +52,7 @@ void SiYiTcpClient::analyzeIp(QString videoUrl)
                 }
             }
         } else {
-            // rtsp://192.168.144.60/video
+            // rtsp://192.168.144.60/video0
             if (ip.split('.').length() == 4) {
                 resetIp(ip);
             } else {
