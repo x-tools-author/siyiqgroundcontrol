@@ -538,6 +538,7 @@ Rectangle {
 
                     onClicked: laserImage.visible = !laserImage.visible
 
+
                     /*onClicked: {
                         console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
                         camera.setLaserState(
