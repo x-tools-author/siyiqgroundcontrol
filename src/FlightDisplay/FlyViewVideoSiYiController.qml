@@ -117,8 +117,11 @@ Rectangle {
                              root.height)
                 camera.setTrackingTarget(true, cookedX, cookedY)
             } else {
+
                 // 中间区域10%才生效
-                if (mouse.x < root.width / 2 - root.width * 0.05) {
+
+
+                /*if (mouse.x < root.width / 2 - root.width * 0.05) {
                     return
                 }
                 if (mouse.x > root.width / 2 + root.width * 0.05) {
@@ -129,8 +132,7 @@ Rectangle {
                 }
                 if (mouse.y > root.height / 2 + root.height * 0.05) {
                     return
-                }
-
+                }*/
                 console.info("camera.autoFocus()")
                 camera.autoFocus(mouse.x, mouse.y, root.width, root.height)
             }
@@ -533,12 +535,14 @@ Rectangle {
                 MouseArea {
                     id: laserDistanceMouseArea
                     anchors.fill: parent
+
                     onClicked: laserImage.visible = !laserImage.visible
-                    // onClicked: {
-                    //     console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
-                    //     camera.setLaserState(
-                    //                 camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
-                    // }
+
+                    /*onClicked: {
+                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
+                        camera.setLaserState(
+                                    camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
+                    }*/
                 }
                 Rectangle {
                     id: laserInfo
@@ -549,26 +553,27 @@ Rectangle {
                     visible: laserImage.visible
                     anchors.left: parent.right
                     anchors.leftMargin: controlColumn.spacing
-                    anchors.top: parent.top
+                    //anchors.top: parent.bottom
+                    //anchors.horizontalCenter: parent.horizontalCenter
                     ColumnLayout {
                         id: infoGridLayout
                         anchors.centerIn: parent
                         //columns: 2
                         QGCLabel {
-                            font.pixelSize: 48
-                            text: qsTr("Distance: ") + camera.cookedLaserDistance + "m"
+                            //font.pixelSize: 2*btText.font.pixelSize
+                            text: qsTr("Distance: ") + "\n" + camera.cookedLaserDistance + "m"
                             color: "black"
                             //Layout.columnSpan: 2
                         }
                         QGCLabel {
                             color: "black"
                             text: camera.cookedLongitude + "°"
-                            font.pixelSize: 36
+                            //font.pixelSize: 36
                         }
                         QGCLabel {
                             color: "black"
                             text: camera.cookedLatitude + "°"
-                            font.pixelSize: 36
+                            //font.pixelSize: 36
                         }
                     }
                 }
@@ -578,7 +583,7 @@ Rectangle {
     Image {
         id: laserImage
         source: "qrc:/resources/SiYi/+.svg"
-        visible: false
+        visible: camera.laserStateOn
         //x: camera.laserCoordsX * root.width / 1280
         //y: camera.laserCoordsY * root.height / 720
         anchors.centerIn: parent
@@ -590,7 +595,9 @@ Rectangle {
     }
 
     Component.onCompleted: {
-
+        SiYi.iconsHeight = Qt.binding(function () {
+            return controlColumn.height
+        })
         //updateLaserInfoPos()
     }
 

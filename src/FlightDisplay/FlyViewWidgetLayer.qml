@@ -120,6 +120,7 @@ Item {
     FlyViewInstrumentPanel {
         id: instrumentPanel
         anchors.margins: _toolsMargin
+        anchors.topMargin: anchors.margins + SiYi.iconsHeight
         anchors.top: multiVehiclePanelSelector.visible ? multiVehiclePanelSelector.bottom : parent.top
         anchors.right: parent.right
         width: _rightPanelWidth
