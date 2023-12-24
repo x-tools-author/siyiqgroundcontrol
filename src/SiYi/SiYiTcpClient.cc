@@ -42,7 +42,7 @@ void SiYiTcpClient::analyzeIp(QString videoUrl)
     videoUrl = videoUrl.remove(QString("rtsp://"));
     QStringList strList = videoUrl.split('/');
     if (!strList.isEmpty()) {
-        // rtsp://192/168.144.24:8554/video1
+        // rtsp://192/168.144.25:8554/video1
         QString ip = strList.first();
         if (ip.contains(":")) {
             if (ip.split(':').length() == 2) {
@@ -90,8 +90,8 @@ void SiYiTcpClient::run()
         emit connected();
         emit isConnectedChanged();
     });
-    connect(tcpClient, &QTcpSocket::disconnected, tcpClient, [=](){
-        qInfo() << info << "Disconnect from server!";
+    connect(tcpClient, &QTcpSocket::disconnected, tcpClient, [=]() {
+        qInfo() << info << "Disconnect from server:" << tcpClient->errorString();
 
         this->isConnected_ = false;
         this->txMessageVectorMutex_.lock();

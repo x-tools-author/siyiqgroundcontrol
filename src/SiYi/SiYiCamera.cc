@@ -215,6 +215,9 @@ void SiYiCamera::getLaserState()
     QByteArray body;
 
     QByteArray msg = packMessage(0x01, cmdId, body);
+
+    qDebug() << "Tx get laser:" << msg.toHex(' ');
+
     sendMessage(msg);
 }
 
@@ -225,8 +228,10 @@ void SiYiCamera::setLaserState(int state)
     body.append(char(state));
 
     QByteArray msg = packMessage(0x01, cmdId, body);
-    qDebug() << "Tx laser:" << msg.toHex(' ');
+    qDebug() << "Tx set laser:" << msg.toHex(' ');
     sendMessage(msg);
+
+    getLaserState();
 }
 
 /**
@@ -1030,7 +1035,7 @@ void SiYiCamera::messageHandle0xbb(const QByteArray &msg)
         qint8 result;
     };
 
-    qDebug() << "laser" << msg.toHex(' ');
+    qDebug() << "set laser response" << msg.toHex(' ');
 
     int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
     if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
