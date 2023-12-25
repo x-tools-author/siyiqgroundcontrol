@@ -230,8 +230,6 @@ void SiYiCamera::setLaserState(int state)
     QByteArray msg = packMessage(0x01, cmdId, body);
     qDebug() << "Tx set laser:" << msg.toHex(' ');
     sendMessage(msg);
-
-    getLaserState();
 }
 
 /**
@@ -1043,8 +1041,8 @@ void SiYiCamera::messageHandle0xbb(const QByteArray &msg)
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK*>(ptr);
         bool on = (ctx->result == LaserStateOn);
-        if ((on) != m_laserStateOn) {
-            m_laserStateOn = !on;
+        if (on != m_laserStateOn) {
+            m_laserStateOn = on;
             emit laserStateOnChanged();
         }
     }
