@@ -45,11 +45,12 @@ Rectangle {
     property real videoH: 720
     property bool expended: true
     property bool using1080p: false //camera.using1080p
+    property real iconScale: SiYi.isAndroid ? 0.6 : 1.5
 
     MouseArea {
         id: controlMouseArea
         anchors.fill: parent
-        hoverEnabled: true
+        hoverEnabled: false
         visible: camera.isConnected
         onPressed: {
             if (camera.isTracking) {
@@ -82,19 +83,32 @@ Rectangle {
 
             controlMouseArea.currentX = mouse.x
             controlMouseArea.currentY = mouse.y
+
             controlMouseArea.yaw = controlMouseArea.currentX - controlMouseArea.originX
             controlMouseArea.pitch = controlMouseArea.currentY - controlMouseArea.originY
-            controlMouseArea.yaw = controlMouseArea.yaw / 5
-            controlMouseArea.pitch = controlMouseArea.pitch / 5
+            //controlMouseArea.yaw = controlMouseArea.yaw / 5
+            //controlMouseArea.pitch = controlMouseArea.pitch / 5
             if (Math.abs(controlMouseArea.yaw) > Math.abs(controlMouseArea.pitch)) {
                 if (Math.abs(controlMouseArea.yaw) > minDelta) {
                     controlMouseArea.pitch = 0
                     controlMouseArea.isYDirection = false
+
+                    if (contrlTimer.sendEnable) {
+                        contrlTimer.sendEnable = false
+                        var cookedX = controlMouseArea.yaw * 100 / root.width
+                        camera.turn(cookedX, 0)
+                    }
                 }
             } else {
                 if (Math.abs(controlMouseArea.pitch) > minDelta) {
                     controlMouseArea.yaw = 0
                     controlMouseArea.isYDirection = true
+
+                    if (contrlTimer.sendEnable) {
+                        contrlTimer.sendEnable = false
+                        var cookedY = controlMouseArea.pitch * 100 / root.height
+                        camera.turn(0, -cookedY)
+                    }
                 }
             }
         }
@@ -144,7 +158,10 @@ Rectangle {
             interval: 100
             repeat: true
             onTriggered: {
-                if (controlMouseArea.enableControl) {
+                contrlTimer.sendEnable = true
+
+
+                /*if (controlMouseArea.enableControl) {
                     if (controlMouseArea.yaw < -100) {
                         controlMouseArea.yaw = -100
                     }
@@ -179,17 +196,18 @@ Rectangle {
                                                                     controlMouseArea.yaw) < minDelta ? controlMouseArea.preYaw : controlMouseArea.yaw,
                                 controlMouseArea.isYDirection ? Math.abs(
                                                                     controlMouseArea.pitch) < minDelta ? -controlMouseArea.prePitch : -controlMouseArea.pitch : 0)
-                }
-                onRunningChanged: {
-                    if (!running) {
-                        controlMouseArea.originX = 0
-                        controlMouseArea.originY = 0
-                        controlMouseArea.currentX = 0
-                        controlMouseArea.currentY = 0
-                        camera.turn(0, 0)
-                    }
+                }*/
+            }
+            onRunningChanged: {
+                if (!running) {
+                    controlMouseArea.originX = 0
+                    controlMouseArea.originY = 0
+                    controlMouseArea.currentX = 0
+                    controlMouseArea.currentY = 0
+                    camera.turn(0, 0)
                 }
             }
+            property bool sendEnable: false
         }
 
         property bool enableControl: false
@@ -221,24 +239,13 @@ Rectangle {
         }
 
         Row {
-            id: controlColumn
-            spacing: 16
-            Image {
-                source: "qrc:/resources/SiYi/buttonRight.svg"
-                fillMode: Image.PreserveAspectFit
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
-                rotation: expended ? 180 : 0
-                MouseArea {
-                    anchors.fill: parent
-                    onClicked: root.expended = !root.expended
-                }
-            }
+            anchors.left: controlColumn.right
+            anchors.top: controlColumn.top
             Image {
                 source: SiYi.hideWidgets ? using1080p ? "qrc:/resources/SiYi/NavGreen.svg" : "qrc:/resources/SiYi/NavRed.svg" : "qrc:/resources/SiYi/nav.svg"
                 fillMode: Image.PreserveAspectFit
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 visible: expended
                 MouseArea {
                     anchors.fill: parent
@@ -249,14 +256,137 @@ Rectangle {
                     }
                 }
             }
+            Image {
+                // AI模块状态设置：0关闭，1开启
+                id: aiControl
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
+                source: camera.aiModeOn ? (camera.isTracking ? "qrc:/resources/SiYi/AiRed.svg" : "qrc:/resources/SiYi/AiGreen.svg") : (aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg")
+                //source: aiControl.step === 0 ? "qrc:/resources/SiYi/Ai.svg" : (aiControl.step === 1 ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/AiRed.svg")
+                fillMode: Image.PreserveAspectFit
+                cache: false
+                anchors.verticalCenter: parent.verticalCenter
+                visible: expended ? camera.enableAi : false
+                MouseArea {
+                    id: aiControlMouseArea
+                    anchors.fill: parent
+                    onClicked: {
+                        // aiControl.step = aiControl.step + 1
+                        // if (aiControl.step > 2) {
+                        //     aiControl.step = 0
+                        // }
+                        if (camera.aiModeOn) {
+                            if (camera.isTracking) {
+                                camera.setTrackingTarget(false, 0, 0)
+                            } else {
+                                camera.setAiModel(SiYiCamera.AiModeOff)
+                            }
+                        } else {
+                            camera.setAiModel(SiYiCamera.AiModeOn)
+                        }
+                    }
+                }
+                property int step: 0
+            }
+            Item {
+                width: 8
+                height: 1
+            }
+            Image {
+                // 激光测距状态设置：0关闭，1开启
+                id: laserDistance
+                sourceSize.width: (btText.width - SiYi.isAndroid ? 10 : 8) * iconScale
+                sourceSize.height: (btText.width - SiYi.isAndroid ? 10 : 8) * iconScale
+                anchors.verticalCenter: parent.verticalCenter
+                visible: expended ? camera.enableLaser : false
+                source: {
+                    if (laserDistanceMouseArea.containsMouse) {
+                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                    }
+
+                    if (laserImage.visible) {
+                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                    } else {
+                        if (laserDistanceMouseArea.pressed) {
+                            return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                        } else {
+                            return "qrc:/resources/SiYi/LaserDistance.svg"
+                        }
+                    }
+                }
+                fillMode: Image.PreserveAspectFit
+                cache: false
+                MouseArea {
+                    id: laserDistanceMouseArea
+                    anchors.fill: parent
+
+                    //onClicked: laserImage.visible = !laserImage.visible
+                    onClicked: {
+                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
+                        camera.setLaserState(
+                                    camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
+                    }
+                }
+                Rectangle {
+                    id: laserInfo
+                    width: infoGridLayout.width + 20
+                    height: infoGridLayout.height + 20
+                    radius: 4
+                    color: "#bbffffff"
+                    visible: laserImage.visible
+                    anchors.left: parent.right
+                    anchors.leftMargin: controlColumn.spacing
+                    //anchors.top: parent.bottom
+                    //anchors.horizontalCenter: parent.horizontalCenter
+                    ColumnLayout {
+                        id: infoGridLayout
+                        anchors.centerIn: parent
+                        //columns: 2
+                        QGCLabel {
+                            //font.pixelSize: 2*btText.font.pixelSize
+                            //text: qsTr("Distance: ") + "\n" + camera.cookedLaserDistance + "m"
+                            text: camera.cookedLaserDistance + "m"
+                            color: "black"
+                            //Layout.columnSpan: 2
+                        }
+                        QGCLabel {
+                            color: "black"
+                            text: camera.cookedLongitude + "°"
+                            //font.pixelSize: 36
+                        }
+                        QGCLabel {
+                            color: "black"
+                            text: camera.cookedLatitude + "°"
+                            //font.pixelSize: 36
+                        }
+                    }
+                }
+            }
+        }
+
+        Column {
+            id: controlColumn
+            spacing: 16
+            Image {
+                source: "qrc:/resources/SiYi/buttonRight.svg"
+                fillMode: Image.PreserveAspectFit
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
+                rotation: expended ? 180 : 0
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: root.expended = !root.expended
+                }
+            }
 
             Image {
                 // 放大
                 id: zoomInImage
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 source: zoomInMA.pressed ? "qrc:/resources/SiYi/ZoomInGreen.svg" : "qrc:/resources/SiYi/ZoomIn.svg"
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 visible: expended ? camera.enableZoom : false
@@ -291,10 +421,11 @@ Rectangle {
             Image {
                 // 缩小
                 id: zoomOut
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 source: zoomOutMA.pressed ? "qrc:/resources/SiYi/ZoomOutGreen.svg" : "qrc:/resources/SiYi/ZoomOut.svg"
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 visible: expended ? camera.enableZoom : false
@@ -329,10 +460,11 @@ Rectangle {
             Image {
                 // 回中
                 id: reset
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 source: resetMA.pressed ? "qrc:/resources/SiYi/ResetGreen.svg" : "qrc:/resources/SiYi/Reset.svg"
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 visible: expended ? camera.enableControl : false
@@ -346,10 +478,11 @@ Rectangle {
             Image {
                 // 拍照
                 id: photo
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 source: photoMA.pressed ? "qrc:/resources/SiYi/PhotoGreen.svg" : "qrc:/resources/SiYi/Photo.svg"
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 visible: expended ? camera.enablePhoto : false
@@ -366,12 +499,13 @@ Rectangle {
             Image {
                 // 录像
                 id: video
-                sourceSize.width: btText.width + (SiYi.isAndroid ? 10 : 0)
-                sourceSize.height: btText.width + (SiYi.isAndroid ? 10 : 0)
+                sourceSize.width: (btText.width + 10) * iconScale
+                sourceSize.height: (btText.width + 10) * iconScale
                 //width: btText.width
                 //height: btText.width
                 cache: false
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 visible: expended ? camera.enableVideo : false
                 MouseArea {
@@ -412,10 +546,11 @@ Rectangle {
             Image {
                 // 远景
                 id: far
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 source: farMA.pressed ? "qrc:/resources/SiYi/farGreen.svg" : "qrc:/resources/SiYi/far.svg"
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 visible: expended ? camera.enableFocus : false
@@ -446,10 +581,11 @@ Rectangle {
             Image {
                 // 近景
                 id: neer
-                sourceSize.width: btText.width
-                sourceSize.height: btText.width
+                sourceSize.width: btText.width * iconScale
+                sourceSize.height: btText.width * iconScale
                 source: neerMA.pressed ? "qrc:/resources/SiYi/neerGreen.svg" : "qrc:/resources/SiYi/neer.svg"
-                anchors.verticalCenter: parent.verticalCenter
+                //anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 fillMode: Image.PreserveAspectFit
                 cache: false
                 visible: expended ? camera.enableFocus : false
@@ -473,109 +609,6 @@ Rectangle {
                     onTriggered: {
                         camera.focus(-1)
                         neerTimer.start()
-                    }
-                }
-            }
-            Image {
-                // AI模块状态设置：0关闭，1开启
-                id: aiControl
-                sourceSize.width: btText.width + (SiYi.isAndroid ? 10 : 0)
-                sourceSize.height: btText.width + (SiYi.isAndroid ? 10 : 0)
-                source: camera.aiModeOn ? (camera.isTracking ? "qrc:/resources/SiYi/AiRed.svg" : "qrc:/resources/SiYi/AiGreen.svg") : (aiControlMouseArea.pressed ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/Ai.svg")
-                //source: aiControl.step === 0 ? "qrc:/resources/SiYi/Ai.svg" : (aiControl.step === 1 ? "qrc:/resources/SiYi/AiGreen.svg" : "qrc:/resources/SiYi/AiRed.svg")
-                fillMode: Image.PreserveAspectFit
-                cache: false
-                anchors.verticalCenter: parent.verticalCenter
-                visible: expended ? camera.enableAi : false
-                MouseArea {
-                    id: aiControlMouseArea
-                    anchors.fill: parent
-                    onClicked: {
-                        // aiControl.step = aiControl.step + 1
-                        // if (aiControl.step > 2) {
-                        //     aiControl.step = 0
-                        // }
-                        if (camera.aiModeOn) {
-                            if (camera.isTracking) {
-                                camera.setTrackingTarget(false, 0, 0)
-                            } else {
-                                camera.setAiModel(SiYiCamera.AiModeOff)
-                            }
-                        } else {
-                            camera.setAiModel(SiYiCamera.AiModeOn)
-                        }
-                    }
-                }
-                property int step: 0
-            }
-            Image {
-                // 激光测距状态设置：0关闭，1开启
-                id: laserDistance
-                sourceSize.width: btText.width - (SiYi.isAndroid ? 10 : 0)
-                sourceSize.height: btText.width - (SiYi.isAndroid ? 10 : 0)
-                anchors.verticalCenter: parent.verticalCenter
-                visible: expended ? camera.enableLaser : false
-                source: {
-                    if (laserDistanceMouseArea.containsMouse) {
-                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
-                    }
-
-                    if (laserImage.visible) {
-                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
-                    } else {
-                        if (laserDistanceMouseArea.pressed) {
-                            return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
-                        } else {
-                            return "qrc:/resources/SiYi/LaserDistance.svg"
-                        }
-                    }
-                }
-                fillMode: Image.PreserveAspectFit
-                cache: false
-                MouseArea {
-                    id: laserDistanceMouseArea
-                    anchors.fill: parent
-
-                    onClicked: laserImage.visible = !laserImage.visible
-
-
-                    /*onClicked: {
-                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
-                        camera.setLaserState(
-                                    camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
-                    }*/
-                }
-                Rectangle {
-                    id: laserInfo
-                    width: infoGridLayout.width + 20
-                    height: infoGridLayout.height + 20
-                    radius: 4
-                    color: "#bbffffff"
-                    visible: laserImage.visible
-                    anchors.left: parent.right
-                    anchors.leftMargin: controlColumn.spacing
-                    //anchors.top: parent.bottom
-                    //anchors.horizontalCenter: parent.horizontalCenter
-                    ColumnLayout {
-                        id: infoGridLayout
-                        anchors.centerIn: parent
-                        //columns: 2
-                        QGCLabel {
-                            //font.pixelSize: 2*btText.font.pixelSize
-                            text: qsTr("Distance: ") + "\n" + camera.cookedLaserDistance + "m"
-                            color: "black"
-                            //Layout.columnSpan: 2
-                        }
-                        QGCLabel {
-                            color: "black"
-                            text: camera.cookedLongitude + "°"
-                            //font.pixelSize: 36
-                        }
-                        QGCLabel {
-                            color: "black"
-                            text: camera.cookedLatitude + "°"
-                            //font.pixelSize: 36
-                        }
                     }
                 }
             }
