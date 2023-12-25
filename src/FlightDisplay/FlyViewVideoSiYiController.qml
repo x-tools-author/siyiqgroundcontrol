@@ -46,6 +46,7 @@ Rectangle {
     property bool expended: true
     property bool using1080p: false //camera.using1080p
     property real iconScale: SiYi.isAndroid ? 0.6 : 1.5
+    property int iconLeftMargin: 150
 
     MouseArea {
         id: controlMouseArea
@@ -225,7 +226,7 @@ Rectangle {
     Item {
         id: controlRectangle
         anchors.left: parent.left
-        anchors.leftMargin: 150
+        anchors.leftMargin: iconLeftMargin + 10
         anchors.topMargin: 10
         width: controlColumn.width
         height: controlColumn.height
@@ -295,8 +296,8 @@ Rectangle {
             Image {
                 // 激光测距状态设置：0关闭，1开启
                 id: laserDistance
-                sourceSize.width: (btText.width - SiYi.isAndroid ? 10 : 8) * iconScale
-                sourceSize.height: (btText.width - SiYi.isAndroid ? 10 : 8) * iconScale
+                sourceSize.width: (btText.width - (SiYi.isAndroid ? 14 : 8)) * iconScale
+                sourceSize.height: (btText.width - (SiYi.isAndroid ? 14 : 8)) * iconScale
                 anchors.verticalCenter: parent.verticalCenter
                 visible: expended ? camera.enableLaser : false
                 source: {

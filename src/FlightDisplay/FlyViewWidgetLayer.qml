@@ -55,6 +55,7 @@ Item {
 
     property var siyi: SiYi
     property SiYiCamera camera: siyi.camera
+    property int iconLeftMargin: toolStrip.width + toolStrip.anchors.leftMargin
 
     QGCToolInsets {
         id: _totalToolInsets

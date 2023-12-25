@@ -1,3 +1,5 @@
+
+
 /****************************************************************************
  *
  * (c) 2009-2020 QGROUNDCONTROL PROJECT <http://www.qgroundcontrol.org>
@@ -6,23 +8,24 @@
  * COPYING.md in the root of the source code directory.
  *
  ****************************************************************************/
-
 import QtQuick 2.12
 
-import QGroundControl               1.0
-import QGroundControl.Controls      1.0
-import QGroundControl.Controllers   1.0
-import QGroundControl.ScreenTools   1.0
+import QGroundControl 1.0
+import QGroundControl.Controls 1.0
+import QGroundControl.Controllers 1.0
+import QGroundControl.ScreenTools 1.0
 
 Item {
-    id:         _root
-    visible:    QGroundControl.videoManager.hasVideo
+    id: _root
+    visible: QGroundControl.videoManager.hasVideo
+
+    property alias iconLeftMargin: siyiController.iconLeftMargin
 
     property Item pipState: videoPipState
     QGCPipState {
-        id:         videoPipState
+        id: videoPipState
         pipOverlay: _pipOverlay
-        isDark:     true
+        isDark: true
 
         onWindowAboutToOpen: {
             QGroundControl.videoManager.stopVideo()
@@ -42,26 +45,26 @@ Item {
     }
 
     Timer {
-        id:           videoStartDelay
-        interval:     2000;
-        running:      false
-        repeat:       false
-        onTriggered:  QGroundControl.videoManager.startVideo()
+        id: videoStartDelay
+        interval: 2000
+        running: false
+        repeat: false
+        onTriggered: QGroundControl.videoManager.startVideo()
     }
 
     //-- Video Streaming
     FlightDisplayViewVideo {
-        id:             videoStreaming
-        anchors.fill:   parent
-        useSmallFont:   _root.pipState.state !== _root.pipState.fullState
-        visible:        QGroundControl.videoManager.isGStreamer
+        id: videoStreaming
+        anchors.fill: parent
+        useSmallFont: _root.pipState.state !== _root.pipState.fullState
+        visible: QGroundControl.videoManager.isGStreamer
     }
     //-- UVC Video (USB Camera or Video Device)
     Loader {
-        id:             cameraLoader
-        anchors.fill:   parent
-        visible:        !QGroundControl.videoManager.isGStreamer
-        source:         QGroundControl.videoManager.uvcEnabled ? "qrc:/qml/FlightDisplayViewUVC.qml" : "qrc:/qml/FlightDisplayViewDummy.qml"
+        id: cameraLoader
+        anchors.fill: parent
+        visible: !QGroundControl.videoManager.isGStreamer
+        source: QGroundControl.videoManager.uvcEnabled ? "qrc:/qml/FlightDisplayViewUVC.qml" : "qrc:/qml/FlightDisplayViewDummy.qml"
     }
 
     QGCLabel {
@@ -73,15 +76,15 @@ Item {
 
     MouseArea {
         id: flyViewVideoMouseArea
-        anchors.fill:       parent
-        enabled:            pipState.state === pipState.fullState
+        anchors.fill: parent
+        enabled: pipState.state === pipState.fullState
         hoverEnabled: true
-        onDoubleClicked:    QGroundControl.videoManager.fullScreen = !QGroundControl.videoManager.fullScreen
+        onDoubleClicked: QGroundControl.videoManager.fullScreen = !QGroundControl.videoManager.fullScreen
     }
 
-    ProximityRadarVideoView{
-        anchors.fill:   parent
-        vehicle:        QGroundControl.multiVehicleManager.activeVehicle
+    ProximityRadarVideoView {
+        anchors.fill: parent
+        vehicle: QGroundControl.multiVehicleManager.activeVehicle
     }
 
     ObstacleDistanceOverlayVideo {
@@ -90,6 +93,7 @@ Item {
     }
 
     FlyViewVideoSiYiController {
+        id: siyiController
         anchors.fill: parent
         visible: !_mainWindowIsMap
     }
