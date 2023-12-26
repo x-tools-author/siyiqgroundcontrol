@@ -45,8 +45,14 @@ Rectangle {
     property real videoH: 720
     property bool expended: true
     property bool using1080p: false //camera.using1080p
-    property real iconScale: SiYi.isAndroid ? 0.6 : 1.5
+    property real iconScale: SiYi.isAndroid ? 0.7 : 1.5
     property int iconLeftMargin: 150
+    property bool laserIconShow: false
+    property bool showLaserOnLeft: camera.mainStreamSplitMode === 3
+                                   || camera.mainStreamSplitMode === 5
+    property bool doNotShowLaserIcon: camera.mainStreamSplitMode === 1
+                                      || camera.mainStreamSplitMode === 2
+                                      || camera.mainStreamSplitMode === 4
 
     MouseArea {
         id: controlMouseArea
@@ -226,8 +232,8 @@ Rectangle {
     Item {
         id: controlRectangle
         anchors.left: parent.left
-        anchors.leftMargin: iconLeftMargin + 10
-        anchors.topMargin: 10
+        anchors.leftMargin: SiYi.isAndroid ? iconLeftMargin + 4 : 150
+        //anchors.topMargin: 10
         width: controlColumn.width
         height: controlColumn.height
         anchors.top: parent.top
@@ -272,10 +278,6 @@ Rectangle {
                     id: aiControlMouseArea
                     anchors.fill: parent
                     onClicked: {
-                        // aiControl.step = aiControl.step + 1
-                        // if (aiControl.step > 2) {
-                        //     aiControl.step = 0
-                        // }
                         if (camera.aiModeOn) {
                             if (camera.isTracking) {
                                 camera.setTrackingTarget(false, 0, 0)
@@ -296,19 +298,27 @@ Rectangle {
             Image {
                 // 激光测距状态设置：0关闭，1开启
                 id: laserDistance
-                sourceSize.width: (btText.width - (SiYi.isAndroid ? 14 : 8)) * iconScale
-                sourceSize.height: (btText.width - (SiYi.isAndroid ? 14 : 8)) * iconScale
+                sourceSize.width: (btText.width - (SiYi.isAndroid ? 14 : 10)) * iconScale
+                sourceSize.height: (btText.width - (SiYi.isAndroid ? 14 : 10)) * iconScale
                 anchors.verticalCenter: parent.verticalCenter
                 visible: expended ? camera.enableLaser : false
                 source: {
+                    if (laserDistanceMouseArea.pressed) {
+                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                    }
+
                     if (laserDistanceMouseArea.containsMouse) {
                         return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
                     }
 
-                    if (laserImage.visible) {
-                        return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                    if (camera.laserStateHasResponse) {
+                        if (camera.laserStateOn) {
+                            return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
+                        } else {
+                            return "qrc:/resources/SiYi/LaserDistance.svg"
+                        }
                     } else {
-                        if (laserDistanceMouseArea.pressed) {
+                        if (root.laserIconShow) {
                             return "qrc:/resources/SiYi/LaserDistanceGreen.svg"
                         } else {
                             return "qrc:/resources/SiYi/LaserDistance.svg"
@@ -320,47 +330,61 @@ Rectangle {
                 MouseArea {
                     id: laserDistanceMouseArea
                     anchors.fill: parent
-
-                    //onClicked: laserImage.visible = !laserImage.visible
                     onClicked: {
-                        console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
-                        camera.setLaserState(
-                                    camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn)
+                        if (camera.laserStateHasResponse) {
+                            console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
+                            var onState = camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn
+                            camera.setLaserState(onState)
+                        } else {
+                            root.laserIconShow = !root.laserIconShow
+                        }
                     }
                 }
                 Rectangle {
                     id: laserInfo
-                    width: infoGridLayout.width + 20
-                    height: infoGridLayout.height + 20
+                    width: laserLabel.width + 4
+                    height: laserLabel.height + 4
                     radius: 4
                     color: "#bbffffff"
-                    visible: laserImage.visible
-                    anchors.left: parent.right
-                    anchors.leftMargin: controlColumn.spacing
-                    //anchors.top: parent.bottom
-                    //anchors.horizontalCenter: parent.horizontalCenter
-                    ColumnLayout {
-                        id: infoGridLayout
-                        anchors.centerIn: parent
-                        //columns: 2
-                        QGCLabel {
-                            //font.pixelSize: 2*btText.font.pixelSize
-                            //text: qsTr("Distance: ") + "\n" + camera.cookedLaserDistance + "m"
-                            text: camera.cookedLaserDistance + "m"
-                            color: "black"
-                            //Layout.columnSpan: 2
-                        }
-                        QGCLabel {
-                            color: "black"
-                            text: camera.cookedLongitude + "°"
-                            //font.pixelSize: 36
-                        }
-                        QGCLabel {
-                            color: "black"
-                            text: camera.cookedLatitude + "°"
-                            //font.pixelSize: 36
+                    visible: {
+                        if (camera.laserStateHasResponse) {
+                            return camera.laserStateOn
+                        } else {
+                            return root.laserIconShow
                         }
                     }
+                    anchors.left: parent.right
+                    anchors.leftMargin: controlColumn.spacing
+                    QGCLabel {
+                        id: laserLabel
+                        padding: 0
+                        text: camera.cookedLaserDistance + "m" + "\n" + camera.cookedLongitude + "°"
+                              + "\n" + camera.cookedLatitude + "°"
+                        color: "black"
+                        font.pointSize: 8
+                    }
+                    // ColumnLayout {
+                    //     id: infoGridLayout
+                    //     anchors.centerIn: parent
+                    //     spacing: 0
+                    //     QGCLabel {
+                    //         padding: 0
+                    //         text: camera.cookedLaserDistance + "m"
+                    //         color: "black"
+                    //         font.pointSize: btText.font.pointSize - 2
+                    //         lineHeight: 1.0
+                    //     }
+                    //     QGCLabel {
+                    //         color: "black"
+                    //         text: camera.cookedLongitude + "°"
+                    //         font.pixelSize: btText.font.pixelSize - 2
+                    //     }
+                    //     QGCLabel {
+                    //         color: "black"
+                    //         text: camera.cookedLatitude + "°"
+                    //         font.pixelSize: btText.font.pixelSize - 2
+                    //     }
+                    // }
                 }
             }
         }
@@ -500,14 +524,14 @@ Rectangle {
             Image {
                 // 录像
                 id: video
-                sourceSize.width: (btText.width + 10) * iconScale
-                sourceSize.height: (btText.width + 10) * iconScale
-                //width: btText.width
-                //height: btText.width
+                //sourceSize.width: (btText.width - 8) * iconScale
+                //sourceSize.height: (btText.width + 8) * iconScale
+                width: (btText.width) * iconScale
+                height: (btText.width + 4) * iconScale
                 cache: false
                 //anchors.verticalCenter: parent.verticalCenter
                 anchors.horizontalCenter: parent.horizontalCenter
-                fillMode: Image.PreserveAspectFit
+                //fillMode: Image.PreserveAspectFit
                 visible: expended ? camera.enableVideo : false
                 MouseArea {
                     id: videoMA
@@ -615,25 +639,32 @@ Rectangle {
             }
         }
     }
-    Image {
-        id: laserImage
-        source: "qrc:/resources/SiYi/+.svg"
-        visible: camera.laserStateOn
-        //x: camera.laserCoordsX * root.width / 1280
-        //y: camera.laserCoordsY * root.height / 720
-        anchors.centerIn: parent
-        sourceSize.width: btText.width
-        sourceSize.height: btText.width
-
-        //onXChanged: updateLaserInfoPos()
-        //onYChanged: updateLaserInfoPos()
+    Item {
+        height: parent.height
+        width: showLaserOnLeft ? root.width / 2 : root.width
+        Image {
+            id: laserImage
+            source: "qrc:/resources/SiYi/+.svg"
+            visible: {
+                if (root.doNotShowLaserIcon) {
+                    return false
+                }
+                if (camera.laserStateHasResponse) {
+                    return camera.laserStateOn
+                } else {
+                    return root.laserIconShow
+                }
+            }
+            anchors.centerIn: parent
+            sourceSize.width: btText.width * (SiYi.isAndroid ? iconScale : 2)
+            sourceSize.height: btText.width * (SiYi.isAndroid ? iconScale : 2)
+        }
     }
 
     Component.onCompleted: {
         SiYi.iconsHeight = Qt.binding(function () {
             return controlColumn.height
         })
-        //updateLaserInfoPos()
     }
 
     function updateLaserInfoPos() {
