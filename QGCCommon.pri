@@ -20,14 +20,14 @@ CONFIG -= debug_and_release
 CONFIG += warn_on
 CONFIG += resources_big
 CONFIG += c++17
-    
+
 linux {
     linux-g++ | linux-g++-64 | linux-g++-32 | linux-clang {
         message("Linux build")
         CONFIG  += LinuxBuild
         DEFINES += __STDC_LIMIT_MACROS
         DEFINES += QGC_GST_TAISYNC_ENABLED
-        DEFINES += QGC_GST_MICROHARD_ENABLED 
+        DEFINES += QGC_GST_MICROHARD_ENABLED
         linux-clang {
             message("Linux clang")
             QMAKE_CXXFLAGS += -Qunused-arguments -fcolor-diagnostics
@@ -43,14 +43,14 @@ linux {
         CONFIG += LinuxBuild
         DEFINES += __STDC_LIMIT_MACROS __rasp_pi2__
         DEFINES += QGC_GST_TAISYNC_ENABLED
-        DEFINES += QGC_GST_MICROHARD_ENABLED 
+        DEFINES += QGC_GST_MICROHARD_ENABLED
     } else : android-clang {
         CONFIG += AndroidBuild MobileBuild
         DEFINES += __android__
         DEFINES += __STDC_LIMIT_MACROS
         DEFINES += QGC_ENABLE_BLUETOOTH
         DEFINES += QGC_GST_TAISYNC_ENABLED
-        DEFINES += QGC_GST_MICROHARD_ENABLED 
+        DEFINES += QGC_GST_MICROHARD_ENABLED
         QMAKE_CXXFLAGS_WARN_ON += -Werror \
             -Wno-unused-parameter \             # gst_plugins-good has these errors
             -Wno-implicit-fallthrough \         # gst_plugins-good has these errors
@@ -81,7 +81,7 @@ linux {
         CONFIG += WindowsBuild
         DEFINES += __STDC_LIMIT_MACROS
         DEFINES += QGC_GST_TAISYNC_ENABLED
-        DEFINES += QGC_GST_MICROHARD_ENABLED 
+        DEFINES += QGC_GST_MICROHARD_ENABLED
         QMAKE_CFLAGS -= -Zc:strictStrings
         QMAKE_CFLAGS_RELEASE -= -Zc:strictStrings
         QMAKE_CFLAGS_RELEASE_WITH_DEBUGINFO -= -Zc:strictStrings
@@ -103,7 +103,7 @@ linux {
         CONFIG  += x86_64
         CONFIG  -= x86
         DEFINES += QGC_GST_TAISYNC_ENABLED
-        DEFINES += QGC_GST_MICROHARD_ENABLED 
+        DEFINES += QGC_GST_MICROHARD_ENABLED
         QMAKE_CXXFLAGS += -fvisibility=hidden
         QMAKE_CXXFLAGS_WARN_ON += -Werror \
             -Wno-unused-parameter           # gst-plugins-good
@@ -158,7 +158,7 @@ StableBuild {
 
 # Set the QGC version from git
 # APP_VERSION_STR = vUnknown
-APP_VERSION_STR = 4.2.3
+APP_VERSION_STR = 4.2.3.1
 VERSION         = 0.0.0   # Marker to indicate out-of-tree build
 MAC_VERSION     = 0.0.0
 MAC_BUILD       = 0
@@ -172,7 +172,7 @@ exists ($$PWD/.git) {
 
     # Pull the version info from the last annotated version tag. Format: v#.#.#
     contains(GIT_DESCRIBE, ^v[0-9]+.[0-9]+.[0-9]+.*) {
-        APP_VERSION_STR = $${GIT_DESCRIBE}
+        #APP_VERSION_STR = $${GIT_DESCRIBE}
         VERSION         = $$replace(GIT_DESCRIBE, "v", "")
         VERSION         = $$replace(VERSION, "-", ".")
         VERSION         = $$section(VERSION, ".", 0, 3)
