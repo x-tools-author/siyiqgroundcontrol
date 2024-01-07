@@ -1084,10 +1084,10 @@ void SiYiCamera::messageHandle0xbb(const QByteArray &msg)
         if (on != m_laserStateOn) {
             m_laserStateOn = on;
             emit laserStateOnChanged();
-
-            m_laserStateHasResponse = true;
-            emit laserStateHasResponseChanged();
         }
+
+        m_laserStateHasResponse = true;
+        emit laserStateHasResponseChanged();
     }
 }
 
