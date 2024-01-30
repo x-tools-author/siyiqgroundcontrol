@@ -158,7 +158,7 @@ StableBuild {
 
 # Set the QGC version from git
 # APP_VERSION_STR = vUnknown
-APP_VERSION_STR = 4.2.3.1
+APP_VERSION_STR = 4.2.3.2
 VERSION         = 0.0.0   # Marker to indicate out-of-tree build
 MAC_VERSION     = 0.0.0
 MAC_BUILD       = 0
