@@ -728,9 +728,16 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
     struct ACK {
         quint32 version;
     };
+    struct ACKNew
+    {
+        quint32 version;
+        quint32 aiVersion;
+    };
 
     int headerLength = 4 + 1 + 4 + 2 + 1 + 4;
-    if (msg.length() == int(headerLength + sizeof(ACK) + 4)) {
+    bool bytes4 = msg.length() == int(headerLength + sizeof(ACK) + 4);
+    bool bytes8 = msg.length() == int(headerLength + sizeof(ACKNew) + 4);
+    if (bytes4 || bytes8) {
         const char *ptr = msg.constData();
         ptr += headerLength;
         auto ctx = reinterpret_cast<const ACK*>(ptr);
@@ -801,6 +808,12 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             qWarning() << "Unknow camera type: " << type << ", disable all functions.";
         }
 
+        if (bytes4) {
+            m_enableAi = false;
+        } else if (bytes8) {
+            m_enableAi = true;
+        }
+
         emit enableFocusChanged();
         emit enableZoomChanged();
         emit enablePhotoChanged();
@@ -813,6 +826,8 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             getAiModel();
             getTrackingState();
         }
+    } else {
+        qWarning() << "The length of x0x94 message is not correct.";
     }
 }
 
