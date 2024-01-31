@@ -740,7 +740,7 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
     if (bytes4 || bytes8) {
         const char *ptr = msg.constData();
         ptr += headerLength;
-        auto ctx = reinterpret_cast<const ACK*>(ptr);
+        auto ctx = reinterpret_cast<const ACK *>(ptr);
 
         /*
         0x6C：R1卡录摄像头
@@ -807,12 +807,13 @@ void SiYiCamera::messageHandle0x94(const QByteArray &msg)
             m_enableLaser = false;
             qWarning() << "Unknow camera type: " << type << ", disable all functions.";
         }
-
+#if 0
         if (bytes4) {
             m_enableAi = false;
         } else if (bytes8) {
             m_enableAi = true;
         }
+#endif
 
         emit enableFocusChanged();
         emit enableZoomChanged();
