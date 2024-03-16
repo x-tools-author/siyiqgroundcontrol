@@ -88,6 +88,7 @@ Rectangle {
                 return
             }
 
+            hasBeenMoved = true
             controlMouseArea.currentX = mouse.x
             controlMouseArea.currentY = mouse.y
 
@@ -95,7 +96,8 @@ Rectangle {
             controlMouseArea.pitch = controlMouseArea.currentY - controlMouseArea.originY
             //controlMouseArea.yaw = controlMouseArea.yaw / 5
             //controlMouseArea.pitch = controlMouseArea.pitch / 5
-            if (Math.abs(controlMouseArea.yaw) > Math.abs(controlMouseArea.pitch)) {
+            if (Math.abs(controlMouseArea.yaw) > Math.abs(
+                        controlMouseArea.pitch)) {
                 if (Math.abs(controlMouseArea.yaw) > minDelta) {
                     controlMouseArea.pitch = 0
                     controlMouseArea.isYDirection = false
@@ -123,10 +125,16 @@ Rectangle {
             if (camera.isTracking) {
                 return
             }
+
             console.info("camera.resetPostion()")
             camera.resetPostion()
         }
         onClicked: function (mouse) {
+            if (hasBeenMoved) {
+                hasBeenMoved = false
+                return
+            }
+
             if (camera.aiModeOn) {
                 var w = root.width
                 var h = root.height
@@ -134,8 +142,8 @@ Rectangle {
                 var y = mouse.y
                 var cookedX = (x * videoW) / root.width
                 var cookedY = (y * videoH) / root.height
-                console.info("camera.setTrackingTarget()", cookedX, cookedY, root.width,
-                             root.height)
+                console.info("camera.setTrackingTarget()", cookedX, cookedY,
+                             root.width, root.height)
                 camera.setTrackingTarget(true, cookedX, cookedY)
             } else {
 
@@ -332,7 +340,8 @@ Rectangle {
                     anchors.fill: parent
                     onClicked: {
                         if (camera.laserStateHasResponse) {
-                            console.info("Set laser state: ", camera.laserStateOn ? "OFF" : "ON")
+                            console.info("Set laser state: ",
+                                         camera.laserStateOn ? "OFF" : "ON")
                             var onState = camera.laserStateOn ? SiYiCamera.LaserStateOff : SiYiCamera.LaserStateOn
                             camera.setLaserState(onState)
                         } else {
@@ -358,8 +367,8 @@ Rectangle {
                     QGCLabel {
                         id: laserLabel
                         padding: 0
-                        text: camera.cookedLaserDistance + "m" + "\n" + camera.cookedLongitude + "°"
-                              + "\n" + camera.cookedLatitude + "°"
+                        text: camera.cookedLaserDistance + "m" + "\n" + camera.cookedLongitude
+                              + "°" + "\n" + camera.cookedLatitude + "°"
                         color: "black"
                         font.pointSize: 8
                     }
@@ -538,7 +547,8 @@ Rectangle {
                     anchors.fill: parent
                     onPressed: {
                         if (camera.isRecording) {
-                            camera.sendRecodingCommand(SiYiCamera.CloseRecording)
+                            camera.sendRecodingCommand(
+                                        SiYiCamera.CloseRecording)
                         } else {
                             camera.sendRecodingCommand(SiYiCamera.OpenRecording)
                         }
