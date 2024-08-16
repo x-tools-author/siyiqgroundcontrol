@@ -209,6 +209,7 @@
         <file alias="QGroundControl/FlightDisplay/FlyViewCustomLayer.qml">src/FlightDisplay/FlyViewCustomLayer.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewInstrumentPanel.qml">src/FlightDisplay/FlyViewInstrumentPanel.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewMap.qml">src/FlightDisplay/FlyViewMap.qml</file>
+        <file alias="QGroundControl/FlightDisplay/MyCustomAim.qml">src/FlightDisplay/MyCustomAim.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewMissionCompleteDialog.qml">src/FlightDisplay/FlyViewMissionCompleteDialog.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewPreFlightChecklistPopup.qml">src/FlightDisplay/FlyViewPreFlightChecklistPopup.qml</file>
         <file alias="QGroundControl/FlightDisplay/FlyViewToolStrip.qml">src/FlightDisplay/FlyViewToolStrip.qml</file>

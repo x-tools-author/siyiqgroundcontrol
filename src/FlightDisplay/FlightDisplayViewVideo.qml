@@ -192,4 +192,8 @@ Item {
             property int zoom: 0
         }
     }
+
+    MyCustomAim {
+        id: customAim
+    }
 }
