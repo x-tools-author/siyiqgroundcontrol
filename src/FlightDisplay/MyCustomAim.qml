@@ -16,6 +16,19 @@ import QGroundControl.Vehicle 1.0
 
 Rectangle {
 
+    property int size: togglePepSwitch.checked ? 800 : 600
+    property string baseColor: "#00FF00"
+    property string addColor: "#FF0000"
+    property string dotColor: "#FFFFFF"
+    property int baseThickness: 5
+    property int addThickness: 3
+    property int baseElementSize: 50
+    property int zIndex: 10
+    property int circleRadius: 15
+    property int dotDadius: 6
+    property int counter: (size / 2) / baseElementSize
+
+
     id: container
     width: parent.width
     height: parent.height
@@ -24,340 +37,349 @@ Rectangle {
 
     Rectangle {
         id: customAim
-        width: 540
-        height: 540
+        width: size
+        height: size
         color: "transparent"
         anchors.centerIn: parent
         visible: toggleSwitch.checked
-        z: 10
+        z: zIndex
 
         // Горизонтальні та вертикальні центральні лінії
         Rectangle {
-            width: (parent.width / 2) - 15
-            height: 5
-            color: "#00FF00"
+            width: (size / 2) - circleRadius
+            height: baseThickness
+            color: baseColor
             anchors.left: parent.left
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Rectangle {
-            width: (parent.width / 2) - 15
-            height: 5
-            color: "#00FF00"
+            width: (size / 2) - circleRadius
+            height: baseThickness
+            color: baseColor
             anchors.right: parent.right
             anchors.verticalCenter: parent.verticalCenter
         }
 
         Rectangle {
-            width: 5
-            height: (parent.height / 2) - 15
-            color: "#00FF00"
+            width: baseThickness
+            height: (size / 2) - circleRadius
+            color: baseColor
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
         Rectangle {
-            width: 5
-            height: (parent.height / 2) - 15
-            color: "#00FF00"
+            width: baseThickness
+            height: (size / 2) - circleRadius
+            color: baseColor
             anchors.bottom: parent.bottom
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
+        // Коло
+        Rectangle {
+            width: circleRadius * 2
+            height: circleRadius * 2
+            color: "transparent"
+            border.color: baseColor
+            border.width: baseThickness
+            radius: circleRadius
+            anchors.centerIn: parent
+        }
+
         // Горизонтальні відсічення
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: 5
-                height: index === 0 ? 90 : 45
-                color: "#00FF00"
+                width: baseThickness
+                height: index === 0 ? baseElementSize * 2 : baseElementSize
+                color: baseColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: index * 45
+                anchors.leftMargin: index * baseElementSize
             }
         }
 
         // Додаткові
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: 3
-                height: 22.5
-                color: "#FFA500"
+                width: addThickness
+                height: baseElementSize / 2
+                color: addColor
                 visible: togglePepSwitch.checked
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.left: parent.left
-                anchors.leftMargin: 22.5 + (index * 45)
+                anchors.leftMargin: baseElementSize / 2 + (index * baseElementSize)
             }
         }
 
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: 5
-                height: index === 0 ? 90 : 45
-                color: "#00FF00"
+                width: baseThickness
+                height: index === 0 ? baseElementSize * 2 : baseElementSize
+                color: baseColor
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: index * 45
+                anchors.rightMargin: index * baseElementSize
             }
         }
 
         // Додаткові
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: 3
-                height: 22.5
-                color: "#FFA500"
+                width: addThickness
+                height: baseElementSize / 2
+                color: addColor
                 visible: togglePepSwitch.checked
                 anchors.verticalCenter: parent.verticalCenter
                 anchors.right: parent.right
-                anchors.rightMargin: 22.5 + (index * 45)
+                anchors.rightMargin: baseElementSize / 2 + (index * baseElementSize)
             }
         }
 
         // Вертикальные отсечки
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: index === 0 ? 90 : 45
-                height: 5
-                color: "#00FF00"
+                width: index === 0 ? baseElementSize * 2 : baseElementSize
+                height: baseThickness
+                color: baseColor
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: index * 45
+                anchors.topMargin: index * baseElementSize
             }
         }
 
         // Додаткові
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: 22.5
-                height: 3
-                color: "#FFA500"
+                width: baseElementSize / 2
+                height: addThickness
+                color: addColor
                 visible: togglePepSwitch.checked
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.top: parent.top
-                anchors.topMargin: 22.5 + (index * 45)
+                anchors.topMargin: baseElementSize / 2 + (index * baseElementSize)
             }
         }
 
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: index === 0 ? 90 : 45
-                height: 5
-                color: "#00FF00"
+                width: index === 0 ? baseElementSize * 2 : baseElementSize
+                height: baseThickness
+                color: baseColor
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: index * 45
+                anchors.bottomMargin: index * baseElementSize
             }
         }
 
         // Додаткові
         Repeater {
-            model: 6
+            model: counter
             Rectangle {
-                width: 22.5
-                height: 3
-                color: "#FFA500"
+                width: baseElementSize / 2
+                height: addThickness
+                color: addColor
                 visible: togglePepSwitch.checked
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 22.5 + (index * 45)
+                anchors.bottomMargin: baseElementSize / 2 + (index * baseElementSize)
             }
         }
 
         // Косі відсічення - верхні
         Repeater {
-            model: 4
+            model: counter - 2
             Rectangle {
-                width: 45
-                height: 5
-                color: "#00FF00"
+                width: baseElementSize
+                height: baseThickness
+                color: baseColor
                 anchors.top: parent.top
-                anchors.topMargin: (index + 1) * 45
                 anchors.right: parent.horizontalCenter
-                anchors.rightMargin: 200 - index * 45
+                anchors.topMargin: (size / 2  - baseElementSize * 2) - index * baseElementSize
+                anchors.rightMargin: (baseElementSize + baseElementSize / 2) + (index * baseElementSize)
             }
         }
 
         // Додаткові верхні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.top: parent.top
-                anchors.topMargin: 22.5 + (index * 45)
                 anchors.right: parent.horizontalCenter
-                anchors.rightMargin: 110 - index * 20
+                anchors.topMargin: ((size / 2  - baseElementSize * 2) - index * baseElementSize) + (size / 2  - ((size / 2  - baseElementSize * 2) - index * baseElementSize)) / 2
+                anchors.rightMargin: baseElementSize * 2 + (index * baseElementSize)
             }
         }
 
         // Додаткові нижні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.top: parent.top
-                anchors.topMargin: 140 + (index * 20)
                 anchors.right: parent.horizontalCenter
-                anchors.rightMargin: 240 - index * 40
+                anchors.topMargin: size / 2 - (baseElementSize * 2 + index * baseElementSize)
+                anchors.rightMargin: (( baseElementSize * 2 + index * baseElementSize) - baseElementSize / 2) / 2
             }
         }
 
         Repeater {
-            model: 4
+            model: counter - 2
             Rectangle {
-                width: 40
-                height: 5
-                color: "#00FF00"
+                width: baseElementSize
+                height: baseThickness
+                color: baseColor
                 anchors.top: parent.top
-                anchors.topMargin: (index + 1) * 45
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 200 - index * 45
+                anchors.topMargin: (size / 2  - baseElementSize * 2) - index * baseElementSize
+                anchors.leftMargin: (baseElementSize + baseElementSize / 2) + (index * baseElementSize)
             }
         }
 
         // Додаткові верхні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.top: parent.top
-                anchors.topMargin: 22.5 + (index * 45)
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 110 - index * 20
+                anchors.topMargin: ((size / 2  - baseElementSize * 2) - index * baseElementSize) + (size / 2  - ((size / 2  - baseElementSize * 2) - index * baseElementSize)) / 2
+                anchors.leftMargin: baseElementSize * 2 + (index * baseElementSize)
             }
         }
 
         // Додаткові нижні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.top: parent.top
-                anchors.topMargin: 140 + (index * 20)
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 240 - index * 40
+                anchors.topMargin: size / 2 - (baseElementSize * 2 + index * baseElementSize)
+                anchors.leftMargin: (( baseElementSize * 2 + index * baseElementSize) - baseElementSize / 2) / 2
             }
         }
 
         // Косі відсічки - нижні
         Repeater {
-            model: 4
+            model: counter - 2
             Rectangle {
-                width: 40
-                height: 5
-                color: "#00FF00"
+                width: baseElementSize
+                height: baseThickness
+                color: baseColor
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: (index + 1) * 45
                 anchors.right: parent.horizontalCenter
-                anchors.rightMargin: 200 - index * 45
+                anchors.bottomMargin: (size / 2  - baseElementSize * 2) - index * baseElementSize
+                anchors.rightMargin: (baseElementSize + baseElementSize / 2) + (index * baseElementSize)
             }
         }
 
         // Додаткові верхні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 22.5 + (index * 45)
                 anchors.right: parent.horizontalCenter
-                anchors.rightMargin: 120 - index * 24
+                anchors.bottomMargin: ((size / 2  - baseElementSize * 2) - index * baseElementSize) + (size / 2  - ((size / 2  - baseElementSize * 2) - index * baseElementSize)) / 2
+                anchors.rightMargin: baseElementSize * 2 + (index * baseElementSize)
             }
         }
 
         // Додаткові нижні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 140 + (index * 20)
                 anchors.right: parent.horizontalCenter
-                anchors.rightMargin: 240 - index * 40
+                anchors.bottomMargin: size / 2 - (baseElementSize * 2 + index * baseElementSize)
+                anchors.rightMargin: (( baseElementSize * 2 + index * baseElementSize) - baseElementSize / 2) / 2
             }
         }
 
         Repeater {
-            model: 4
+            model: counter - 2
             Rectangle {
-                width: 40
-                height: 5
-                color: "#00FF00"
+                width: baseElementSize
+                height: baseThickness
+                color: baseColor
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: (index + 1) * 45
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 200 - index * 45
+                anchors.bottomMargin: (size / 2  - baseElementSize * 2) - index * baseElementSize
+                anchors.leftMargin: (baseElementSize + baseElementSize / 2) + (index * baseElementSize)
             }
         }
 
         // Додаткові верхні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 22.5 + (index * 45)
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 120 - index * 24
+                anchors.bottomMargin: ((size / 2  - baseElementSize * 2) - index * baseElementSize) + (size / 2  - ((size / 2  - baseElementSize * 2) - index * baseElementSize)) / 2
+                anchors.leftMargin: baseElementSize * 2 + (index * baseElementSize)
             }
         }
 
         // Додаткові нижні
         Repeater {
-            model: 5
+            model: counter - 1
             Rectangle {
-                width: 20
-                height: 5
-                color: "#FFFF00"
+                width: dotDadius * 2
+                height: dotDadius * 2
+                radius: dotDadius
+                color: dotColor
                 visible: togglePepSwitch.checked
                 anchors.bottom: parent.bottom
-                anchors.bottomMargin: 140 + (index * 20)
                 anchors.left: parent.horizontalCenter
-                anchors.leftMargin: 240 - index * 40
+                anchors.bottomMargin: size / 2 - (baseElementSize * 2 + index * baseElementSize)
+                anchors.leftMargin: (( baseElementSize * 2 + index * baseElementSize) - baseElementSize / 2) / 2
             }
-        }
-
-        Rectangle {
-            width: 30
-            height: 30
-            color: "transparent"
-            border.color: "#00FF00"
-            border.width: 5
-            radius: 15
-            anchors.centerIn: parent
         }
     }
 
     Switch {
         id: togglePepSwitch
-        text: qsTr("Додатково")
+        text: qsTr("Детально")
         checked: false
         visible: toggleSwitch.checked
         anchors.left: parent.left
@@ -391,7 +413,6 @@ Rectangle {
             opacity: enabled ? 1.0 : 0.3
             color: togglePepSwitch.down ? "#17a81a" : "#21be2b"
             verticalAlignment: Text.AlignVCenter
-            // @disable-check M16
             leftPadding: togglePepSwitch.indicator.width + togglePepSwitch.spacing
         }
     }
@@ -431,7 +452,6 @@ Rectangle {
             opacity: enabled ? 1.0 : 0.3
             color: toggleSwitch.down ? "#17a81a" : "#21be2b"
             verticalAlignment: Text.AlignVCenter
-            // @disable-check M16
             leftPadding: toggleSwitch.indicator.width + toggleSwitch.spacing
         }
     }
