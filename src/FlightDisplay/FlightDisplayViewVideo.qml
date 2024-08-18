@@ -195,5 +195,6 @@ Item {
 
     MyCustomAim {
         id: customAim
+        visible: !_mainWindowIsMap && QGroundControl.videoManager.decoding
     }
 }

@@ -671,6 +671,11 @@ Rectangle {
         }
     }
 
+    MyCustomAim {
+        id: customAim
+        visible: !_mainWindowIsMap && !QGroundControl.videoManager.decoding
+    }
+
     Component.onCompleted: {
         SiYi.iconsHeight = Qt.binding(function () {
             return controlColumn.height

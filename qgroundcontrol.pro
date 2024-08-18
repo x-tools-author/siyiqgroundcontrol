@@ -27,7 +27,7 @@ message(Qt version $$[QT_VERSION])
 
 include(QGCCommon.pri)
 
-TARGET   = SiYiQGroundControl
+TARGET   = 49KS
 TEMPLATE = app
 QGCROOT  = $$PWD
 

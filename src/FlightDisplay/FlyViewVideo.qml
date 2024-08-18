@@ -97,9 +97,4 @@ Item {
         anchors.fill: parent
         visible: !_mainWindowIsMap
     }
-
-    MyCustomAim {
-        visible: !_mainWindowIsMap
-        id: customAim
-    }
 }
