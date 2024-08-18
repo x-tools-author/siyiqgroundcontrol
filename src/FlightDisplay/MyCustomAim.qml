@@ -363,7 +363,7 @@ Rectangle {
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.leftMargin: 20
-        anchors.bottomMargin: 106
+        anchors.bottomMargin: 386
         z: 10
 
         indicator: Rectangle {
@@ -402,7 +402,8 @@ Rectangle {
         checked: true
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        anchors.margins: 20
+        anchors.bottomMargin: 300
+        anchors.leftMargin: 20
         z: 10
 
         indicator: Rectangle {
