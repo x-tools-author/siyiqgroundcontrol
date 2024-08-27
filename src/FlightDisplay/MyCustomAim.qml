@@ -19,7 +19,7 @@ Rectangle {
     property int size: togglePepSwitch.checked ? 800 : 600
     property string baseColor: "#00FF00"
     property string addColor: "#FF0000"
-    property string dotColor: "#FFFFFF"
+    property string dotColor: "#FF1493"
     property int baseThickness: 5
     property int addThickness: 3
     property int baseElementSize: 50
