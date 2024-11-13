@@ -15,7 +15,6 @@ import QGroundControl.ScreenTools 1.0
 import QGroundControl.Vehicle 1.0
 
 Rectangle {
-
     property int size: togglePepSwitch.checked ? 800 : 600
     property string baseColor: "#00FF00"
     property string addColor: "#FF0000"
@@ -23,7 +22,7 @@ Rectangle {
     property int baseThickness: 5
     property int addThickness: 3
     property int baseElementSize: 50
-    property int zIndex: 10
+    property int zIndex: 1100
     property int circleRadius: 15
     property int dotDadius: 6
     property int counter: (size / 2) / baseElementSize
@@ -33,7 +32,7 @@ Rectangle {
     width: parent.width
     height: parent.height
     color: "transparent"
-    z: 10
+    z: zIndex
 
     Rectangle {
         id: customAim
@@ -381,12 +380,13 @@ Rectangle {
         id: togglePepSwitch
         text: qsTr("Детально")
         checked: false
-        visible: toggleSwitch.checked
+        // visible: toggleSwitch.checked
         anchors.left: parent.left
         anchors.bottom: parent.bottom
         anchors.leftMargin: 20
         anchors.bottomMargin: 386
-        z: 10
+        z: zIndex
+        visible: false
 
         indicator: Rectangle {
             implicitWidth: 150
@@ -425,7 +425,8 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 300
         anchors.leftMargin: 20
-        z: 10
+        z: zIndex
+        visible: false
 
         indicator: Rectangle {
             implicitWidth: 150
